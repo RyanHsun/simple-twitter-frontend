@@ -22,6 +22,8 @@ const routes = [
     path: '/users/:id',
     name: 'account-setting',
     component: () => import('../views/AccountSetting.vue')
+  },
+  {
     path: '/',
     name: 'root',
     redirect: '/tweets'
