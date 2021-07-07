@@ -13,6 +13,11 @@ export default {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -48,21 +53,7 @@ ul {
   border-radius: 30px;
   border: 1px solid #FF6600;
 }
-.title {
-  position: absolute;
-  top: -62px;
-  left: 0;
-  z-index: 10;
-  width: 100%;
-  margin: 0;
-  padding: 20px;
-  font-size: 18px;
-  text-align: left;
-  border-width: 0 1px 1px 1px;
-  border-style: solid;
-  border-color: #E6ECF0;
-  background: #fff;
-}
+
 .avatar {
   display: block;
   width: 50px;

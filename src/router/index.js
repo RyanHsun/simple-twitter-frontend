@@ -30,7 +30,7 @@ const routes = [
   },
   {
     path: '/tweets/:id',
-    name: 'tweets',
+    name: 'tweet',
     component: () => import('../views/Tweet.vue')
   },
   {
@@ -39,9 +39,39 @@ const routes = [
     component: () => import('../views/User.vue')
   },
   {
+    path: '/users/:id/replied_tweets',
+    name: 'user-tweets-replied',
+    component: () => import('../views/User.vue')
+  },
+  {
+    path: '/users/:id/likes_tweets',
+    name: 'user-tweets-likes',
+    component: () => import('../views/User.vue')
+  },
+  {
     path: '/users/:id/setting',
     name: 'account-setting',
     component: () => import('../views/AccountSetting.vue')
+  },
+  {
+    path: '/users/:id/followings',
+    name: 'user-followings',
+    component: () => import('../views/UserFollowships.vue')
+  },
+  {
+    path: '/users/:id/followers',
+    name: 'user-followers',
+    component: () => import('../views/UserFollowships.vue')
+  },
+  {
+    path: '/admin/tweets',
+    name: 'admin-tweets',
+    component: () => import('../views/AdminTweets.vue')
+  },
+  {
+    path: '/admin/users',
+    name: 'admin-users',
+    component: () => import('../views/AdminUsers.vue')
   },
   {
     path: '/admin/login',
