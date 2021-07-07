@@ -4,7 +4,7 @@
       <img class="mb-4" src="../assets/logo.svg" alt="">
       <div class="text-center mb-4">
         <h1 class="h3 mb-3 font-weight-normal">
-          登入Aphitter
+          後台登入
         </h1>
       </div>
 
@@ -46,10 +46,7 @@
 
       <div class="text-right mb-3">
         <p>
-          <router-link to="/regist">註冊Aphitter</router-link>
-          ·
-          <router-link to="/admin/login">後台登入</router-link>
-
+          <router-link to="/login">前台登入</router-link>
         </p>
       </div>
 

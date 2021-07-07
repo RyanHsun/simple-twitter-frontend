@@ -79,7 +79,7 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">
+      <button class="btn btn-lg btn-block mb-3" type="submit">
         註冊
       </button>
 
@@ -145,6 +145,7 @@ h1 {
 .btn {
   border-radius: 50px;
   background: #ff6600;
+  color: #fff;
   border: none;
   max-width: 540px;
   margin: 30px auto;
