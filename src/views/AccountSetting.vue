@@ -4,7 +4,7 @@
     <section class="account-setting">
       <div class="account-setting-wrap">
         <h2 class="title">帳號設定</h2>
-        <form>
+        <form @submit.stop.prevent="handleSubmit">
           <div class="text-center mb-4"></div>
 
           <div class="form-label-group mb-2">
@@ -80,9 +80,7 @@
             />
           </div>
 
-          <button class="save-btn btn" type="submit">
-            儲存
-          </button>
+          <button class="save-btn btn" type="submit">儲存</button>
         </form>
       </div>
     </section>
@@ -92,6 +90,18 @@
 
 <script>
 import Sidebar from "./../components/Sidebar.vue";
+const dummyUser = {
+  currentUser: {
+    id: 1,
+    account: 'root',
+    name: '管理者',
+    email: 'root@example.com',
+    password: "12346578",
+    checkPassword: "12346578",
+    
+  }
+}
+
 export default {
   components: {
     Sidebar,
@@ -105,6 +115,28 @@ export default {
       checkPassword: "",
     };
   },
+  created() {
+    this.fetchUser();
+  },
+  methods: {
+    fetchUser () {
+      const { currentUser } = dummyUser
+      const { account, name, email, password, checkPassword } = currentUser
+      this.account = account
+      this.name = name
+      this.email = email
+      this.password = password
+      this.checkPassword = checkPassword
+    },
+    handleSubmit (e) {
+      const form = e.target
+      const formData = new FormData(form)
+      // TODO: 透過 API 向伺服器更新使用者
+      for (let [name, value] of formData.entries()) {
+        console.log(name + ': ' + value)
+      }
+    }
+  }
 };
 </script>
 
@@ -141,6 +173,9 @@ export default {
 .form-control {
   background: #f5f8fa;
   border: 0;
+  height: 50px;
+  margin-top: 20px;
+  padding-top: 30px;
 }
 
 .input-label {
