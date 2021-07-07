@@ -1,6 +1,6 @@
 <template>
   <div class="container py-5">
-    <form class="w-100">
+    <form class="w-100" @submit.prevent.stop="handleSubmit">
       <img class="mb-4" src="../assets/logo.svg" alt="">
       <div class="text-center mb-4">
         <h1 class="h3 mb-3 font-weight-normal">
@@ -65,6 +65,17 @@ export default {
     return {
       email: '',
       password: ''
+    }
+  },
+  methods: {
+    handleSubmit () {
+      const data = JSON.stringify({
+        email: this.email,
+        password: this.password
+      })
+
+      // TODO: 向後端驗證使用者登入資訊是否合法
+      console.log('data', data)
     }
   }
 }
