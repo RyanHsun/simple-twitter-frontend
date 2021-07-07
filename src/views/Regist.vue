@@ -1,6 +1,6 @@
 <template>
   <div class="container py-5">
-    <form class="w-100">
+    <form class="w-100" @submit.prevent.stop="handleSubmit">
       <img class="mb-4" src="../assets/logo.svg" alt="" />
       <div class="text-center mb-4">
         <h1 class="h3 mb-3 font-weight-normal">建立你的帳號</h1>
@@ -79,7 +79,7 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">
+      <button class="btn btn-lg btn-block mb-3" type="submit">
         註冊
       </button>
 
@@ -102,6 +102,20 @@ export default {
       email: '',
       password: '',
       checkPassword: ''
+    }
+  },
+  methods: {
+    handleSubmit () {
+      const data = JSON.stringify({
+        account: this.account,
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        checkPassword: this.checkPassword,
+      })
+
+      // TODO: 向後端驗證使用者登入資訊是否合法
+      console.log('data', data)
     }
   }
 }
@@ -145,6 +159,7 @@ h1 {
 .btn {
   border-radius: 50px;
   background: #ff6600;
+  color: #fff;
   border: none;
   max-width: 540px;
   margin: 30px auto;

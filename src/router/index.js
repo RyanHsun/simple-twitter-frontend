@@ -70,8 +70,13 @@ const routes = [
   },
   {
     path: '/admin/users',
-    name: 'admin-lusers',
+    name: 'admin-users',
     component: () => import('../views/AdminUsers.vue')
+  },
+  {
+    path: '/admin/login',
+    name: 'admin-login',
+    component: () => import('../views/AdminLogin.vue')
   },
   {
     path: '*',

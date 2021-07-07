@@ -7,36 +7,36 @@
         </a>
       </h1>
       <nav class="navigation">
-        <a class="nav-item" href="#">
+        <router-link class="nav-item" to="/">
           <div class="icon index">
             <img src="~@/assets/img/icon_index.svg" alt="">
           </div>
           <div>首頁</div>
-        </a>
+        </router-link>
         <a class="nav-item" href="#">
           <div class="icon user">
             <img src="~@/assets/img/icon_user.svg" alt="">
           </div>
           <div>個人資料</div>
         </a>
-        <a class="nav-item" href="#">
+        <router-link class="nav-item" to="/users/:id/setting">
           <div class="icon cog">
             <img src="~@/assets/img/icon_cog.svg" alt="">
           </div>
           <div>設定</div>
-        </a>
+        </router-link>
       </nav>
       <button class="btn new-tweet" type="button">
         推文
       </button>
     </div>
     <div class="bottom">
-      <a class="logout" href="#">
+      <router-link class="logout" to="/login">
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="">
         </div>
         <div>登出</div>
-      </a>
+      </router-link>
     </div>
   </section>
 </template>
