@@ -9,29 +9,39 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/login',
-    name: 'login',
-    component: Login,
-  },
-  {
-    path: '/users',
-    name: 'regist',
-    component: () => import('../views/Regist.vue')
-  },
-  {
-    path: '/users/:id',
-    name: 'account-setting',
-    component: () => import('../views/AccountSetting.vue')
-  },
-  {
     path: '/',
     name: 'root',
     redirect: '/tweets'
   },
   {
+    path: '/login',
+    name: 'login',
+    component: Login
+  },
+  {
+    path: '/regist',
+    name: 'regist',
+    component: () => import('../views/Regist.vue')
+  },
+  {
     path: '/tweets',
     name: 'tweets',
     component: Tweets
+  },
+  {
+    path: '/tweets/:id',
+    name: 'tweets',
+    component: () => import('../views/Tweet.vue')
+  },
+  {
+    path: '/users/:id',
+    name: 'user',
+    component: () => import('../views/User.vue')
+  },
+  {
+    path: '/users/:id/setting',
+    name: 'account-setting',
+    component: () => import('../views/AccountSetting.vue')
   },
   {
     path: '*',
