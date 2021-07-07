@@ -31,12 +31,12 @@
       </button>
     </div>
     <div class="bottom">
-      <a class="logout" href="#">
+      <router-link class="logout" to="/login">
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="">
         </div>
         <div>登出</div>
-      </a>
+      </router-link>
     </div>
   </section>
 </template>
