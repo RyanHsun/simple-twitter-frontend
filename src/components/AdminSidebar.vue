@@ -7,27 +7,27 @@
         </a>
       </h1>
       <nav class="navigation">
-        <a class="nav-item" href="#">
+        <router-link class="nav-item" to="/admin/tweets">
           <div class="icon index">
             <img src="~@/assets/img/icon_index.svg" alt="">
           </div>
           <div>推文清單</div>
-        </a>
-        <a class="nav-item" href="#">
+        </router-link>
+        <router-link class="nav-item" to="/admin/users">
           <div class="icon user">
             <img src="~@/assets/img/icon_user.svg" alt="">
           </div>
           <div>使用者列表</div>
-        </a>
+        </router-link>
       </nav>
     </div>
     <div class="bottom">
-      <a class="logout" href="#">
+      <router-link class="logout" to="/admin/login">
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="">
         </div>
         <div>登出</div>
-      </a>
+      </router-link>
     </div>
   </section>
 </template>
