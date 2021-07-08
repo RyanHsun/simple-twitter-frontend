@@ -42,6 +42,9 @@ a,
 button {
   color: #000;
   text-decoration: none;
+  background: no-repeat;
+  border: none;
+  padding: 0;
 }
 ul {
   list-style: none;
