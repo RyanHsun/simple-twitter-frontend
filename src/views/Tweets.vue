@@ -3,13 +3,17 @@
     <Sidebar />
     <section class="tweets">
       <div class="tweets-wrap">
-        <h2 class="title">首頁</h2>
+        <h2 class="headbar">
+          <div class="title">
+            <div class="main-title">推文</div>
+          </div>
+        </h2>
         <form class="create-tweet" action="">
           <div class="create-tweet-wrap">
             <span class="avatar" href="">
               <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
             </span>
-            <input class="tweet-input" type="text" placeholder="有什麼新鮮事？">
+            <textarea class="tweet-textarea" name="" id="" cols="30" rows="2" maxlength="140" placeholder="有什麼新鮮事？"></textarea>
           </div>
           <button class="btn tweet-button">推文</button>
         </form>
@@ -44,24 +48,23 @@ export default {
   }
   .tweets {
     position: relative;
-    margin-top: 62px;
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
-    
+    margin-top: 50px;
   }
   .tweets-wrap {
     overflow-y: scroll;
-    max-height: calc( 100vh - 62px );
+    max-height: calc( 100vh - 50px );
   }
-  .title {
+  .headbar {
     position: absolute;
-    top: -62px;
+    top: -50px;
     left: 0;
     z-index: 10;
+    display: flex;
+    align-items: center;
     width: 100%;
+    height: 50px;
     margin: 0;
-    padding: 20px;
+    padding: 5px 20px;
     font-size: 18px;
     text-align: left;
     border-width: 0 1px 1px 1px;
@@ -69,23 +72,42 @@ export default {
     border-color: #E6ECF0;
     background: #fff;
   }
+  .back {
+    margin-right: 40px;
+  }
+  .title {
+    display: inline-block;
+  }
+  .main-title {
+    font-weight: 900;
+  }
+  .sub-title {
+    font-size: 13px;
+    color: #657786;
+  }
   .create-tweet {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     padding: 20px;
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
     border-bottom: 10px solid #E6ECF0;
   }
   .create-tweet-wrap {
+    display: flex;
     width: 100%;
     text-align: left;
   }
-  .tweet-input {
+  .tweet-textarea {
+    width: calc( 100% - 60px);
+    margin-top: 10px;
     font-size: 18px;
     color: #9197A3;
     border: none;
     outline: none;
-    width: calc( 100% - 60px);
+    resize: none;
   }
   .avatar {
     display: inline-block;

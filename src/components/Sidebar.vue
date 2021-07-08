@@ -13,12 +13,12 @@
           </div>
           <div>首頁</div>
         </router-link>
-        <a class="nav-item" href="#">
+        <router-link class="nav-item" to="/users/:id">
           <div class="icon user">
             <img src="~@/assets/img/icon_user.svg" alt="">
           </div>
           <div>個人資料</div>
-        </a>
+        </router-link>
         <router-link class="nav-item" to="/users/:id/setting">
           <div class="icon cog">
             <img src="~@/assets/img/icon_cog.svg" alt="">
@@ -26,9 +26,13 @@
           <div>設定</div>
         </router-link>
       </nav>
-      <button class="btn new-tweet" type="button">
+      <button type="button" class="btn new-tweet" data-toggle="modal" data-target="#newTweetModal">
         推文
       </button>
+      <!-- Button trigger modal -->
+      <div class="modal fade" id="newTweetModal" tabindex="-1" aria-labelledby="newTweetModalLabel" aria-hidden="true">
+        <NewTweetModal />
+      </div>
     </div>
     <div class="bottom">
       <router-link class="logout" to="/login">
@@ -40,6 +44,16 @@
     </div>
   </section>
 </template>
+
+<script>
+import NewTweetModal from './../components/NewTweetModal.vue'
+
+export default {
+  components: {
+    NewTweetModal
+  }
+}
+</script>
 
 <style scoped>
   .sidebar {

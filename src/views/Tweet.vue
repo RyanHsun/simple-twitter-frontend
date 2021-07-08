@@ -3,9 +3,13 @@
     <Sidebar />
     <section class="tweet">
       <div class="tweet-wrap">
-        <h2 class="title">
-          <img src="~@/assets/img/icon_back.svg" alt="">
-          推文
+        <h2 class="headbar">
+          <a class="back" href="">
+            <img src="~@/assets/img/icon_back.svg" alt="">
+          </a>
+          <div class="title">
+            <div class="main-title">推文</div>
+          </div>
         </h2>
         <div class="tweet-detail">
           <div class="user">
@@ -24,177 +28,181 @@
             上午 10:05・2020年6月10日
           </div>
           <div class="tweet-response">
-            <div class="tweet-replys">34 回覆</div>
+            <div class="tweet-replies">34 回覆</div>
             <div class="tweet-likes">808 喜歡次數</div>
           </div>
           <div class="tweet-response-action">
-            <div class="tweet-reply-action">
+            <button type="button" class="tweet-reply-action" data-toggle="modal" data-target="#replyTweetModal">
               <img src="~@/assets/img/icon_comment.svg" alt="">
+            </button>
+            <!-- Button trigger modal -->
+            <div class="modal fade" id="replyTweetModal" tabindex="-1" aria-labelledby="replyTweetModalLabel" aria-hidden="true">
+              <ReplyTweetModal />
             </div>
-            <div class="tweet-like-action">
+            <button class="tweet-like-action" type="button">
               <img src="~@/assets/img/icon_like.svg" alt="">
-            </div>
+            </button>
           </div>
         </div>
-        <ul class="tweet-replys">
-          <li class="tweet-reply">
+        <ul class="tweet-replied-list">
+          <li class="tweet-replied">
             <a href="" class="avatar">
               <img src="https://randomuser.me/api/portraits/men/82.jpg" alt="">
             </a>
-            <div class="tweet-reply-detail">
-              <div class="tweet-reply-user-info">
+            <div class="tweet-replied-detail">
+              <div class="tweet-replied-user-info">
                 <a class="name" href="">user1</a>
                 <span class="account">@user1</span>
                 <span class="tweet-update-at">・3小時</span>
               </div>
-              <div class="tweet-reply-to">
+              <div class="tweet-replied-to">
                 回覆 @apple
               </div>
-              <div class="tweet-reply-content">
+              <div class="tweet-replied-content">
                 Good ~
               </div>
             </div>
           </li>
-          <li class="tweet-reply">
+          <li class="tweet-replied">
             <a href="" class="avatar">
               <img src="https://randomuser.me/api/portraits/men/38.jpg" alt="">
             </a>
-            <div class="tweet-reply-detail">
-              <div class="tweet-reply-user-info">
+            <div class="tweet-replied-detail">
+              <div class="tweet-replied-user-info">
                 <a class="name" href="">user1</a>
                 <span class="account">@user1</span>
                 <span class="tweet-update-at">・3小時</span>
               </div>
-              <div class="tweet-reply-to">
+              <div class="tweet-replied-to">
                 回覆 @apple
               </div>
-              <div class="tweet-reply-content">
+              <div class="tweet-replied-content">
                 Good ~
               </div>
             </div>
           </li>
-          <li class="tweet-reply">
+          <li class="tweet-replied">
             <a href="" class="avatar">
               <img src="https://randomuser.me/api/portraits/men/84.jpg" alt="">
             </a>
-            <div class="tweet-reply-detail">
-              <div class="tweet-reply-user-info">
+            <div class="tweet-replied-detail">
+              <div class="tweet-replied-user-info">
                 <a class="name" href="">user1</a>
                 <span class="account">@user1</span>
                 <span class="tweet-update-at">・3小時</span>
               </div>
-              <div class="tweet-reply-to">
+              <div class="tweet-replied-to">
                 回覆 @apple
               </div>
-              <div class="tweet-reply-content">
+              <div class="tweet-replied-content">
                 Good ~
               </div>
             </div>
           </li>
-          <li class="tweet-reply">
+          <li class="tweet-replied">
             <a href="" class="avatar">
               <img src="https://randomuser.me/api/portraits/men/76.jpg" alt="">
             </a>
-            <div class="tweet-reply-detail">
-              <div class="tweet-reply-user-info">
+            <div class="tweet-replied-detail">
+              <div class="tweet-replied-user-info">
                 <a class="name" href="">user1</a>
                 <span class="account">@user1</span>
                 <span class="tweet-update-at">・3小時</span>
               </div>
-              <div class="tweet-reply-to">
+              <div class="tweet-replied-to">
                 回覆 @apple
               </div>
-              <div class="tweet-reply-content">
+              <div class="tweet-replied-content">
                 Good ~
               </div>
             </div>
           </li>
-          <li class="tweet-reply">
+          <li class="tweet-replied">
             <a href="" class="avatar">
               <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
             </a>
-            <div class="tweet-reply-detail">
-              <div class="tweet-reply-user-info">
+            <div class="tweet-replied-detail">
+              <div class="tweet-replied-user-info">
                 <a class="name" href="">user1</a>
                 <span class="account">@user1</span>
                 <span class="tweet-update-at">・3小時</span>
               </div>
-              <div class="tweet-reply-to">
+              <div class="tweet-replied-to">
                 回覆 @apple
               </div>
-              <div class="tweet-reply-content">
+              <div class="tweet-replied-content">
                 Good ~
               </div>
             </div>
           </li>
-          <li class="tweet-reply">
+          <li class="tweet-replied">
             <a href="" class="avatar">
               <img src="https://randomuser.me/api/portraits/men/54.jpg" alt="">
             </a>
-            <div class="tweet-reply-detail">
-              <div class="tweet-reply-user-info">
+            <div class="tweet-replied-detail">
+              <div class="tweet-replied-user-info">
                 <a class="name" href="">user1</a>
                 <span class="account">@user1</span>
                 <span class="tweet-update-at">・3小時</span>
               </div>
-              <div class="tweet-reply-to">
+              <div class="tweet-replied-to">
                 回覆 @apple
               </div>
-              <div class="tweet-reply-content">
+              <div class="tweet-replied-content">
                 Good ~
               </div>
             </div>
           </li>
-          <li class="tweet-reply">
+          <li class="tweet-replied">
             <a href="" class="avatar">
               <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="">
             </a>
-            <div class="tweet-reply-detail">
-              <div class="tweet-reply-user-info">
+            <div class="tweet-replied-detail">
+              <div class="tweet-replied-user-info">
                 <a class="name" href="">user1</a>
                 <span class="account">@user1</span>
                 <span class="tweet-update-at">・3小時</span>
               </div>
-              <div class="tweet-reply-to">
+              <div class="tweet-replied-to">
                 回覆 @apple
               </div>
-              <div class="tweet-reply-content">
+              <div class="tweet-replied-content">
                 Good ~
               </div>
             </div>
           </li>
-          <li class="tweet-reply">
+          <li class="tweet-replied">
             <a href="" class="avatar">
               <img src="https://randomuser.me/api/portraits/men/18.jpg" alt="">
             </a>
-            <div class="tweet-reply-detail">
-              <div class="tweet-reply-user-info">
+            <div class="tweet-replied-detail">
+              <div class="tweet-replied-user-info">
                 <a class="name" href="">user1</a>
                 <span class="account">@user1</span>
                 <span class="tweet-update-at">・3小時</span>
               </div>
-              <div class="tweet-reply-to">
+              <div class="tweet-replied-to">
                 回覆 @apple
               </div>
-              <div class="tweet-reply-content">
+              <div class="tweet-replied-content">
                 Good ~
               </div>
             </div>
           </li>
-          <li class="tweet-reply">
+          <li class="tweet-replied">
             <a href="" class="avatar">
               <img src="https://randomuser.me/api/portraits/men/5.jpg" alt="">
             </a>
-            <div class="tweet-reply-detail">
-              <div class="tweet-reply-user-info">
+            <div class="tweet-replied-detail">
+              <div class="tweet-replied-user-info">
                 <a class="name" href="">user1</a>
                 <span class="account">@user1</span>
                 <span class="tweet-update-at">・3小時</span>
               </div>
-              <div class="tweet-reply-to">
+              <div class="tweet-replied-to">
                 回覆 @apple
               </div>
-              <div class="tweet-reply-content">
+              <div class="tweet-replied-content">
                 Good ~
               </div>
             </div>
@@ -209,16 +217,19 @@
 <script>
 import Sidebar from './../components/Sidebar.vue'
 import UsersTop from './../components/UsersTop.vue'
+import ReplyTweetModal from './../components/ReplyTweetModal.vue'
 
 export default {
   components: {
     Sidebar,
-    UsersTop
+    UsersTop,
+    ReplyTweetModal
   }
 }
 </script>
 
 <style scoped>
+
   .container {
     display: grid;
     grid-template-columns: 20% auto 30%;
@@ -228,23 +239,49 @@ export default {
   }
   .tweet {
     position: relative;
-    margin-top: 62px;
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
+    margin-top: 50px;
   }
   .tweet-wrap {
     overflow-y: scroll;
     max-height: 100vh;
   }
-  .title {
+  .headbar {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    z-index: 10;
     display: flex;
-  }
-  .title img {
-    margin-right: 30px;
-  }
-  .tweet-detail {
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    margin: 0;
+    padding: 5px 20px;
+    font-size: 18px;
     text-align: left;
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
+    background: #fff;
+  }
+  .back {
+    margin-right: 40px;
+  }
+  .title {
+    display: inline-block;
+  }
+  .main-title {
+    font-weight: 900;
+  }
+  .sub-title {
+    font-size: 13px;
+    color: #657786;
+  }
+  .tweet-detail,
+  .tweet-replied-list {
+    text-align: left;
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
   }
   .user {
     padding: 10px 20px;
@@ -263,7 +300,7 @@ export default {
     border-style: solid;
     border-color: #E6ECF0;
   }
-  .tweet-replys {
+  .tweet-replies {
     margin-right: 30px;
   }
   .tweet-response-action {
@@ -271,7 +308,7 @@ export default {
     padding: 10px 20px;
     border-bottom: 1px solid #E6ECF0;
   }
-  .tweet-response-action > div {
+  .tweet-response-action > button {
     width: 20px;
   }
   .tweet-response-action img {
@@ -281,13 +318,13 @@ export default {
     margin-right: 20%;
   }
 
-  .tweet-reply {
+  .tweet-replied {
     border-bottom: 1px solid #e6ecf0;
     display: flex;
     padding: 10px 15px;
     width: 100%;
   }
-  .tweet-reply-detail {
+  .tweet-replied-detail {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
