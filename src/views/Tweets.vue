@@ -46,7 +46,7 @@ const dummyData = {
       replyNum: 2,
       createdAt: "2021-06-27 15:47:52",
       User: {
-        id: 1,
+        id: 8,
         account: "user1",
         name: "User1",
         avatar: "https://randomuser.me/api/portraits/men/58.jpg"
@@ -55,22 +55,22 @@ const dummyData = {
     {
       id: 2,
       content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
-      isLike: false,
-      likeNum: 13,
+      isLike: true,
+      likeNum: 136,
       replyNum: 5,
       createdAt: "2021-06-27 15:47:52",
       User: {
-        id: 1,
+        id: 2,
         account: "user1",
         name: "User1",
         avatar: "https://randomuser.me/api/portraits/men/20.jpg"
       }
     },
     {
-      id: 2,
+      id: 3,
       content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
       isLike: false,
-      likeNum: 13,
+      likeNum: 143,
       replyNum: 5,
       createdAt: "2021-06-27 15:47:52",
       User: {
@@ -81,40 +81,40 @@ const dummyData = {
       }
     },
     {
-      id: 2,
+      id: 4,
       content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
-      isLike: false,
+      isLike: true,
       likeNum: 13,
       replyNum: 5,
-      createdAt: "2021-06-27 15:47:52",
+      createdAt: "2021-06-17 15:47:52",
       User: {
-        id: 1,
+        id: 4,
         account: "user1",
         name: "User1",
         avatar: "https://randomuser.me/api/portraits/men/21.jpg"
       }
     },
     {
-      id: 2,
+      id: 5,
       content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
       isLike: false,
       likeNum: 13,
       replyNum: 5,
       createdAt: "2021-06-27 15:47:52",
       User: {
-        id: 1,
+        id: 3,
         account: "user1",
         name: "User1",
         avatar: "https://randomuser.me/api/portraits/men/18.jpg"
       }
     },
     {
-      id: 2,
+      id: 6,
       content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
       isLike: false,
       likeNum: 13,
       replyNum: 5,
-      createdAt: "2021-06-27 15:47:52",
+      createdAt: "2021-06-22 15:47:52",
       User: {
         id: 1,
         account: "user1",
