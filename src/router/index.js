@@ -53,16 +53,16 @@ const routes = [
     name: 'account-setting',
     component: () => import('../views/AccountSetting.vue')
   },
-  {
-    path: '/users/:id/followings',
-    name: 'user-followings',
-    component: () => import('../views/UserFollowships.vue')
-  },
-  {
-    path: '/users/:id/followers',
-    name: 'user-followers',
-    component: () => import('../views/UserFollowships.vue')
-  },
+  // {
+  //   path: '/users/:id/followings',
+  //   name: 'user-followings',
+  //   component: () => import('../views/UserFollowships.vue')
+  // },
+  // {
+  //   path: '/users/:id/followers',
+  //   name: 'user-followers',
+  //   component: () => import('../views/UserFollowships.vue')
+  // },
   {
     path: '/admin/tweets',
     name: 'admin-tweets',
@@ -78,6 +78,20 @@ const routes = [
     name: 'admin-login',
     component: () => import('../views/AdminLogin.vue')
   },
+  //test for UserFollow part
+  //test for UserFollow part
+  {
+    path: '/users/:id/followers',
+    name: 'user-followers',
+    component: () => import('../views/UserFollowers.vue')
+  },
+  {
+    path: '/users/:id/followings',
+    name: 'user-followings',
+    component: () => import('../views/UserFollowings.vue')
+  },
+  //test for UserFollow part
+  //test for UserFollow part
   {
     path: '*',
     name: 'not-found',

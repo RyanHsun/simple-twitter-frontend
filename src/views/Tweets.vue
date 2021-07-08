@@ -17,7 +17,14 @@
           </div>
           <button class="btn tweet-button">推文</button>
         </form>
-        <TweetsList />
+        
+        <ul class="tweets-list">
+          <TweetsList
+            v-for="tweet in tweets"
+            :key="tweet.id"
+            :initial-tweet="tweet"
+          />
+        </ul>
       </div>
     </section>
     <UsersTop />
@@ -29,11 +36,116 @@ import Sidebar from './../components/Sidebar.vue'
 import UsersTop from './../components/UsersTop.vue'
 import TweetsList from './../components/TweetsList.vue'
 
+const dummyData = {
+  Tweets: [
+    {
+      id: 1,
+      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      isLike: true,
+      likeNum: 10,
+      replyNum: 2,
+      createdAt: "2021-06-27 15:47:52",
+      User: {
+        id: 8,
+        account: "user1",
+        name: "User1",
+        avatar: "https://randomuser.me/api/portraits/men/58.jpg"
+      }
+    },
+    {
+      id: 2,
+      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      isLike: true,
+      likeNum: 136,
+      replyNum: 5,
+      createdAt: "2021-06-27 15:47:52",
+      User: {
+        id: 2,
+        account: "user1",
+        name: "User1",
+        avatar: "https://randomuser.me/api/portraits/men/20.jpg"
+      }
+    },
+    {
+      id: 3,
+      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      isLike: false,
+      likeNum: 143,
+      replyNum: 5,
+      createdAt: "2021-06-27 15:47:52",
+      User: {
+        id: 1,
+        account: "user1",
+        name: "User1",
+        avatar: "https://randomuser.me/api/portraits/men/28.jpg"
+      }
+    },
+    {
+      id: 4,
+      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      isLike: true,
+      likeNum: 13,
+      replyNum: 5,
+      createdAt: "2021-06-17 15:47:52",
+      User: {
+        id: 4,
+        account: "user1",
+        name: "User1",
+        avatar: "https://randomuser.me/api/portraits/men/21.jpg"
+      }
+    },
+    {
+      id: 5,
+      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      isLike: false,
+      likeNum: 13,
+      replyNum: 5,
+      createdAt: "2021-06-27 15:47:52",
+      User: {
+        id: 3,
+        account: "user1",
+        name: "User1",
+        avatar: "https://randomuser.me/api/portraits/men/18.jpg"
+      }
+    },
+    {
+      id: 6,
+      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      isLike: false,
+      likeNum: 13,
+      replyNum: 5,
+      createdAt: "2021-06-22 15:47:52",
+      User: {
+        id: 1,
+        account: "user1",
+        name: "User1",
+        avatar: "https://randomuser.me/api/portraits/men/23.jpg"
+      }
+    }
+  ]
+}
+
+
 export default {
+  name: 'tweets',
   components: {
     Sidebar,
     TweetsList,
     UsersTop
+  },
+  data () {
+    return {
+      tweets: []
+    }
+  },
+  created () {
+    this.fetchTweets()
+  },
+  methods: {
+    fetchTweets () {
+      const { Tweets } = dummyData
+      this.tweets = Tweets
+    }
   }
 }
 </script>
@@ -117,5 +229,9 @@ export default {
     color: #fff;
     background-color: #FF6600;
   }
-  
+  .tweets-list {
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
+  }
 </style>

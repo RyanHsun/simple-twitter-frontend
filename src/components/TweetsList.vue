@@ -1,175 +1,78 @@
 <template>
-  <ul class="tweets-list">
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-        <div class="tweet-panel">
-          <span class="comment">
-            <img src="~@/assets/img/icon_comment.svg" alt="">1
-          </span>
-          <span class="likes">
-            <img src="~@/assets/img/icon_like.svg" alt="">2
-          </span>
-        </div>
+  <li class="tweet">
+    <router-link to="/users/:id" class="avatar">
+      <img :src="tweet.User.avatar" alt="">
+    </router-link>
+    <div class="tweet-info">
+      <div class="user-info">
+        <router-link class="name" to="/users/:id">{{ tweet.User.name }}</router-link>
+        <span class="account">@{{ tweet.User.account }}</span>
+        <span class="tweet-update-at">・{{ tweet.createdAt | fromNow }}</span>
       </div>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-        <div class="tweet-panel">
-          <span class="comment">
-            <img src="~@/assets/img/icon_comment.svg" alt="">1
-          </span>
-          <span class="likes">
-            <img src="~@/assets/img/icon_like.svg" alt="">2
-          </span>
-        </div>
+      <div class="tweet-content">
+        {{ tweet.content }}
       </div>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-        <div class="tweet-panel">
-          <span class="comment">
-            <img src="~@/assets/img/icon_comment.svg" alt="">1
-          </span>
-          <span class="likes">
-            <img src="~@/assets/img/icon_like.svg" alt="">2
-          </span>
-        </div>
+      <div class="tweet-panel">
+        <button class="comment" type="button">
+          <img src="~@/assets/img/icon_comment.svg" alt="">{{ tweet.replyNum }}
+        </button>
+        <button
+          v-if="tweet.isLike"
+         class="likes" 
+         :class="{ 'is-like': tweet.isLike }"
+         type="button" 
+         @click.stop.prevent="toggleLike(tweet)"
+        >
+          <img src="~@/assets/img/icon_like-fill.svg" alt="">
+          <span>{{ tweet.likeNum }}</span>
+        </button>
+        <button
+          v-else
+         class="likes" 
+         type="button" 
+         @click.stop.prevent="toggleLike(tweet)"
+        >
+          <img src="~@/assets/img/icon_like.svg" alt="">
+          <span>{{ tweet.likeNum }}</span>
+        </button>
       </div>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-        <div class="tweet-panel">
-          <span class="comment">
-            <img src="~@/assets/img/icon_comment.svg" alt="">1
-          </span>
-          <span class="likes">
-            <img src="~@/assets/img/icon_like.svg" alt="">2
-          </span>
-        </div>
-      </div>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-        <div class="tweet-panel">
-          <span class="comment">
-            <img src="~@/assets/img/icon_comment.svg" alt="">1
-          </span>
-          <span class="likes">
-            <img src="~@/assets/img/icon_like.svg" alt="">2
-          </span>
-        </div>
-      </div>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-        <div class="tweet-panel">
-          <span class="comment">
-            <img src="~@/assets/img/icon_comment.svg" alt="">1
-          </span>
-          <span class="likes">
-            <img src="~@/assets/img/icon_like.svg" alt="">2
-          </span>
-        </div>
-      </div>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-        <div class="tweet-panel">
-          <span class="comment">
-            <img src="~@/assets/img/icon_comment.svg" alt="">1
-          </span>
-          <span class="likes">
-            <img src="~@/assets/img/icon_like.svg" alt="">2
-          </span>
-        </div>
-      </div>
-    </li>
-  </ul>
+    </div>
+  </li>
 </template>
 
-<style scoped>
-.tweets-list {
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
+<script>
+import { fromNowFilter } from "./../utils/mixins"
+
+export default {
+  mixins: [fromNowFilter],
+  props: {
+    initialTweet: {
+      type: Object,
+      required: true
+    }
+  },
+  data () {
+    return {
+      tweet: this.initialTweet
+    }
+  },
+  methods: {
+    toggleLike (tweet) {
+      if (tweet.isLike) {
+        tweet.isLike = false
+        tweet.likeNum -= 1
+        // 串接 API 更新推文資料
+      } else {
+        tweet.isLike = true
+        tweet.likeNum += 1
+        // 串接 API 更新推文資料
+      }
+    }
+  }
 }
+</script>
+<style scoped>
+
 .tweet {
   border-bottom: 1px solid #e6ecf0;
   display: flex;
@@ -190,10 +93,13 @@
 .tweet-content {
   margin: 10px 0;
 }
-.tweet-panel span {
+.tweet-panel button {
   padding-right: 40px;
 }
 .tweet-panel img{
   margin-right: 20px;
+}
+.is-like {
+  color: #E0245E;
 }
 </style>
