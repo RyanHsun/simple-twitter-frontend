@@ -41,10 +41,6 @@ export default {
   .user {
     position: relative;
     margin-top: 50px;
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
-    
   }
   .user-wrap {
     overflow-y: scroll;

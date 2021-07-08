@@ -12,7 +12,7 @@
             <span class="account">@{{ user.account }}</span>
           </a>
           <button
-            v-if="user.isFollowed"
+            v-if="user.isFollowing"
             @click.stop.prevent="deleteFollowing(user.id)"
             class="btn toggle-follow is-following"
           >
@@ -41,15 +41,16 @@ const dummyUsersTop = {
       name: "User2",
       avatar: "https://randomuser.me/api/portraits/men/88.jpg",
       isFollowing: true,
-      //覺得要新增followerCount
+
+
     },
     {
       id: 2,
       account: "user1",
       name: "User1",
-      avatar: "https://randomuser.me/api/portraits/men/88.jpg",
+      avatar: "https://randomuser.me/api/portraits/men/78.jpg",
       isFollowing: false,
-      //覺得要新增followerCount
+
     },
   ],
 };
@@ -74,8 +75,7 @@ export default {
         } else {
           return {
             ...user,
-            followerCount: user.followerCount + 1,
-            isFollowed: true,
+            isFollowing: true,
           };
         }
       });
@@ -87,8 +87,7 @@ export default {
         } else {
           return {
             ...user,
-            followerCount: user.followerCount - 1,
-            isFollowed: false,
+            isFollowing: false,
           };
         }
       });

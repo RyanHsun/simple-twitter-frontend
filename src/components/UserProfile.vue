@@ -7,9 +7,14 @@
       <a class="user-avatar avatar">
         <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
       </a>
-      <button type="button" class="user-edit btn">
+      <button type="button" class="btn user-edit" data-toggle="modal" data-target="#editProfileModal">
         編輯個人資料
       </button>
+      <!-- Button trigger modal -->
+      <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+        <EditProfileModal />
+      </div>
+      
     </div>
     <a href="" class="user-info">
       <span class="name">user1</span>
@@ -30,7 +35,30 @@
   </div>
 </template>
 
-<style scoped>
+<script>
+import EditProfileModal from './../components/EditProfileModal.vue'
+
+export default {
+  components: {
+    EditProfileModal
+  },
+  data() {
+    return {
+      visible: false
+    }
+  },
+  methods: {
+    showModal () {
+      this.visible = true
+    },
+    handleOk () {
+      this.visible = false
+    }
+  }
+}
+</script>
+
+<style>
   .container {
     display: grid;
     grid-template-columns: 20% auto 30%;
@@ -40,6 +68,9 @@
   }
   .user-profile {
     text-align: left;
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
   }
   .user-profile > div {
     display: flex;
