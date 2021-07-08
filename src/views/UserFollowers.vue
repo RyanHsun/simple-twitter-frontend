@@ -8,22 +8,19 @@
           <div class="user-followships-tab">
             <div class="user-followships-followers active">
               <router-link
-                :to="{
-                  name: 'user-followers',
-                  params: { id: user.id },
-                }"
+                to="/users/:id/followers"
                 >跟隨者</router-link
               >
             </div>
             <div class="user-followships-followings">
               <router-link
-                :to="{ name: 'user-followings', params: { id: user.id } }"
+                to="/users/:id/followings"
                 >正在跟隨</router-link
               >
             </div>
           </div>
         </div>
-        <FollowList />
+        <UserFollowersCard />
       </div>
     </section>
     <UsersTop />
@@ -34,39 +31,16 @@
 import Headbar from "../components/Headbar.vue";
 import Sidebar from "../components/Sidebar.vue";
 import UsersTop from "../components/UsersTop.vue";
-import FollowList from "../components/FollowList.vue";
+import UserFollowersCard from "../components/UserFollowersCard.vue";
+
 
 export default {
   components: {
     Headbar,
     Sidebar,
     UsersTop,
-    FollowList,
+    UserFollowersCard
   },
-  // data() {
-  //   return {
-  //     visibility: 'followers',
-  //   };
-  // },
-  // methods: {
-  //   setVisibility(visibility) {
-  //     this.visibility = visibility;
-  //     console.log("click");
-  //   },
-  // },
-  // computed: {
-  //   filteredFollow(userId) {
-  //     if (this.visibility === "followers") {
-  //       return this.movies.filter((movie) =>
-  //         movie.title.toLowerCase().includes(this.checkedWords.toLowerCase())
-  //       );
-  //     } else if (this.visibility === "followings") {
-  //       return this.favoriteMovies.filter((movie) =>
-  //         movie.title.toLowerCase().includes(this.checkedWords.toLowerCase())
-  //       );
-  //     }
-  //   },
-  // },
 };
 </script>
 
