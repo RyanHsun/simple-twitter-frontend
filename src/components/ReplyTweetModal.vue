@@ -1,0 +1,106 @@
+<template>
+  <!-- Modal -->
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <img src="~@/assets/img/icon_close-og.svg" alt="">
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="tweet">
+            <a href="" class="avatar">
+              <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
+            </a>
+            <div class="tweet-info">
+              <div class="user-info">
+                <a class="name" href="">user1</a>
+                <span class="account">@user1</span>
+                <span class="tweet-update-at">・3小時</span>
+              </div>
+              <div class="tweet-content">
+                Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
+              </div>
+              <div class="tweet-reply-to">回覆給<span>@apple</span></div>
+            </div>
+          </div>
+          <form class="reply-tweet" action="">
+            <div class="reply-tweet-wrap">
+              <span class="avatar" href="">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+              </span>
+              <textarea class="reply-textarea" name="" id="" cols="30" rows="5" maxlength="140" placeholder="推你的回覆"></textarea>
+            </div>
+            <button class="btn reply-button">回覆</button>
+          </form>
+        </div>
+      </div>
+    </div>
+</template>
+
+<style scoped> 
+  .modal-content {
+    border-radius: 14px;
+  }
+  .close {
+    margin: 0;
+    padding: 0;
+    opacity: 1;
+  }
+  .tweet {
+    position: relative;
+    display: flex;
+  }
+  .tweet::before {
+    content: '';
+    border: 1px solid #CCD6DD;
+    position: absolute;
+    height: calc( 100% - 35px);
+    bottom: -18%;
+    left: 5%;
+    z-index: 0;
+  }
+  .tweet-info {
+    width: calc(100% - 60px);
+  }
+  .tweet-reply-to {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+  .tweet-reply-to span {
+    margin-left: 5px;
+    color: #FF6600;
+  }
+  .reply-tweet {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 200px;
+    margin-top: 30px;
+  }
+  .reply-tweet-wrap {
+    display: flex;
+    width: 100%;
+    text-align: left;
+  }
+  .reply-textarea {
+    width: calc( 100% - 60px);
+    margin-top: 10px;
+    font-size: 18px;
+    color: #9197A3;
+    border: none;
+    outline: none;
+    resize: none;
+  }
+  .avatar {
+    position: relative;
+    display: inline-block;
+  }
+  .reply-button {
+    align-self: flex-end;
+    color: #fff;
+    background-color: #FF6600;
+  }
+
+</style>
