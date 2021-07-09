@@ -7,7 +7,13 @@
         <UserProfile 
           :user="user"
         />
-        <!-- <TweetsList /> -->
+        <ul class="tweets-list">
+          <TweetsList 
+            v-for="tweet in tweets"
+            :key="tweet.id"
+            :initial-tweet="tweet"
+          />
+        </ul>
       </div>
     </section>
     <UsersTop />
@@ -19,9 +25,9 @@ import Headbar from './../components/Headbar.vue'
 import Sidebar from './../components/Sidebar.vue'
 import UsersTop from './../components/UsersTop.vue'
 import UserProfile from './../components/UserProfile.vue'
-// import TweetsList from './../components/TweetsList.vue'
+import TweetsList from './../components/TweetsList.vue'
 
-const dummyData = {
+const dummyDataUser = {
   "id": 3,
   "account": "user3",
   "name": "Glenna Kautzer DVM",
@@ -37,31 +43,64 @@ const dummyData = {
   "isFollowing": true
 }
 
+const dummyDataUserTweet = [
+  {
+    "id": 71,
+    "description": "Libero mollitia commodi nesciunt non ad.",
+    "likeNum": 0,
+    "replyNum": 3,
+    "createdAt": "2021-07-08T04:20:23.000Z",
+    "User": {
+      "id": 3,
+      "account": "user3",
+      "name": "Glenna Kautzer DVM",
+      "avatar": "https://loremflickr.com/g/320/320/girl/all"
+    },
+    "isLike": false
+  },
+  {
+    "id": 3,
+    "description": "Veniam asperiores id.",
+    "likeNum": 0,
+    "replyNum": 3,
+    "createdAt": "2021-07-08T04:20:23.000Z",
+    "User": {
+      "id": 3,
+      "account": "user3",
+      "name": "Glenna Kautzer DVM",
+      "avatar": "https://loremflickr.com/g/320/320/girl/all"
+    },
+    "isLike": false
+  },
+  {
+    "id": 81,
+    "description": "Praesentium commodi eos eligendi sunt. Fugiat aliq",
+    "likeNum": 0,
+    "replyNum": 3,
+    "createdAt": "2021-07-08T04:20:23.000Z",
+    "User": {
+      "id": 3,
+      "account": "user3",
+      "name": "Glenna Kautzer DVM",
+      "avatar": "https://loremflickr.com/g/320/320/girl/all"
+    },
+    "isLike": false
+  }
+]
+
+
 export default {
   components: {
     Headbar,
     Sidebar,
     UsersTop,
     UserProfile,
-    // TweetsList
+    TweetsList
   },
   data () {
     return {
-      user: {
-        id: 0,
-        account: '',
-        name: '',
-        email: '',
-        introduction: '',
-        avatar: '',
-        cover: '',
-        tweetNum: 0,
-        likeNum: 0,
-        followingNum: 0,
-        followerNum: 0,
-        lastLoginAt: '',
-        isFollowing: false
-      }
+      user: {},
+      tweets: []
     }
   },
   created () {
@@ -69,37 +108,8 @@ export default {
   },
   methods: {
     fetchUser () {
-      const {
-        id,
-        account,
-        name,
-        email,
-        introduction,
-        avatar,
-        cover,
-        tweetNum,
-        likeNum,
-        followingNum,
-        followerNum,
-        lastLoginAt,
-        isFollowing
-      } = dummyData
-      this.user = {
-        ...this.user,
-        id,
-        account,
-        name,
-        email,
-        introduction,
-        avatar,
-        cover,
-        tweetNum,
-        likeNum,
-        followingNum,
-        followerNum,
-        lastLoginAt,
-        isFollowing
-      }
+      this.user = {...dummyDataUser}
+      this.tweets = [...dummyDataUserTweet]
     }
   }
 }
@@ -120,5 +130,10 @@ export default {
   .user-wrap {
     overflow-y: scroll;
     max-height: 100vh;
+  }
+  .tweets-list {
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
   }
 </style>

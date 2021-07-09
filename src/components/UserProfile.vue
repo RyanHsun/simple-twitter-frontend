@@ -4,9 +4,9 @@
       <div class="user-cover">
         <img :src="user.cover" alt="">
       </div>
-      <a class="user-avatar avatar">
+      <p class="user-avatar avatar">
         <img :src="user.avatar" alt="">
-      </a>
+      </p>
       <button type="button" class="btn user-edit" data-toggle="modal" data-target="#editProfileModal">
         編輯個人資料
       </button>
@@ -16,10 +16,10 @@
       </div>
       
     </div>
-    <a href="" class="user-info">
+    <p  class="user-info">
       <span class="name">{{ user.name }}</span>
       <span class="account">@{{ user.account }}</span>
-    </a>
+    </p>
     <div class="user-introduction">
       {{ user.introduction }}
     </div>
@@ -89,6 +89,9 @@ export default {
   }
   .user-cover img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
   .user-avatar {
     width: 140px;
@@ -101,13 +104,6 @@ export default {
   }
   .user-edit {
     margin-right: 20px;
-  }
-  .user-info {
-    display: inline-block;
-    padding: 0 20px;
-  }
-  .user-info span{
-    display: block;
   }
   .name {
     font-size: 19px;
@@ -134,5 +130,15 @@ export default {
   }
   .user-tab > div.active {
     border-bottom: 2px solid #FF6600;
+  }
+</style>
+
+<style scoped>
+  .user-info {
+    display: inline-block;
+    padding: 0 20px;
+  }
+  .user-info span{
+    display: block;
   }
 </style>

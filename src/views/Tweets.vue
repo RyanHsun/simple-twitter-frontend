@@ -40,7 +40,7 @@ const dummyData = {
   Tweets: [
     {
       id: 1,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      description: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
       isLike: true,
       likeNum: 10,
       replyNum: 2,
@@ -54,7 +54,7 @@ const dummyData = {
     },
     {
       id: 2,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      description: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
       isLike: true,
       likeNum: 136,
       replyNum: 5,
@@ -68,7 +68,7 @@ const dummyData = {
     },
     {
       id: 3,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      description: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
       isLike: false,
       likeNum: 143,
       replyNum: 5,
@@ -82,7 +82,7 @@ const dummyData = {
     },
     {
       id: 4,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      description: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
       isLike: true,
       likeNum: 13,
       replyNum: 5,
@@ -96,7 +96,7 @@ const dummyData = {
     },
     {
       id: 5,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      description: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
       isLike: false,
       likeNum: 13,
       replyNum: 5,
@@ -110,7 +110,7 @@ const dummyData = {
     },
     {
       id: 6,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
+      description: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
       isLike: false,
       likeNum: 13,
       replyNum: 5,

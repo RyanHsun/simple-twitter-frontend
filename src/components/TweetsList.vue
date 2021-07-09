@@ -12,7 +12,7 @@
         <span class="tweet-update-at">・{{ tweet.createdAt | fromNow }}</span>
       </div>
       <div class="tweet-content">
-        {{ tweet.content }}
+        {{ tweet.description }}
       </div>
       <div class="tweet-panel">
         <button class="comment" type="button">

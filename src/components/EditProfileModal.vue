@@ -11,7 +11,7 @@
         </div>
         <div class="modal-body">
           <form action="">
-            <div class="user-profile-head">
+            <div class="user-profile-edit">
               <div class="user-cover">
                 <label for="upload-image-cover" class="upload-image">
                   <img src="~@/assets/img/icon_upload.svg" alt="">
@@ -68,17 +68,9 @@
     padding: 0;
     opacity: 1;
   }
-  .create-tweet {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    height: 200px;
-  }
-  .create-tweet-wrap {
-    display: flex;
-    width: 100%;
-    text-align: left;
+  
+  .user-profile-edit {
+    margin-bottom: 30px;
   }
   .tweet-textarea {
     font-size: 18px;
