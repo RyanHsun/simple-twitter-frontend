@@ -1,11 +1,13 @@
 <template>
   <div class="tweet-detail">
     <div class="user">
-      <router-link class="avatar" to="/users/:id">
+      <router-link class="avatar" :to="{ name: 'user', params: { id: tweet.User.id } }">
         <img :src="tweet.User.avatar" alt="">
       </router-link>
       <div class="info">
-      <router-link class="name" to="/users/:id">{{ tweet.User.name }}</router-link>
+        <router-link class="name" :to="{ name: 'user', params: { id: tweet.User.id } }">
+          {{ tweet.User.name }}
+        </router-link>
         <span class="account">@{{ tweet.User.account }}</span>
       </div>
     </div>

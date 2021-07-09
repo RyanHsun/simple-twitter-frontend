@@ -46,7 +46,7 @@ const dummyTweet = {
     "updatedAt": "2021-06-27 15:47:52",
     "deletedAt": null,
     "User": {
-      "id": 1,
+      "id": 10,
       "account": "root",
       "name": "Root",
       "avatar": "https://randomuser.me/api/portraits/men/57.jpg"
@@ -56,7 +56,7 @@ const dummyTweet = {
 }
 
 const dummyTweetReplies = {
-  "replies": [
+  replies: [
     {
       "id": 1,
       "comment": "Quos asperiores in nostrum cupiditate excepturi aspernatur.",
@@ -84,7 +84,7 @@ const dummyTweetReplies = {
       "comment": "Quos asperiores in nostrum cupiditate excepturi aspernatur.",
       "createdAt": "2021-06-27 15:47:52",
       "User": {
-        "id": 1,
+        "id": 2,
         "account": "user1",
         "name": "User1",
         "avatar": "https://randomuser.me/api/portraits/men/5.jpg"
@@ -95,7 +95,7 @@ const dummyTweetReplies = {
       "comment": "Quos asperiores in nostrum cupiditate excepturi aspernatur.",
       "createdAt": "2021-06-27 15:47:52",
       "User": {
-        "id": 1,
+        "id": 9,
         "account": "user1",
         "name": "User1",
         "avatar": "https://randomuser.me/api/portraits/men/2.jpg"

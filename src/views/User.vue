@@ -19,6 +19,22 @@ import UsersTop from './../components/UsersTop.vue'
 import UserProfile from './../components/UserProfile.vue'
 import TweetsList from './../components/TweetsList.vue'
 
+// const dummyData = {
+//   "id": 3,
+//   "account": "user3",
+//   "name": "Glenna Kautzer DVM",
+//   "email": "user3@example.com",
+//   "introduction": "Minima eum distinctio debitis reiciendis.\nConsequatur ad inventore.\nVoluptas exercitationem laudantium molestias.\nSed dolorem necessitatibus et totam maiores.",
+//   "avatar": "https://loremflickr.com/g/320/240/girl/all",
+//   "cover": "https://loremflickr.com/800/600/dog",
+//   "tweetNum": 10,
+//   "likeNum": 0,
+//   "followingNum": 0,
+//   "followerNum": 0,
+//   "lastLoginAt": "2021-07-08T04:20:22.000Z",
+//   "isFollowing": true
+// }
+
 export default {
   components: {
     Headbar,

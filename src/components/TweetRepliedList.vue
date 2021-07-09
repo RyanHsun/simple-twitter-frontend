@@ -1,11 +1,11 @@
 <template>
   <li class="tweet-replied">
-    <a href="" class="avatar">
+    <router-link class="avatar" :to="{ name: 'user', params: { id: tweetReplied.User.id } }">
       <img :src="tweetReplied.User.avatar" alt="">
-    </a>
+    </router-link>
     <div class="tweet-replied-detail">
       <div class="tweet-replied-user-info">
-        <a class="name" href="">{{ tweetReplied.User.name }}</a>
+        <router-link class="name" :to="{ name: 'user', params: { id: tweetReplied.User.id } }">{{ tweetReplied.User.name }}</router-link>
         <span class="account">@{{ tweetReplied.User.account }}</span>
         <span class="tweet-update-at">・{{ tweetReplied.createdAt | fromNow }}</span>
       </div>
