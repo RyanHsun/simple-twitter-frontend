@@ -4,8 +4,10 @@
     <section class="user">
       <div class="user-wrap">
         <Headbar />
-        <UserProfile />
-        <TweetsList />
+        <UserProfile 
+          :user="user"
+        />
+        <!-- <TweetsList /> -->
       </div>
     </section>
     <UsersTop />
@@ -17,7 +19,23 @@ import Headbar from './../components/Headbar.vue'
 import Sidebar from './../components/Sidebar.vue'
 import UsersTop from './../components/UsersTop.vue'
 import UserProfile from './../components/UserProfile.vue'
-import TweetsList from './../components/TweetsList.vue'
+// import TweetsList from './../components/TweetsList.vue'
+
+const dummyData = {
+  "id": 3,
+  "account": "user3",
+  "name": "Glenna Kautzer DVM",
+  "email": "user3@example.com",
+  "introduction": "Minima eum distinctio debitis reiciendis.\nConsequatur ad inventore.\nVoluptas exercitationem laudantium molestias.\nSed dolorem necessitatibus et totam maiores.",
+  "avatar": "https://loremflickr.com/g/320/320/girl/all",
+  "cover": "https://loremflickr.com/800/600/dog",
+  "tweetNum": 10,
+  "likeNum": 0,
+  "followingNum": 76,
+  "followerNum": 450,
+  "lastLoginAt": "2021-07-08T04:20:22.000Z",
+  "isFollowing": true
+}
 
 export default {
   components: {
@@ -25,7 +43,64 @@ export default {
     Sidebar,
     UsersTop,
     UserProfile,
-    TweetsList
+    // TweetsList
+  },
+  data () {
+    return {
+      user: {
+        id: 0,
+        account: '',
+        name: '',
+        email: '',
+        introduction: '',
+        avatar: '',
+        cover: '',
+        tweetNum: 0,
+        likeNum: 0,
+        followingNum: 0,
+        followerNum: 0,
+        lastLoginAt: '',
+        isFollowing: false
+      }
+    }
+  },
+  created () {
+    this.fetchUser()
+  },
+  methods: {
+    fetchUser () {
+      const {
+        id,
+        account,
+        name,
+        email,
+        introduction,
+        avatar,
+        cover,
+        tweetNum,
+        likeNum,
+        followingNum,
+        followerNum,
+        lastLoginAt,
+        isFollowing
+      } = dummyData
+      this.user = {
+        ...this.user,
+        id,
+        account,
+        name,
+        email,
+        introduction,
+        avatar,
+        cover,
+        tweetNum,
+        likeNum,
+        followingNum,
+        followerNum,
+        lastLoginAt,
+        isFollowing
+      }
+    }
   }
 }
 </script>

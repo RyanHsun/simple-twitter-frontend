@@ -2,10 +2,10 @@
   <div class="user-profile">
     <div class="user-profile-head">
       <div class="user-cover">
-        <img src="~@/assets/img/cover_photo.jpg" alt="">
+        <img :src="user.cover" alt="">
       </div>
       <a class="user-avatar avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
+        <img :src="user.avatar" alt="">
       </a>
       <button type="button" class="btn user-edit" data-toggle="modal" data-target="#editProfileModal">
         編輯個人資料
@@ -17,15 +17,15 @@
       
     </div>
     <a href="" class="user-info">
-      <span class="name">user1</span>
-      <span class="account">@user1</span>
+      <span class="name">{{ user.name }}</span>
+      <span class="account">@{{ user.account }}</span>
     </a>
     <div class="user-introduction">
-      Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
+      {{ user.introduction }}
     </div>
     <div class="user-followships">
-      <div class="user-following">34 個跟隨中</div>
-      <div class="user-follower">808 位跟隨者</div>
+      <div class="user-following">{{ user.followingNum }} 個跟隨中</div>
+      <div class="user-follower">{{ user.followerNum }} 位跟隨者</div>
     </div>
     <div class="user-tab">
       <div class="user-tweet active">推文</div>
@@ -42,18 +42,18 @@ export default {
   components: {
     EditProfileModal
   },
+  props: {
+    user: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
-      visible: false
+
     }
   },
   methods: {
-    showModal () {
-      this.visible = true
-    },
-    handleOk () {
-      this.visible = false
-    }
   }
 }
 </script>
@@ -83,7 +83,9 @@ export default {
   }
   .user-cover {
     width: 100%;
+    height: 200px;
     margin-bottom: 10px;
+    overflow: hidden;
   }
   .user-cover img {
     width: 100%;
