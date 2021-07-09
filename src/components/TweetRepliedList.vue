@@ -7,10 +7,10 @@
       <div class="tweet-replied-user-info">
         <a class="name" href="">{{ tweetReplied.User.name }}</a>
         <span class="account">@{{ tweetReplied.User.account }}</span>
-        <span class="tweet-update-at">・3小時</span>
+        <span class="tweet-update-at">・{{ tweetReplied.createdAt | fromNow }}</span>
       </div>
       <div class="tweet-replied-to">
-        回覆 @apple
+        回覆 @{{ tweet.User.name }}
       </div>
       <div class="tweet-replied-content">
        {{ tweetReplied.comment }}
@@ -20,8 +20,14 @@
 </template>
 
 <script>
+import { fromNowFilter } from './../utils/mixins'
 export default {
+  mixins: [fromNowFilter],
   props: {
+    tweet: {
+      type: Object,
+      required: true
+    },
     initialTweetReplied: {
       type: Object,
       required: true

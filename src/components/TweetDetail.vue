@@ -27,7 +27,21 @@
       <div class="modal fade" id="replyTweetModal" tabindex="-1" aria-labelledby="replyTweetModalLabel" aria-hidden="true">
         <ReplyTweetModal />
       </div>
-      <button class="tweet-like-action" type="button">
+      <button
+        v-if="tweet.isLike"
+        class="likes" 
+        :class="{ 'is-like': tweet.isLike }"
+        type="button" 
+        @click.stop.prevent="toggleLike(tweet)"
+      >
+        <img src="~@/assets/img/icon_like-fill.svg" alt="">
+      </button>
+      <button
+        v-else
+        class="likes" 
+        type="button" 
+        @click.stop.prevent="toggleLike(tweet)"
+      >
         <img src="~@/assets/img/icon_like.svg" alt="">
       </button>
     </div>
@@ -48,6 +62,19 @@ export default {
   },
   components: {
     ReplyTweetModal
+  },
+  methods: {
+    toggleLike (tweet) {
+      if (tweet.isLike) {
+        tweet.isLike = false
+        tweet.likeNum -= 1
+        // 串接 API 更新推文資料
+      } else {
+        tweet.isLike = true
+        tweet.likeNum += 1
+        // 串接 API 更新推文資料
+      }
+    }
   }
 }
 </script>
