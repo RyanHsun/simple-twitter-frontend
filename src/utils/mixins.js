@@ -1,9 +1,19 @@
 import moment from 'moment'
 export const fromNowFilter = {
   filters: {
-    fromNow (datetime) {
+    fromNow (dateTime) {
       moment.locale('zh-tw')
-      return datetime ? moment(datetime).fromNow() : '-'
+      let fromNowString = moment(dateTime).fromNow()
+      const fnString = fromNowString.substring(fromNowString.length, 2)
+      const fnNumber = parseInt(fromNowString)
+      console.log(fnNumber, fnString)
+      if (fnString === '天前' && fnNumber <= 1) {
+        return dateTime ? moment(dateTime).fromNow() : '-'
+      } if (fnString === '小時前' && fnNumber <= 23) {
+        return dateTime ? moment(dateTime).fromNow() : '-'
+      } else {
+        return dateTime ? moment(dateTime).format('YYYY年M月D日') : '-'
+      }
     }
   }
 }
@@ -12,8 +22,8 @@ export const exactDateFilter = {
   filters: {
     exactDate (dateTime) {
       moment.locale('zh-tw')
-      if (!dateTime) return '-'
-      return moment(dateTime).format('a h:mm ⋅ YYYY年M月Do')
+      // return dateTime ? moment(dateTime).format('YYYY年M月D日') : '-'
+      return dateTime ? moment(dateTime).format('a hh:mm ⋅ YYYY年M月D日') : '-' 
     }
   }
 }
