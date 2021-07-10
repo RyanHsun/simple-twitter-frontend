@@ -8,7 +8,7 @@
           :user="user"
         />
         <div class="tweets-switch-tab">
-          
+
           <button 
             v-for="tweetsSwitchTab in tweetsSwitchTabs"
             :key="tweetsSwitchTab.id"
@@ -299,7 +299,7 @@ export default {
   }
   .user-wrap {
     overflow-y: scroll;
-    max-height: 100vh;
+    max-height: calc( 100vh - 50px );
   }
   .tweets-list {
     border-width: 0 1px;
@@ -308,6 +308,9 @@ export default {
   }
   .tweets-switch-tab {
     display: flex;
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
     border-bottom: 1px solid #E6ECF0;
   }
   .tweets-switch-tab .tab-item {

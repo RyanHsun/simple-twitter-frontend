@@ -28,7 +28,7 @@
          class="likes" 
          :class="{ 'is-like': like.LikedTweet.isLike }"
          type="button" 
-         @click.stop.prevent="toggleLike(tweet)"
+         @click.stop.prevent="toggleLike(like.LikedTweet)"
         >
           <img src="~@/assets/img/icon_like-fill.svg" alt="">
           <span>{{ like.LikedTweet.likeNum }}</span>
@@ -37,7 +37,7 @@
           v-else
          class="likes" 
          type="button" 
-         @click.stop.prevent="toggleLike(tweet)"
+         @click.stop.prevent="toggleLike(like.LikedTweet)"
         >
           <img src="~@/assets/img/icon_like.svg" alt="">
           <span>{{ like.LikedTweet.likeNum }}</span>
