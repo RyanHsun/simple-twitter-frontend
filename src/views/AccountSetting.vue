@@ -67,11 +67,25 @@
           </div>
 
           <div class="form-label-group mb-3">
-            <label class="input-label" for="checkPassword">密碼確認</label>
+            <label class="input-label" for="passwordNew">新密碼</label>
             <input
-              v-model="checkPassword"
-              id="checkPassword"
-              name="checkPassword"
+              v-model="passwordNew"
+              id="passwordNew"
+              name="passwordNew"
+              type="password"
+              class="form-control"
+              placeholder=""
+              autocomplete="current-password"
+              required
+            />
+          </div>
+
+          <div class="form-label-group mb-3">
+            <label class="input-label" for="passwordNewCheck">新密碼確認</label>
+            <input
+              v-model="passwordNewCheck"
+              id="passwordNewCheck"
+              name="passwordNewCheck"
               type="password"
               class="form-control"
               placeholder=""
@@ -96,8 +110,10 @@ const dummyUser = {
     account: 'root',
     name: '管理者',
     email: 'root@example.com',
-    password: "12346578",
-    checkPassword: "12346578",
+    password: "",
+    checkPassword: "",
+    passwordNew:'',
+    passwordNewCheck:''
     
   }
 }
@@ -113,6 +129,8 @@ export default {
       email: "",
       password: "",
       checkPassword: "",
+      passwordNew:'',
+      passwordNewCheck:''
     };
   },
   created() {
@@ -121,12 +139,15 @@ export default {
   methods: {
     fetchUser () {
       const { currentUser } = dummyUser
-      const { account, name, email, password, checkPassword } = currentUser
+      const { account, name, email, password, checkPassword, passwordNew, passwordNewCheck} = currentUser
       this.account = account
       this.name = name
       this.email = email
       this.password = password
       this.checkPassword = checkPassword
+      this.passwordNew = passwordNew
+      this.passwordNewCheck = passwordNewCheck
+
     },
     handleSubmit (e) {
       const form = e.target
