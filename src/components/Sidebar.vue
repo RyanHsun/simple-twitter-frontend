@@ -2,9 +2,9 @@
   <section class="sidebar">
     <div class="top">
       <h1 class="logo">
-        <a href="#">
+        <router-link to="/">
           <img src="~@/assets/img/logo.svg" alt="" />
-        </a>
+        </router-link>
       </h1>
       <nav class="navigation">
         <router-link class="nav-item" to="/">

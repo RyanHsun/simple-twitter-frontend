@@ -1,6 +1,6 @@
 <template>
   <ul class="admin-users-list">
-    <li v-for="adminUser in adminUsers" :key="adminUser.id" class="admin-user">
+    <li v-for="adminUser in adminUsers" :key="adminUser.id" :to="{ name:'user', params: { id: adminUser.id } }" class="admin-user">
       <div class="user-profile-head">
         <div class="user-cover">
           <img :src="adminUser.cover" alt="" />

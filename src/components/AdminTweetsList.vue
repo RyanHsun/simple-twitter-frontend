@@ -1,6 +1,6 @@
 <template>
   <ul class="tweets-list">
-    <li v-for="tweet in tweets" :key="tweet.id" class="tweet">
+    <li v-for="tweet in tweets" :key="tweet.id" :to="{ name:'tweet', params: { id: tweet.id } }" class="tweet">
       <a href="" class="avatar">
         <img :src="tweet.User.avatar" alt="" />
       </a>
