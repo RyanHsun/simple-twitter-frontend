@@ -3,7 +3,9 @@
     <Sidebar />
     <section class="user">
       <div class="user-wrap">
-        <Headbar />
+        <Headbar
+          :user="user"
+        />
         <UserProfile 
           :user="user"
           @after-submit="handleAfterSubmit"
@@ -287,6 +289,7 @@ export default {
       for (let [name, value] of formData.entries()) {
         console.log(name + ': ' + value)
       }
+      
     }
   }
 }

@@ -171,10 +171,15 @@ export default {
     },
     handleEditModalShow (mode) {
       if (mode === 'open') {
+        this.$router.push({ name: 'user-edit' })
         this.isShowModal = true
       } else if (mode === 'close') {
         this.profile = {...this.user}
         this.isShowModal = false
+        this.$router.push({
+          name: 'user',
+          params: { id: this.user.id }
+        })
       }
     },
     handleSubmit (e) {
@@ -184,7 +189,11 @@ export default {
 
       $("#editProfileModal").modal('hide')
       this.isShowModal = false
-
+      this.$router.push({
+        name: 'user',
+        params: { id: this.user.id }
+      })
+      this.user = {...this.profile}
     }
   }
 }
