@@ -1,22 +1,28 @@
 <template>
-  <li class="tweet-replied">
-    <router-link class="avatar" :to="{ name: 'user', params: { id: tweetReplied.User.id } }">
-      <img :src="tweetReplied.User.avatar" alt="">
-    </router-link>
-    <div class="tweet-replied-detail">
-      <div class="tweet-replied-user-info">
-        <router-link class="name" :to="{ name: 'user', params: { id: tweetReplied.User.id } }">{{ tweetReplied.User.name }}</router-link>
-        <span class="account">@{{ tweetReplied.User.account }}</span>
-        <span class="tweet-update-at">・{{ tweetReplied.createdAt | fromNow }}</span>
+  <ul class="tweet-replied-list">
+    <li 
+      v-for="tweetReplied in tweetReplies"
+      :key="tweetReplied.id"
+      class="tweet-replied"
+    >
+      <router-link class="avatar" :to="{ name: 'user', params: { id: tweetReplied.User.id } }">
+        <img :src="tweetReplied.User.avatar" alt="">
+      </router-link>
+      <div class="tweet-replied-detail">
+        <div class="tweet-replied-user-info">
+          <router-link class="name" :to="{ name: 'user', params: { id: tweetReplied.User.id } }">{{ tweetReplied.User.name }}</router-link>
+          <span class="account">@{{ tweetReplied.User.account }}</span>
+          <span class="tweet-update-at">・{{ tweetReplied.createdAt | fromNow }}</span>
+        </div>
+        <div class="tweet-replied-to">
+          回覆 @{{ tweet.Author.account }}
+        </div>
+        <div class="tweet-replied-content">
+        {{ tweetReplied.comment }}
+        </div>
       </div>
-      <div class="tweet-replied-to">
-        回覆 @{{ tweet.User.name }}
-      </div>
-      <div class="tweet-replied-content">
-       {{ tweetReplied.comment }}
-      </div>
-    </div>
-  </li>
+    </li> 
+  </ul>
 </template>
 
 <script>
@@ -28,14 +34,14 @@ export default {
       type: Object,
       required: true
     },
-    initialTweetReplied: {
-      type: Object,
+    initialTweetReplies: {
+      type: Array,
       required: true
     }
   },
   data () {
     return {
-      tweetReplied: this.initialTweetReplied
+      tweetReplies: this.initialTweetReplies
     }
   },
 
@@ -43,6 +49,11 @@ export default {
 </script>
 
 <style scoped>
+  .tweet-replied-list {
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
+  }
   .tweet-replied {
     border-bottom: 1px solid #e6ecf0;
     display: flex;

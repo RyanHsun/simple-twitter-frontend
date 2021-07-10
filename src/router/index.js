@@ -40,12 +40,12 @@ const routes = [
   },
   {
     path: '/users/:id/replied_tweets',
-    name: 'user-tweets-replied',
+    name: 'user-replied-tweets',
     component: () => import('../views/User.vue')
   },
   {
-    path: '/users/:id/likes_tweets',
-    name: 'user-tweets-likes',
+    path: '/users/:id/likes',
+    name: 'user-likes-tweets',
     component: () => import('../views/User.vue')
   },
   {
@@ -98,6 +98,11 @@ const routes = [
     component: NotFound
   }
 ]
+
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch((err) => err)
+}
 
 const router = new VueRouter({
   routes
