@@ -27,11 +27,6 @@
       <div class="user-following">{{ user.followingNum }} 個跟隨中</div>
       <div class="user-follower">{{ user.followerNum }} 位跟隨者</div>
     </div>
-    <div class="user-tab">
-      <div class="user-tweet active">推文</div>
-      <div class="user-reply">推文與回覆</div>
-      <div class="user-likes">喜歡的內容</div>
-    </div>
   </div>
 </template>
 
@@ -118,19 +113,7 @@ export default {
   .user-following {
     margin-right: 20px;
   }
-  .user-tab {
-    border-bottom: 1px solid #E6ECF0;
-  }
-  .user-tab > div {
-    width: 130px;
-    padding: 15px 0;
-    font-size: 15px;
-    text-align: center;
-    cursor: pointer;
-  }
-  .user-tab > div.active {
-    border-bottom: 2px solid #FF6600;
-  }
+  
 </style>
 
 <style scoped>
