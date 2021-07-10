@@ -14,14 +14,10 @@
         <TweetDetail 
           :tweet="tweet"
         />
-        <ul class="tweet-replied-list">
-          <TweetRepliedList 
-            :tweet="tweet"
-            v-for="tweetReplied in tweetReplies"
-            :key="tweetReplied.id"
-            :initialTweetReplied="tweetReplied"
-          />
-        </ul>
+        <TweetRepliedList 
+          :tweet="tweet"
+          :initialTweetReplies="tweetReplies"
+        />
       </div>
     </section>
     <UsersTop />
@@ -36,73 +32,58 @@ import TweetRepliedList from './../components/TweetRepliedList.vue'
 // import ReplyTweetModal from './../components/ReplyTweetModal.vue'
 
 const dummyTweet = {
-  tweet: {
-    "id": 1,
-    "description": "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.",
-    "likeNum": 10,
-    "replyNum": 20,
-    "isLike": true,
-    "createdAt": "2021-06-27 15:47:52",
-    "updatedAt": "2021-06-27 15:47:52",
-    "deletedAt": null,
-    "User": {
-      "id": 10,
-      "account": "root",
-      "name": "Root",
-      "avatar": "https://randomuser.me/api/portraits/men/57.jpg"
-    },
-    "AdminId": null
+  "id": 4,
+  "isLike": false,
+  "description": "Rerum molestiae quo doloribus sed earum vel ut omnis saepe. Quo aut ut ullam sit quia autem. Aperiam voluptas aliquid neque.",
+  "likeNum": 60,
+  "replyNum": 3,
+  "createdAt": "2021-07-10T02:02:38.000Z",
+  "updatedAt": "2021-06-18T10:02:28.000Z",
+  "deletedAt": null,
+  "AdminId": null,
+  "Author": {
+    "id": 4,
+    "account": "user4",
+    "name": "Yoshiko Kovacek",
+    "avatar": "https://loremflickr.com/g/320/320/girl/all"
   }
 }
 
-const dummyTweetReplies = {
-  replies: [
-    {
+const dummyTweetReplies = [
+  {
+    "id": 91,
+    "comment": "Et distinctio quo ex aspernatur magnam et quaerat voluptas. Minus inventore dolore sapiente laboriosam ut eum ex voluptatem. Dolorum nobis tempora pariatur officia.",
+    "createdAt": "2021-07-08T20:06:08.000Z",
+    "User": {
       "id": 1,
-      "comment": "Quos asperiores in nostrum cupiditate excepturi aspernatur.",
-      "createdAt": "2021-06-27 15:47:52",
-      "User": {
-        "id": 1,
-        "account": "user1",
-        "name": "User1",
-        "avatar": "https://randomuser.me/api/portraits/men/33.jpg"
-      }
-    },
-    {
-      "id": 2,
-      "comment": "Quos asperiores in nostrum cupiditate excepturi aspernatur.",
-      "createdAt": "2021-06-27 15:47:52",
-      "User": {
-        "id": 1,
-        "account": "user1",
-        "name": "User1",
-        "avatar": "https://randomuser.me/api/portraits/men/52.jpg"
-      }
-    },
-    {
-      "id": 3,
-      "comment": "Quos asperiores in nostrum cupiditate excepturi aspernatur.",
-      "createdAt": "2021-06-27 15:47:52",
-      "User": {
-        "id": 2,
-        "account": "user1",
-        "name": "User1",
-        "avatar": "https://randomuser.me/api/portraits/men/5.jpg"
-      }
-    },
-    {
-      "id": 4,
-      "comment": "Quos asperiores in nostrum cupiditate excepturi aspernatur.",
-      "createdAt": "2021-06-27 15:47:52",
-      "User": {
-        "id": 9,
-        "account": "user1",
-        "name": "User1",
-        "avatar": "https://randomuser.me/api/portraits/men/2.jpg"
-      }
+      "account": "user1",
+      "name": "Karianne Lang",
+      "avatar": "https://loremflickr.com/g/320/320/boy/?lock=1"
     }
-  ]
-}
+  },
+  {
+    "id": 92,
+    "comment": "Sit atque enim dolores quia modi sed repellendus recusandae.",
+    "createdAt": "2021-07-02T20:06:08.000Z",
+    "User": {
+      "id": 3,
+      "account": "user3",
+      "name": "Alvah Thompson II",
+      "avatar": "https://loremflickr.com/g/320/320/boy/?lock=3"
+    }
+  },
+  {
+    "id": 93,
+    "comment": "Pariatur dolores nam deserunt cumque exercitationem.",
+    "createdAt": "2021-07-01T20:06:08.000Z",
+    "User": {
+      "id": 2,
+      "account": "user2",
+      "name": "Selmer Stanton",
+      "avatar": "https://loremflickr.com/g/320/320/boy/?lock=2"
+    }
+  }
+]
 
 export default {
   components: {
@@ -121,7 +102,7 @@ export default {
         replyNum: 5,
         isLike: true,
         createdAt: '',
-        User: {}
+        Author: {}
       },
       tweetReplies: []
     }
@@ -134,25 +115,23 @@ export default {
     fetchTweet (tweetId) {
       console.log('tweet Id', tweetId)
 
-      const { tweet } = dummyTweet
-      const { id, description, likeNum, replyNum, isLike, createdAt, User } = tweet
-      this.tweet = {
-        id,
-        description,
-        likeNum,
-        replyNum,
-        isLike,
-        createdAt,
-        User
-      }
+      this.tweet = {...dummyTweet}
+      // const { id, description, likeNum, replyNum, isLike, createdAt, Author } = this.tweet
+      // this.tweet = {
+      //   id,
+      //   description,
+      //   likeNum,
+      //   replyNum,
+      //   isLike,
+      //   createdAt,
+      //   Author
+      // }
       
-      const { tweetReplies } = dummyTweetReplies
-      this.tweetReplies = tweetReplies
+      this.tweetReplies = [...dummyTweetReplies]
+      // this.tweetReplies = tweetReplies
       
-      this.tweetReplies = dummyTweetReplies.replies
+      // this.tweetReplies = dummyTweetReplies.replies
 
-
-      console.log(this.tweetReplies[1].User.id)
     }
   }
 }
