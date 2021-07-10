@@ -2,30 +2,29 @@
   <ul class="followships-list">
     <li v-for="user in users" :key="user.id" class="followships-item">
       <a class="followships-avatar avatar">
-        <img :src="user.avatar" alt="" />
+        <img :src="user.follower.avatar" alt="" />
       </a>
       <div class="followships-content">
         <a class="followships-info" href="">
-          <span class="name">{{ user.name }}</span>
-          <span class="account">@{{ user.account }}</span>
+          <span class="name">{{ user.follower.name }}</span>
+          <span class="account">@{{ user.follower.account }}</span>
         </a>
         <button
-          v-if="user.isFollowing"
-          @click.stop.prevent="deleteFollowing(user.id)"
+          v-if="user.follower.isFollowing"
+          @click.stop.prevent="toggleFollowing(user)"
           class="btn toggle-follow is-following"
         >
           正在跟隨
         </button>
         <button
           v-else
-          @click.stop.prevent="addFollowing(user.id)"
+          @click.stop.prevent="toggleFollowing(user)"
           class="btn toggle-follow"
         >
           跟隨
         </button>
         <div class="followships-intro">
-          Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-          sint. Velit officia consequat duis enim velit mollit.
+          {{ user.follower.introduction }}
         </div>
       </div>
     </li>
@@ -36,46 +35,90 @@
 const dummyUsersTop = {
   Users: [
     {
-      id: 3,
-      account: "user2",
-      name: "User2",
-      avatar: "https://randomuser.me/api/portraits/men/88.jpg",
-      isFollowing: true,
-    },
-    {
-      id: 2,
-      account: "user1",
-      name: "User1",
-      avatar: "https://randomuser.me/api/portraits/men/78.jpg",
-      isFollowing: false,
+      id: 5,
+      followingId: 4,
+      followerId: 3,
+      follower: {
+        id: 4,
+        account: "user4",
+        name: "Jefferey Jacobi",
+        avatar: "https://randomuser.me/api/portraits/women/1.jpg",
+        introduction:
+          "unde reiciendxxxxis asdfasdvacaszavadfvaedfv zdf zfvadfzavdzfv zsfv azdfv dz zsfdsint",
+        likeNum: 0,
+        tweetNum: 10,
+        followingNum: 0,
+        followerNum: 0,
+        isFollowing: false,
+      },
     },
     {
       id: 1,
-      account: "user2",
-      name: "User2",
-      avatar: "https://randomuser.me/api/portraits/men/58.jpg",
-      isFollowing: true,
+      followingId: 2,
+      followerId: 1,
+      follower: {
+        id: 1,
+        account: "user1",
+        name: "Kendall Schinner",
+        avatar: "https://randomuser.me/api/portraits/women/9.jpg",
+        introduction: "Optio ea consectetur quisquam qui autem corporis e",
+        likeNum: 0,
+        tweetNum: 10,
+        followingNum: 0,
+        followerNum: 0,
+        isFollowing: true,
+      },
     },
     {
-      id: 4,
-      account: "user1",
-      name: "User1",
-      avatar: "https://randomuser.me/api/portraits/men/8.jpg",
-      isFollowing: false,
+      id: 2,
+      followingId: 2,
+      followerId: 3,
+      follower: {
+        id: 7,
+        account: "user2",
+        name: "Cesar Shanahan",
+        avatar: "https://randomuser.me/api/portraits/women/58.jpg",
+        introduction: "aut earum enim",
+        likeNum: 0,
+        tweetNum: 10,
+        followingNum: 0,
+        followerNum: 0,
+        isFollowing: false,
+      },
     },
     {
-      id: 5,
-      account: "user2",
-      name: "User2",
-      avatar: "https://randomuser.me/api/portraits/men/68.jpg",
-      isFollowing: true,
+      id: 7,
+      followingId: 2,
+      followerId: 3,
+      follower: {
+        id: 8,
+        account: "user2",
+        name: "Cesar Shanahan",
+        avatar: "https://randomuser.me/api/portraits/women/8.jpg",
+        introduction: "aut earum enim",
+        likeNum: 0,
+        tweetNum: 10,
+        followingNum: 0,
+        followerNum: 0,
+        isFollowing: false,
+      },
     },
     {
-      id: 6,
-      account: "user1",
-      name: "User1",
-      avatar: "https://randomuser.me/api/portraits/men/98.jpg",
-      isFollowing: false,
+      id: 9,
+      followingId: 2,
+      followerId: 3,
+      follower: {
+        id: 9,
+        account: "user2",
+        name: "Cesar Shanahan",
+        avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+        introduction: "aut earum enim",
+        likeNum: 0,
+        tweetNum: 10,
+        followingNum: 0,
+        followerNum: 0,
+        isFollowing: true,
+      },
     },
   ],
 };
@@ -93,29 +136,13 @@ export default {
     fetchusers() {
       this.users = [...dummyUsersTop.Users];
     },
-    addFollowing(userId) {
-      this.users = this.users.map((user) => {
-        if (user.id !== userId) {
-          return user;
-        } else {
-          return {
-            ...user,
-            isFollowing: true,
-          };
-        }
-      });
-    },
-    deleteFollowing(userId) {
-      this.users = this.users.map((user) => {
-        if (user.id !== userId) {
-          return user;
-        } else {
-          return {
-            ...user,
-            isFollowing: false,
-          };
-        }
-      });
+    toggleFollowing(user) {
+      console.log("原本的user.follower.isFollowing", user.follower.isFollowing);
+      if (user.follower.isFollowing) {
+        user.follower.isFollowing = false;
+      } else {
+        user.follower.isFollowing = true;
+      }
     },
   },
 };

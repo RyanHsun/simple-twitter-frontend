@@ -53,20 +53,20 @@ const dummyUsersTop = {
       },
     },
     {
-      id: 4,
+      id: 1,
       followingId: 2,
-      followerId: 3,
+      followerId: 1,
       following: {
-        id: 6,
-        account: "user2",
-        name: "Cesar Shanahan",
-        avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-        introduction: "aut earum enim",
+        id: 1,
+        account: "user1",
+        name: "Kendall Schinner",
+        avatar: "https://randomuser.me/api/portraits/women/9.jpg",
+        introduction: "Optio ea consectetur quisquam qui autem corporis e",
         likeNum: 0,
         tweetNum: 10,
         followingNum: 0,
         followerNum: 0,
-        isFollowing: true,
+        isFollowing: false,
       },
     },
     {
@@ -87,7 +87,7 @@ const dummyUsersTop = {
       },
     },
     {
-      id: 1,
+      id: 9,
       followingId: 2,
       followerId: 3,
       following: {
@@ -127,8 +127,6 @@ export default {
   data() {
     return {
       users: [],
-      // userFollowings: {},
-      // userFollowing: false,
     };
   },
   created() {
@@ -136,20 +134,11 @@ export default {
   },
   methods: {
     fetchusers() {
-      //原本的程式碼
       this.users = [...dummyUsersTop.Users];
-      const {
-        Users: [
-          {
-            following: { isFollowing },
-          },
-        ],
-      } = dummyUsersTop;
-      this.userFollowing = isFollowing;
     },
 
     toggleFollowing(user) {
-      console.log('user.following.isFollowing',user.following.isFollowing)
+      console.log("原本的user.following.isFollowing", user.following.isFollowing);
       if (user.following.isFollowing) {
         user.following.isFollowing = false;
       } else {
