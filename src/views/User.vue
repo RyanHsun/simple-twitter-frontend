@@ -6,6 +6,7 @@
         <Headbar />
         <UserProfile 
           :user="user"
+          @after-submit="handleAfterSubmit"
         />
         <div class="tweets-switch-tab">
 
@@ -279,6 +280,12 @@ export default {
           this.likes = [...dummyDataUserlikes]
           console.log('likes')
           break
+      }
+    },
+    handleAfterSubmit (formData) {
+      // 透過 API 將表單資料送到伺服器
+      for (let [name, value] of formData.entries()) {
+        console.log(name + ': ' + value)
       }
     }
   }

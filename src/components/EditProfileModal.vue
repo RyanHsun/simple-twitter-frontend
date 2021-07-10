@@ -1,47 +1,160 @@
 <template>
-  <!-- Modal -->
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <img src="~@/assets/img/icon_close-og.svg" alt="">
-          </button>
-          <p>編輯個人資料</p>
-          <button class="btn update-profile" type="button">儲存</button>
-        </div>
-        <div class="modal-body">
-          <form action="">
+  <div>
+    <!-- Button trigger modal -->
+    <button 
+      type="button" 
+      class="btn user-edit" 
+      data-toggle="modal" 
+      data-target="#editProfileModal"
+      @click="handleEditModalShow('open')"
+    >
+      編輯個人資料
+    </button>
+    <!-- Modal -->
+    <div 
+      class="modal fade" 
+      id="editProfileModal" 
+      data-backdrop="static" 
+      data-keyboard="false" 
+      tabindex="-1" 
+      aria-labelledby="staticBackdropLabel" 
+      aria-hidden="true" 
+    >
+      <div class="modal-dialog">
+        <form class="modal-content" @submit.stop.prevent="handleSubmit">
+          <div class="modal-header">
+            <button 
+              type="button" 
+              class="close" 
+              data-dismiss="modal" 
+              aria-label="Close" 
+              @click="handleEditModalShow('close')"
+            >
+              <img src="~@/assets/img/icon_close-og.svg" alt="">
+            </button>
+            <p>編輯個人資料</p>
+            <button class="btn update-profile" type="submit">儲存</button>
+          </div>
+          <div class="modal-body">
             <div class="user-profile-edit">
               <div class="user-cover">
                 <label for="upload-image-cover" class="upload-image">
                   <img src="~@/assets/img/icon_upload.svg" alt="">
                 </label>
-                <input id="upload-image-cover" type="file" name="image" accept="image/*" class="form-control-file">
-                <img src="~@/assets/img/cover_photo.jpg" alt="">
+                <input 
+                  id="upload-image-cover" 
+                  type="file" 
+                  name="image" 
+                  accept="image/*" 
+                  class="form-control-file"
+                  @change="handleFileChange">
+                <img :src="profile.cover" alt="">
               </div>
               <div class="user-avatar avatar">
                 <label for="upload-image-avatar" class="upload-image">
                   <img src="~@/assets/img/icon_upload.svg" alt="">
                 </label>
-                <input id="upload-image-avatar" type="file" name="image" accept="image/*" class="form-control-file">
-                <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
+                <input 
+                  id="upload-image-avatar" 
+                  type="file" 
+                  name="image" 
+                  accept="image/*" 
+                  class="form-control-file"
+                  @change="handleFileChange">
+                <img :src="profile.avatar" alt="">
               </div>
               <div class="user-name">
                 <label for="">名稱</label>
-                <input type="text" maxlength="50" class="user-name-input">
-                <span class="text-count">8/50</span>
+                <input 
+                  v-model="profile.name"
+                  type="text" 
+                  maxlength="50" 
+                  class="user-name-input">
+                <span class="text-count">
+                  {{ profile.name ? profile.name.length : 0 }}/50</span>
               </div>
               <div class="user-intro">
                 <label for="">自我介紹</label>
-                <textarea name="" id="" cols="30" rows="8" maxlength="160" class="user-intro-textarea"></textarea>
-                <span class="text-count">0/160</span>
+                <textarea 
+                  v-model="profile.introduction"
+                  name=""
+                  cols="30"
+                  rows="5"
+                  maxlength="160"
+                  class="user-intro-textarea"></textarea>
+                <span class="text-count">{{ profile.introduction ? profile.introduction.length : 0 }}/160</span>
               </div>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
 </template>
+
+<script>
+export default {
+  props: {
+    user: {
+      type: Object,
+      required: true
+    }
+  },
+  data () {
+    return {
+      profile: {
+        cover: '',
+        avatar: '',
+        name: '',
+        introduction: ''  
+      },
+      editModalShow: false
+    }
+  },
+  created () {
+    const { id } = this.$route.params
+    this.fetchProfile(id)
+  },
+  methods: {
+    fetchProfile (profileId) {
+      console.log('Profile Id:', profileId)
+      this.profile = {...this.user}
+    },
+    handleFileChange (e) {
+      const files = e.target.files
+
+      if ( e.target.matches('#upload-image-cover') ) {
+        if (files.length === 0 ) {
+          this.profile.cover = this.user.cover
+        } else {
+          const imageURL = window.URL.createObjectURL(files[0])
+          this.profile.cover = imageURL
+        }
+      } else if ( e.target.matches('#upload-image-avatar') ) {
+        if (files.length === 0 ) {
+          this.profile.avatar = this.user.avatar
+        } else {
+          const imageURL = window.URL.createObjectURL(files[0])
+          this.profile.avatar = imageURL
+        }
+      }
+    },
+    handleEditModalShow (mode) {
+      if (mode === 'open') {
+        this.editModalShow = true
+      } else if (mode === 'close') {
+        this.profile = {...this.user}
+        this.editModalShow = false
+      }
+    },
+    handleSubmit (e) {
+      const form = e.target  
+      const formData = new FormData(form)
+      this.$emit('after-submit', formData)
+    }
+  }
+}
+</script>
 
 <style scoped>
   .modal-header {
@@ -99,6 +212,10 @@
     cursor: pointer;
     background: rgba(255, 255, 255, 20%);
   }
+  .upload-image:hover img{
+    transform: scale(1.2);
+    transition: .3s ease;
+  }
   .user-avatar label[for="upload-image-avatar"] {
     border-radius: 50%;
   }
@@ -134,16 +251,18 @@
   .user-name-input,
   .user-intro-textarea {
     width: 100%;
-    padding: 30px 10px;
     border: 0;
     border-bottom: 2px solid #657786;
     background: #F5F8FA;
+    outline: none;
   }
   .user-name-input {
-    height: 54px;
+    height: 70px;
+    padding: 30px 10px 0 10px;
   }
   .user-intro-textarea {
     display: inherit;
+    padding: 40px 10px 0 10px;
     resize: none;
   }
   .user-name span,
