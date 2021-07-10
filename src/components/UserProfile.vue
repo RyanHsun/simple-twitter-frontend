@@ -4,9 +4,9 @@
       <div class="user-cover">
         <img :src="user.cover" alt="">
       </div>
-      <a class="user-avatar avatar">
+      <p class="user-avatar avatar">
         <img :src="user.avatar" alt="">
-      </a>
+      </p>
       <button type="button" class="btn user-edit" data-toggle="modal" data-target="#editProfileModal">
         編輯個人資料
       </button>
@@ -16,21 +16,16 @@
       </div>
       
     </div>
-    <a href="" class="user-info">
+    <p  class="user-info">
       <span class="name">{{ user.name }}</span>
       <span class="account">@{{ user.account }}</span>
-    </a>
+    </p>
     <div class="user-introduction">
       {{ user.introduction }}
     </div>
     <div class="user-followships">
       <div class="user-following">{{ user.followingNum }} 個跟隨中</div>
       <div class="user-follower">{{ user.followerNum }} 位跟隨者</div>
-    </div>
-    <div class="user-tab">
-      <div class="user-tweet active">推文</div>
-      <div class="user-reply">推文與回覆</div>
-      <div class="user-likes">喜歡的內容</div>
     </div>
   </div>
 </template>
@@ -89,6 +84,9 @@ export default {
   }
   .user-cover img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
   .user-avatar {
     width: 140px;
@@ -101,13 +99,6 @@ export default {
   }
   .user-edit {
     margin-right: 20px;
-  }
-  .user-info {
-    display: inline-block;
-    padding: 0 20px;
-  }
-  .user-info span{
-    display: block;
   }
   .name {
     font-size: 19px;
@@ -122,17 +113,15 @@ export default {
   .user-following {
     margin-right: 20px;
   }
-  .user-tab {
-    border-bottom: 1px solid #E6ECF0;
+  
+</style>
+
+<style scoped>
+  .user-info {
+    display: inline-block;
+    padding: 0 20px;
   }
-  .user-tab > div {
-    width: 130px;
-    padding: 15px 0;
-    font-size: 15px;
-    text-align: center;
-    cursor: pointer;
-  }
-  .user-tab > div.active {
-    border-bottom: 2px solid #FF6600;
+  .user-info span{
+    display: block;
   }
 </style>

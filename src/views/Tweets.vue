@@ -18,13 +18,9 @@
           <button class="btn tweet-button">推文</button>
         </form>
         
-        <ul class="tweets-list">
-          <TweetsList
-            v-for="tweet in tweets"
-            :key="tweet.id"
-            :initial-tweet="tweet"
-          />
-        </ul>
+        <TweetsList
+          :tweets="tweets"
+        />
       </div>
     </section>
     <UsersTop />
@@ -36,95 +32,93 @@ import Sidebar from './../components/Sidebar.vue'
 import UsersTop from './../components/UsersTop.vue'
 import TweetsList from './../components/TweetsList.vue'
 
-const dummyData = {
-  Tweets: [
-    {
-      id: 1,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
-      isLike: true,
-      likeNum: 10,
-      replyNum: 2,
-      createdAt: "2021-06-27 15:47:52",
-      User: {
-        id: 8,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/58.jpg"
-      }
-    },
-    {
-      id: 2,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
-      isLike: true,
-      likeNum: 136,
-      replyNum: 5,
-      createdAt: "2021-06-27 15:47:52",
-      User: {
-        id: 2,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/20.jpg"
-      }
-    },
-    {
-      id: 3,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
-      isLike: false,
-      likeNum: 143,
-      replyNum: 5,
-      createdAt: "2021-06-27 15:47:52",
-      User: {
-        id: 1,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/28.jpg"
-      }
-    },
-    {
-      id: 4,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
-      isLike: true,
-      likeNum: 13,
-      replyNum: 5,
-      createdAt: "2021-06-17 15:47:52",
-      User: {
-        id: 4,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/21.jpg"
-      }
-    },
-    {
-      id: 5,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
-      isLike: false,
-      likeNum: 13,
-      replyNum: 5,
-      createdAt: "2021-06-27 15:47:52",
-      User: {
-        id: 3,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/18.jpg"
-      }
-    },
-    {
-      id: 6,
-      content: "Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. ",
-      isLike: false,
-      likeNum: 13,
-      replyNum: 5,
-      createdAt: "2021-06-22 15:47:52",
-      User: {
-        id: 1,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/23.jpg"
-      }
+const dummyData = [
+  {
+    "id": 13,
+    "isLike": false,
+    "description": "Pariatur neque exercitationem dignissimos odio har",
+    "likeNum": 0,
+    "replyNum": 3,
+    "createdAt": "2021-07-09T05:42:52.000Z",
+    "Author": {
+      "id": 3,
+      "account": "user3",
+      "name": "Rico Muller",
+      "avatar": "https://loremflickr.com/g/320/320/girl/?lock=3"
     }
-  ]
-}
-
+  },
+  {
+    "id": 31,
+    "isLike": false,
+    "description": "Sed odio velit magni facilis aspernatur pariatur e",
+    "likeNum": 0,
+    "replyNum": 3,
+    "createdAt": "2021-07-09T05:42:52.000Z",
+    "Author": {
+      "id": 5,
+      "account": "user1",
+      "name": "Mustafa Kunde",
+      "avatar": "https://loremflickr.com/g/320/320/girl/?lock=5"
+    }
+  },
+  {
+    "id": 34,
+    "isLike": false,
+    "description": "Sed odio velit magni facilis aspernatur pariatur e",
+    "likeNum": 0,
+    "replyNum": 3,
+    "createdAt": "2021-07-09T05:42:52.000Z",
+    "Author": {
+      "id": 4,
+      "account": "user1",
+      "name": "Mustafa Kunde",
+      "avatar": "https://loremflickr.com/g/320/320/girl/?lock=34"
+    }
+  },
+  {
+    "id": 2,
+    "isLike": false,
+    "description": "Sed odio velit magni facilis aspernatur pariatur e",
+    "likeNum": 0,
+    "replyNum": 3,
+    "createdAt": "2021-07-09T05:42:52.000Z",
+    "Author": {
+      "id": 1,
+      "account": "user1",
+      "name": "Mustafa Kunde",
+      "avatar": "https://loremflickr.com/g/320/320/girl/?lock=1"
+    }
+  },
+  {
+    "id": 7,
+    "isLike": false,
+    "description": "Sed odio velit magni facilis aspernatur pariatur e",
+    "likeNum": 0,
+    "replyNum": 3,
+    "createdAt": "2021-07-09T05:42:52.000Z",
+    "Author": {
+      "id": 2,
+      "account": "user1",
+      "name": "Mustafa Kunde",
+      "avatar": "https://loremflickr.com/g/320/320/girl/?lock=2"
+    }
+  },
+  {
+    "id": 9,
+    "isLike": false,
+    "description": "Sed odio velit magni facilis aspernatur pariatur e",
+    "likeNum": 0,
+    "replyNum": 3,
+    "createdAt": "2021-07-09T05:42:52.000Z",
+    "Author": {
+      "id": 4,
+      "account": "user1",
+      "name": "Mustafa Kunde",
+      "avatar": "https://loremflickr.com/g/320/320/girl/?lock=4"
+    }
+  },
+  
+]
 
 export default {
   name: 'tweets',
@@ -143,8 +137,7 @@ export default {
   },
   methods: {
     fetchTweets () {
-      const { Tweets } = dummyData
-      this.tweets = Tweets
+      this.tweets = [...dummyData]
     }
   }
 }
