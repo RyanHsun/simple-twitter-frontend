@@ -1,45 +1,50 @@
 <template>
-  <li class="tweet">
-    <router-link class="avatar" :to="{ name: 'user', params: { id: tweet.User.id } }">
-      <img :src="tweet.User.avatar" alt="">
-    </router-link>
-    <div class="tweet-info">
-      <div class="user-info">
-        <router-link class="name" :to="{ name: 'user', params: { id: tweet.User.id } }">
-          {{ tweet.User.name }}
-        </router-link>
-        <span class="account">@{{ tweet.User.account }}</span>
-        <span class="tweet-update-at">・{{ tweet.createdAt | fromNow }}</span>
+  <ul class="tweets-list">
+    <li v-for="tweet in tweets"
+      :key="tweet.id"
+      class="tweet" 
+    >
+      <router-link class="avatar" :to="{ name: 'user', params: { id: tweet.Author.id } }">
+        <img :src="tweet.Author.avatar" alt="">
+      </router-link>
+      <div class="tweet-info">
+        <div class="user-info">
+          <router-link class="name" :to="{ name: 'user', params: { id: tweet.Author.id } }">
+            {{ tweet.Author.name }}
+          </router-link>
+          <span class="account">@{{ tweet.Author.account }}</span>
+          <span class="tweet-update-at">・{{ tweet.createdAt | fromNow }}</span>
+        </div>
+        <div class="tweet-content">
+          {{ tweet.description }}
+        </div>
+        <div class="tweet-panel">
+          <button class="comment" type="button">
+            <img src="~@/assets/img/icon_comment.svg" alt="">{{ tweet.replyNum }}
+          </button>
+          <button
+            v-if="tweet.isLike"
+          class="likes" 
+          :class="{ 'is-like': tweet.isLike }"
+          type="button" 
+          @click.stop.prevent="toggleLike(tweet)"
+          >
+            <img src="~@/assets/img/icon_like-fill.svg" alt="">
+            <span>{{ tweet.likeNum }}</span>
+          </button>
+          <button
+            v-else
+          class="likes" 
+          type="button" 
+          @click.stop.prevent="toggleLike(tweet)"
+          >
+            <img src="~@/assets/img/icon_like.svg" alt="">
+            <span>{{ tweet.likeNum }}</span>
+          </button>
+        </div>
       </div>
-      <div class="tweet-content">
-        {{ tweet.description }}
-      </div>
-      <div class="tweet-panel">
-        <button class="comment" type="button">
-          <img src="~@/assets/img/icon_comment.svg" alt="">{{ tweet.replyNum }}
-        </button>
-        <button
-          v-if="tweet.isLike"
-         class="likes" 
-         :class="{ 'is-like': tweet.isLike }"
-         type="button" 
-         @click.stop.prevent="toggleLike(tweet)"
-        >
-          <img src="~@/assets/img/icon_like-fill.svg" alt="">
-          <span>{{ tweet.likeNum }}</span>
-        </button>
-        <button
-          v-else
-         class="likes" 
-         type="button" 
-         @click.stop.prevent="toggleLike(tweet)"
-        >
-          <img src="~@/assets/img/icon_like.svg" alt="">
-          <span>{{ tweet.likeNum }}</span>
-        </button>
-      </div>
-    </div>
-  </li>
+    </li>
+  </ul>
 </template>
 
 <script>
@@ -48,14 +53,14 @@ import { fromNowFilter } from "./../utils/mixins"
 export default {
   mixins: [fromNowFilter],
   props: {
-    initialTweet: {
-      type: Object,
+    tweets: {
+      type: Array,
       required: true
     }
   },
   data () {
     return {
-      tweet: this.initialTweet
+      tweet: this.tweets
     }
   },
   methods: {
