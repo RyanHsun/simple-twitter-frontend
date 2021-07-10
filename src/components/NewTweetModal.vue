@@ -15,7 +15,7 @@
               </span>
               <textarea v-model="newTweet" class="tweet-textarea" name="" id="" cols="30" rows="5" maxlength="140" placeholder="有什麼新鮮事？"></textarea>
             </div>
-            <button class="btn tweet-button" @click.stop.prevent="addTweet">推文</button>
+            <button class="btn tweet-button" @click="addTweet" data-dismiss="modal">推文</button>
           </form>
         </div>
       </div>
@@ -31,9 +31,14 @@ export default {
   },
   methods: {
     addTweet() {
+
+      this.$emit('after-submit-tweet',this.newTweet)
       this.newTweet = ''
-      this.$emit('after-submit-tweet') 
+      // this.$router.push({ name: 'tweets' })
     },
+    // cancelModal() {
+    //   this.isShowModal = false
+    // },
   },
 }
 </script>

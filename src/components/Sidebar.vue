@@ -31,18 +31,20 @@
         class="btn new-tweet"
         data-toggle="modal"
         data-target="#newTweetModal"
+        @click="showModal"
       >
         推文
       </button>
       <!-- Button trigger modal -->
-      <div 
+      <div
+        v-if="isShowModal"
         class="modal fade"
         id="newTweetModal"
         tabindex="-1"
         aria-labelledby="newTweetModalLabel"
         aria-hidden="true"
       >
-        <NewTweetModal />
+        <NewTweetModal @after-submit-tweet="afterSubmitTweet"/>
       </div>
     </div>
     <div class="bottom">
@@ -64,19 +66,23 @@ export default {
     NewTweetModal,
   },
   data() {
-    return{
+    return {
       isShowModal: false,
-    }
+    };
   },
   methods: {
-    addNewTweet() {
-      // this.modalData = this.movies.find((_movie) => _movie.id === movie.id);
-    },
     showModal() {
       this.isShowModal = true
     },
     cancelModal() {
       this.isShowModal = false
+    },
+    afterSubmitTweet(payload) {
+      // this.$emit('after-submit-tweet',this.newTweet)
+      console.log('payload',payload)
+
+      this.$emit('tweet-from-sidebar',payload)
+      this.newTweet = ""
     },
   },
 };
