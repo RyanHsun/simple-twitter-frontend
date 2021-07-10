@@ -4,13 +4,19 @@
       <h2 class="title">跟隨誰</h2>
       <ul class="users">
         <li v-for="user in users" :key="user.id" class="user">
-          <router-link class="avatar" :to="{ name: 'user', params: { id: user.id } }">
+          <router-link
+            class="avatar"
+            :to="{ name: 'user', params: { id: user.id } }"
+          >
             <img :src="user.avatar" alt="" />
           </router-link>
-          <a class="info" href="">
+          <router-link
+            class="info"
+            :to="{ name: 'user', params: { id: user.id } }"
+          >
             <span class="name">{{ user.name }}</span>
             <span class="account">@{{ user.account }}</span>
-          </a>
+          </router-link>
           <button
             v-if="user.isFollowing"
             @click.stop.prevent="deleteFollowing(user.id)"
@@ -41,8 +47,6 @@ const dummyUsersTop = {
       name: "User2",
       avatar: "https://randomuser.me/api/portraits/men/88.jpg",
       isFollowing: true,
-
-
     },
     {
       id: 2,
@@ -50,7 +54,6 @@ const dummyUsersTop = {
       name: "User1",
       avatar: "https://randomuser.me/api/portraits/men/78.jpg",
       isFollowing: false,
-
     },
   ],
 };
@@ -66,7 +69,7 @@ export default {
   },
   methods: {
     fetchusers() {
-      this.users = [...dummyUsersTop.Users]
+      this.users = [...dummyUsersTop.Users];
     },
     addFollowing(userId) {
       this.users = this.users.map((user) => {

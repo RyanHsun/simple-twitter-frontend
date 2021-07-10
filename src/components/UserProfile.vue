@@ -2,12 +2,12 @@
   <div class="user-profile">
     <div class="user-profile-head">
       <div class="user-cover">
-        <img :src="user.cover" alt="">
+        <img :src="user.cover" alt="" />
       </div>
       <p class="user-avatar avatar">
-        <img :src="user.avatar" alt="">
+        <img :src="user.avatar" alt="" />
       </p>
-    
+
       <!-- <EditProfileModal
         :user="user"
         @after-submit="handleAfterSubmit"
@@ -105,7 +105,7 @@
         </div>
       </div>
     </div>
-    <p  class="user-info">
+    <p class="user-info">
       <span class="name">{{ user.name }}</span>
       <span class="account">@{{ user.account }}</span>
     </p>
@@ -113,8 +113,16 @@
       {{ user.introduction }}
     </div>
     <div class="user-followships">
-      <div class="user-following">{{ user.followingNum }} 個跟隨中</div>
-      <div class="user-follower">{{ user.followerNum }} 位跟隨者</div>
+      <router-link class="nav-item " :to="{ name: 'user-followings', params: { id: user.id } }"
+        ><div class="user-following">
+          {{ user.followingNum }} 個跟隨中
+        </div></router-link
+      >
+      <router-link class="nav-item" :to="{ name: 'user-followers', params: { id: user.id } }"
+        ><div class="user-follower">
+          {{ user.followerNum }} 位跟隨者
+        </div></router-link
+      >
     </div>
   </div>
 </template>
@@ -127,8 +135,8 @@ export default {
   props: {
     user: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data () {
     return {
@@ -200,66 +208,65 @@ export default {
 </script>
 
 <style>
-  .container {
-    display: grid;
-    grid-template-columns: 20% auto 30%;
-    max-width: 1500px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-  .user-profile {
-    text-align: left;
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
-  }
-  .user-profile > div {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .user-profile-head {
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
-  }
-  .user-cover {
-    width: 100%;
-    height: 200px;
-    margin-bottom: 10px;
-    overflow: hidden;
-  }
-  .user-cover img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
-  .user-avatar {
-    width: 140px;
-    height: 140px;
-    margin-top: -70px;
-    margin-left: 20px;
-  }
-  .user-avatar img {
-    border: 5px solid #fff;
-  }
-  .user-edit {
-    margin-right: 20px;
-  }
-  .name {
-    font-size: 19px;
-  }
-  .user-introduction, 
-  .user-followships {
-    padding: 10px 20px;
-  }
-  .user-followships {
-    font-size: 14px;
-  }
-  .user-following {
-    margin-right: 20px;
-  }
-  
+.container {
+  display: grid;
+  grid-template-columns: 20% auto 30%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.user-profile {
+  text-align: left;
+  border-width: 0 1px;
+  border-style: solid;
+  border-color: #e6ecf0;
+}
+.user-profile > div {
+  display: flex;
+  flex-wrap: wrap;
+}
+.user-profile-head {
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+.user-cover {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.user-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.user-avatar {
+  width: 140px;
+  height: 140px;
+  margin-top: -70px;
+  margin-left: 20px;
+}
+.user-avatar img {
+  border: 5px solid #fff;
+}
+.user-edit {
+  margin-right: 20px;
+}
+.name {
+  font-size: 19px;
+}
+.user-introduction,
+.user-followships {
+  padding: 10px 20px;
+}
+.user-followships {
+  font-size: 14px;
+}
+.user-following {
+  margin-right: 20px;
+}
 </style>
 
 <style scoped>

@@ -7,13 +7,13 @@
           <Headbar />
           <div class="user-followships-tab">
             <div class="user-followships-followers">
-              <router-link
+              <router-link  class="nav-item"
                 to="/users/:id/followers"
                 >跟隨者</router-link
               >
             </div>
             <div class="user-followships-followings active">
-              <router-link
+              <router-link class="nav-item"
                 to="/users/:id/followings"
                 >正在跟隨</router-link
               >
@@ -92,5 +92,9 @@ export default {
 }
 .user-followships-tab > div.active {
   border-bottom: 2px solid #ff6600;
+}
+.nav-item:hover,
+.nav-item.active {
+  color: #ff6600;
 }
 </style>
