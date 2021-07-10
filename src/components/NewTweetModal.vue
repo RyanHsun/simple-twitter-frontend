@@ -13,14 +13,30 @@
               <span class="avatar" href="">
                 <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
               </span>
-              <textarea class="tweet-textarea" name="" id="" cols="30" rows="5" maxlength="140" placeholder="有什麼新鮮事？"></textarea>
+              <textarea v-model="newTweet" class="tweet-textarea" name="" id="" cols="30" rows="5" maxlength="140" placeholder="有什麼新鮮事？"></textarea>
             </div>
-            <button class="btn tweet-button">推文</button>
+            <button class="btn tweet-button" @click.stop.prevent="addTweet">推文</button>
           </form>
         </div>
       </div>
     </div>
 </template>
+<script>
+
+export default {
+  data() {
+    return{
+      newTweet: '',
+    }
+  },
+  methods: {
+    addTweet() {
+      this.newTweet = ''
+      this.$emit('after-submit-tweet') 
+    },
+  },
+}
+</script>
 
 <style scoped>
   .close {

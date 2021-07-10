@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Sidebar />
+    <Sidebar @after-submit-tweet="afterSubmitTweet" />
     <section class="tweets">
       <div class="tweets-wrap">
         <h2 class="headbar">
@@ -145,7 +145,16 @@ export default {
     fetchTweets () {
       const { Tweets } = dummyData
       this.tweets = Tweets
-    }
+    },
+    afterSubmitTweet() {
+      this.tweet.push({
+         // TODO: 透過 API 向後端伺服器新增tweet
+        //  id: uuid(),
+         name: this.tweets, 
+      })
+    },
+
+
   }
 }
 </script>
