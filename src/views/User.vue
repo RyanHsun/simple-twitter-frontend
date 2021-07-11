@@ -187,7 +187,7 @@ const dummyDataUserlikes = [
       Author: {
         id: 5,
         name: "Dr. Elouise Hessel",
-        account: "user2",
+        account: "user5",
         avatar: "https://loremflickr.com/g/320/320/girl/?lock=5",
       },
       isLike: true,
@@ -200,13 +200,13 @@ const dummyDataUserlikes = [
     createdAt: "2021-07-09T12:13:19.000Z",
     LikedTweet: {
       id: 3,
-      description: "Aut nisi sit laudantium. Debitis deserunt exceptur",
+      description: "Praesentium commodi eos eligendi sunt. Fugiat aliq,Praesentium commodi eos eligendi sunt. Fugiat aliq",
       likeNum: 24,
       replyNum: 31,
       createdAt: "2021-07-01T04:20:23.000Z",
       Author: {
         id: 2,
-        name: "Dr. Elouise Hessel",
+        name: "James Town",
         account: "user2",
         avatar: "https://loremflickr.com/g/320/320/girl/?lock=2",
       },
@@ -324,4 +324,10 @@ export default {
   .nav-item.active {
     color: #ff6600;
   }
+  .tweets-list {
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
+  }
+  
 </style>
