@@ -107,11 +107,6 @@ export default {
 }
 </script>
 <style scoped>
-.tweets-list {
-  border-width: 0 1px;
-  border-style: solid;
-  border-color: #E6ECF0;
-}
 .tweet {
   border-bottom: 1px solid #e6ecf0;
   display: flex;
