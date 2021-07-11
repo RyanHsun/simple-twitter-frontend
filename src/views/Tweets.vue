@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Sidebar @tweet-from-sidebar="tweetFromSidebar"/>
+    <Sidebar @after-submit-tweet="afterSubmitTweet" />
     <section class="tweets">
       <div class="tweets-wrap">
         <h2 class="headbar">
@@ -159,8 +159,13 @@ export default {
       });
       this.newTweet = "";
     },
-    tweetFromSidebar() {
-      this.fetchTweets()
+    afterSubmitTweet(payload) {
+      const { description } = payload
+      console.log('description',description)
+      this.tweets.push({
+        // id: commentId,
+        description: description,
+      })
     },
   },
 };
