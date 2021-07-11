@@ -189,8 +189,9 @@ export default {
   content: '';
   border: 1px solid #CCD6DD;
   position: absolute;
-  height: calc( 100% - 35px);
-  bottom: -18%;
+  height: calc( 100% - 30px );
+  top: 55px;
+  bottom: 0;
   left: 5%;
   z-index: 0;
 }
