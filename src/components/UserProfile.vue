@@ -208,13 +208,7 @@ export default {
 </script>
 
 <style>
-.container {
-  display: grid;
-  grid-template-columns: 20% auto 30%;
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
+
 .user-profile {
   text-align: left;
   border-width: 0 1px;
@@ -270,6 +264,13 @@ export default {
 </style>
 
 <style scoped>
+  .container {
+    display: grid;
+    grid-template-columns: 20% auto 30%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
   .user-info {
     display: inline-block;
     padding: 0 20px;

@@ -45,6 +45,7 @@ button {
   background: no-repeat;
   border: none;
   padding: 0;
+  outline: none;
 }
 ul {
   list-style: none;
