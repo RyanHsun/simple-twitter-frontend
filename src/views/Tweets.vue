@@ -166,10 +166,13 @@ export default {
     }
   },
   created() {
-    this.fetchTweets({
-      queryOffset: '',
-      queryLimit: ''
-    })
+    const { offset = '', limit = '' } = this.$route.query
+    this.fetchTweets({ queryOffset: offset, queryLimit: limit })
+  },
+  beforeRouteUpdate (to, from, next) {
+    const { offset = '', limit = '' } = to.query
+    this.fetchTweets({ queryOffset: offset, queryLimit: limit })
+    next()
   },
   methods: {
     async fetchTweets({ queryOffset, queryLimit }) {
