@@ -60,6 +60,8 @@
 
 
 <script>
+import authorizationAPI from './../apis/authorization'
+
 export default {
   data () {
     return {
@@ -69,13 +71,16 @@ export default {
   },
   methods: {
     handleSubmit () {
-      const data = JSON.stringify({
+      authorizationAPI.logIn({
         email: this.email,
         password: this.password
+      }).then(response => {
+        // TODO: 取得 API 請求後的資料
+        // console.log('response', response)
+        const { data } = response
+        localStorage.setItem('token', data.token)
+        this.$router.push('/tweets')
       })
-
-      // TODO: 向後端驗證使用者登入資訊是否合法
-      console.log('data', data)
     }
   }
 }
