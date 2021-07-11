@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Sidebar />
+    <Sidebar @after-submit-tweet="afterSubmitTweet"/>
     <section class="user">
       <div class="user-wrap">
         <Headbar
@@ -282,7 +282,15 @@ export default {
         console.log(name + ': ' + value)
       }
       
-    }
+    },
+    afterSubmitTweet(payload) {
+      const { description } = payload
+      console.log('description',description)
+      this.tweets.push({
+        // id: commentId,
+        description: description,
+      })
+    },
   }
 }
 </script>
