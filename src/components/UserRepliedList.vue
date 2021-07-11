@@ -28,7 +28,7 @@
             class="likes" 
             :class="{ 'is-like': replied.RepliedTweet.isLike }"
             type="button" 
-            @click.stop.prevent="toggleLike(tweet)"
+            @click.stop.prevent="toggleLike(replied.RepliedTweet)"
             >
               <img src="~@/assets/img/icon_like-fill.svg" alt="">
               <span>{{ replied.RepliedTweet.likeNum }}</span>
@@ -37,7 +37,7 @@
               v-else
             class="likes" 
             type="button" 
-            @click.stop.prevent="toggleLike(tweet)"
+            @click.stop.prevent="toggleLike(replied.RepliedTweet)"
             >
               <img src="~@/assets/img/icon_like.svg" alt="">
               <span>{{ replied.RepliedTweet.likeNum }}</span>
@@ -120,7 +120,7 @@ export default {
   mixins: [fromNowFilter],
   props: {
     user: {
-      type: Array,
+      type: Object,
       required: true
     },
     replies: {
@@ -138,10 +138,12 @@ export default {
       if (tweet.isLike) {
         tweet.isLike = false
         tweet.likeNum -= 1
+        console.log('Un Like', tweet)
         // 串接 API 更新推文資料
       } else {
         tweet.isLike = true
         tweet.likeNum += 1
+        console.log('Is Like', tweet)
         // 串接 API 更新推文資料
       }
     }

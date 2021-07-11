@@ -3,8 +3,13 @@
     <Sidebar />
     <section class="user">
       <div class="user-wrap">
-        <Headbar />
-        <UserProfile :user="user" />
+        <Headbar
+          :user="user"
+        />
+        <UserProfile 
+          :user="user"
+          @after-submit="handleAfterSubmit"
+        />
         <div class="tweets-switch-tab">
           <button 
             v-for="tweetsSwitchTab in tweetsSwitchTabs"
@@ -271,47 +276,57 @@ export default {
           break;
       }
     },
-  },
-};
+    handleAfterSubmit (formData) {
+      // 透過 API 將表單資料送到伺服器
+      for (let [name, value] of formData.entries()) {
+        console.log(name + ': ' + value)
+      }
+      
+    }
+  }
+}
 </script>
 
 <style scoped>
-.container {
-  display: grid;
-  grid-template-columns: 20% auto 30%;
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-.user {
-  position: relative;
-  margin-top: 50px;
-}
-.user-wrap {
-  overflow-y: scroll;
-  max-height: 100vh;
-}
-.tweets-list {
-  border-width: 0 1px;
-  border-style: solid;
-  border-color: #e6ecf0;
-}
-.tweets-switch-tab {
-  display: flex;
-  border-bottom: 1px solid #e6ecf0;
-}
-.tweets-switch-tab .tab-item {
-  width: 130px;
-  padding: 15px 0;
-  font-size: 15px;
-  text-align: center;
-  cursor: pointer;
-}
-.tweets-switch-tab .tab-item.active {
-  border-bottom: 2px solid #ff6600;
-}
-.nav-item:hover,
-.nav-item.active {
-  color: #ff6600;
-}
+  .container {
+    display: grid;
+    grid-template-columns: 20% auto 30%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .user {
+    position: relative;
+    margin-top: 50px;
+  }
+  .user-wrap {
+    overflow-y: scroll;
+    max-height: calc( 100vh - 50px );
+  }
+  .tweets-list {
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
+  }
+  .tweets-switch-tab {
+    display: flex;
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
+    border-bottom: 1px solid #E6ECF0;
+  }
+  .tweets-switch-tab .tab-item {
+    width: 130px;
+    padding: 15px 0;
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .tweets-switch-tab .tab-item.active {
+    border-bottom: 2px solid #FF6600;
+  }
+  .nav-item:hover,
+  .nav-item.active {
+    color: #ff6600;
+  }
 </style>

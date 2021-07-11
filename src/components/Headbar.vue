@@ -4,11 +4,22 @@
       <img src="~@/assets/img/icon_back.svg" alt="">
     </a>
     <div class="title">
-      <div class="main-title">John Doe</div>
-      <div class="sub-title">25 推文</div>
+      <div class="main-title">{{ user.name }}</div>
+      <div class="sub-title">{{ user.tweetNum }} 推文</div>
     </div>
   </h2>
 </template>
+
+<script>
+export default {
+  props: {
+    user: {
+      type: Object,
+      required: true
+    }
+  }
+}
+</script>
 
 <style scoped>
 .headbar {

@@ -6,7 +6,6 @@ export const fromNowFilter = {
       let fromNowString = moment(dateTime).fromNow()
       const fnString = fromNowString.substring(fromNowString.length, 2)
       const fnNumber = parseInt(fromNowString)
-      console.log(fnNumber, fnString)
       if (fnString === '天前' && fnNumber <= 1) {
         return dateTime ? moment(dateTime).fromNow() : '-'
       } if (fnString === '小時前' && fnNumber <= 23) {
