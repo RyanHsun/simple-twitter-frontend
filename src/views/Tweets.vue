@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Sidebar @after-submit-tweet="afterSubmitTweet" />
+    <Sidebar :tweets-id="tweets.id" @after-submit-tweet="afterSubmitTweet" />
     <section class="tweets">
       <div class="tweets-wrap">
         <h2 class="headbar">
@@ -43,7 +43,24 @@
 import Sidebar from "./../components/Sidebar.vue";
 import UsersTop from "./../components/UsersTop.vue";
 import TweetsList from "./../components/TweetsList.vue";
+import { v4 as uuidv4 } from "uuid";
 
+const dummyDataUser = {
+  id: 1,
+  account: "user3",
+  name: "Glenna Kautzer DVM",
+  email: "user3@example.com",
+  introduction:
+    "Minima eum distinctio debitis reiciendis.\nConsequatur ad inventore.\nVoluptas exercitationem laudantium molestias.\nSed dolorem necessitatibus et totam maiores.",
+  avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+  cover: "https://loremflickr.com/800/600/dog",
+  tweetNum: 10,
+  likeNum: 0,
+  followingNum: 37,
+  followerNum: 100,
+  lastLoginAt: "2021-07-08T04:20:22.000Z",
+  isFollowing: true,
+};
 const dummyData = [
   {
     id: 13,
@@ -140,8 +157,10 @@ export default {
   },
   data() {
     return {
+      // user:[],
       tweets: [],
       newTweet: "",
+      user: {},
     };
   },
   created() {
@@ -150,6 +169,8 @@ export default {
   methods: {
     fetchTweets() {
       this.tweets = [...dummyData];
+      this.user = { ...dummyDataUser };
+      // this.user = { ...dummyDataUser };
     },
     addTweet() {
       this.tweets.push({
@@ -160,12 +181,22 @@ export default {
       this.newTweet = "";
     },
     afterSubmitTweet(payload) {
-      const { description } = payload
-      console.log('description',description)
-      this.tweets.push({
+      const { description } = payload;
+      console.log("description", description);
+      this.tweets.unshift({
         // id: commentId,
+        id: uuidv4(),
         description: description,
-      })
+        createdAt: new Date(),
+        likeNum: 0,
+        replyNum: 0,
+        Author: {
+          id: this.user.id,
+          account: this.user.account,
+          name: this.user.name,
+          avatar: this.user.avatar,
+        },
+      });
     },
   },
 };

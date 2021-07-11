@@ -399,4 +399,8 @@ export default {
     color: #fff;
     background-color: #FF6600;
   }
+  .nav-item:hover,
+  .nav-item.active {
+    color: #ff6600;
+  }
 </style>
