@@ -65,7 +65,7 @@ const dummyData = [
     description: "Sed odio velit magni facilis aspernatur pariatur e",
     likeNum: 0,
     replyNum: 3,
-    createdAt: "2021-07-09T05:42:52.000Z",
+    createdAt: "2021-07-06T05:42:52.000Z",
     Author: {
       id: 5,
       account: "user1",
@@ -79,7 +79,7 @@ const dummyData = [
     description: "Sed odio velit magni facilis aspernatur pariatur e",
     likeNum: 0,
     replyNum: 3,
-    createdAt: "2021-07-09T05:42:52.000Z",
+    createdAt: "2021-07-04T05:42:52.000Z",
     Author: {
       id: 4,
       account: "user1",
@@ -93,7 +93,7 @@ const dummyData = [
     description: "Sed odio velit magni facilis aspernatur pariatur e",
     likeNum: 0,
     replyNum: 3,
-    createdAt: "2021-07-09T05:42:52.000Z",
+    createdAt: "2021-07-03T05:42:52.000Z",
     Author: {
       id: 1,
       account: "user1",
@@ -107,7 +107,7 @@ const dummyData = [
     description: "Sed odio velit magni facilis aspernatur pariatur e",
     likeNum: 0,
     replyNum: 3,
-    createdAt: "2021-07-09T05:42:52.000Z",
+    createdAt: "2021-07-01T05:42:52.000Z",
     Author: {
       id: 2,
       account: "user1",
@@ -121,7 +121,7 @@ const dummyData = [
     description: "Sed odio velit magni facilis aspernatur pariatur e",
     likeNum: 0,
     replyNum: 3,
-    createdAt: "2021-07-09T05:42:52.000Z",
+    createdAt: "2021-06-21T05:42:52.000Z",
     Author: {
       id: 4,
       account: "user1",

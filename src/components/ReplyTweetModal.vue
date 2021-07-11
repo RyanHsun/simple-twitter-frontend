@@ -10,18 +10,18 @@
         <div class="modal-body">
           <div class="tweet">
             <a href="" class="avatar">
-              <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
+              <img :src="tweet.Author.avatar" alt="">
             </a>
             <div class="tweet-info">
               <div class="user-info">
-                <a class="name" href="">user1</a>
-                <span class="account">@user1</span>
-                <span class="tweet-update-at">・3小時</span>
+                <a class="name" href="">{{ tweet.Author.name }}</a>
+                <span class="account">@{{ tweet.Author.account }}</span>
+                <span class="tweet-update-at">・{{ tweet.createdAt | fromNow }}</span>
               </div>
               <div class="tweet-content">
-                Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
+                {{ tweet.description}}
               </div>
-              <div class="tweet-reply-to">回覆給<span>@apple</span></div>
+              <div class="tweet-reply-to">回覆給<span>@{{ tweet.Author.account }}</span></div>
             </div>
           </div>
           <form class="reply-tweet" action="">
@@ -38,6 +38,20 @@
     </div>
 </template>
 
+<script>
+import { fromNowFilter } from './../utils/mixins'
+
+export default {
+  mixins: [fromNowFilter],
+  props: {
+    tweet: {
+      type: Object,
+      required: true
+    }
+  }  
+}
+</script>
+
 <style scoped> 
   .modal-content {
     border-radius: 14px;
@@ -50,6 +64,7 @@
   .tweet {
     position: relative;
     display: flex;
+    text-align: left;
   }
   .tweet::before {
     content: '';

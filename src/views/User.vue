@@ -303,11 +303,6 @@ export default {
     overflow-y: scroll;
     max-height: calc( 100vh - 50px );
   }
-  .tweets-list {
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
-  }
   .tweets-switch-tab {
     display: flex;
     border-width: 0 1px;

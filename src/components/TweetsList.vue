@@ -19,38 +19,62 @@
           {{ tweet.description }}
         </div>
         <div class="tweet-panel">
-          <button class="comment" type="button">
-            <img src="~@/assets/img/icon_comment.svg" alt="">{{ tweet.replyNum }}
+          <button 
+            type="button"
+            class="tweet-reply-action" 
+            data-toggle="modal" 
+            :data-target="`#replyTweetModal-${tweet.id}`"
+            @click="handleReplyTweetModal"
+          >
+            <img src="~@/assets/img/icon_comment.svg" alt="">
+            <span>{{ tweet.replyNum }}</span>
           </button>
           <button
             v-if="tweet.isLike"
-          class="likes" 
-          :class="{ 'is-like': tweet.isLike }"
-          type="button" 
-          @click.stop.prevent="toggleLike(tweet)"
-          >
+            class="likes" 
+            :class="{ 'is-like': tweet.isLike }"
+            type="button" 
+            @click.stop.prevent="toggleLike(tweet)"
+            >
             <img src="~@/assets/img/icon_like-fill.svg" alt="">
             <span>{{ tweet.likeNum }}</span>
           </button>
           <button
             v-else
-          class="likes" 
-          type="button" 
-          @click.stop.prevent="toggleLike(tweet)"
-          >
+            class="likes" 
+            type="button" 
+            @click.stop.prevent="toggleLike(tweet)"
+            >
             <img src="~@/assets/img/icon_like.svg" alt="">
             <span>{{ tweet.likeNum }}</span>
           </button>
         </div>
+      </div>
+      <!-- Modal -->
+      <div 
+        v-if="isShowReplyModal"
+        class="modal fade" 
+        :id="`replyTweetModal-${tweet.id}`" 
+        tabindex="-1" 
+        aria-labelledby="replyTweetModalLabel" 
+        aria-hidden="true"
+      >
+        <ReplyTweetModal
+          :tweet="tweet"
+        />
       </div>
     </li>
   </ul>
 </template>
 
 <script>
-import { fromNowFilter } from "./../utils/mixins"
+import { fromNowFilter } from './../utils/mixins'
+import ReplyTweetModal from './../components/ReplyTweetModal.vue'
 
 export default {
+  components: {
+    ReplyTweetModal
+  },
   mixins: [fromNowFilter],
   props: {
     tweets: {
@@ -60,7 +84,8 @@ export default {
   },
   data () {
     return {
-      tweet: this.tweets
+      tweet: this.tweets,
+      isShowReplyModal: false
     }
   },
   methods: {
@@ -74,12 +99,19 @@ export default {
         tweet.likeNum += 1
         // 串接 API 更新推文資料
       }
+    },
+    handleReplyTweetModal () {
+      this.isShowReplyModal = true
     }
   }
 }
 </script>
 <style scoped>
-
+.tweets-list {
+  border-width: 0 1px;
+  border-style: solid;
+  border-color: #E6ECF0;
+}
 .tweet {
   border-bottom: 1px solid #e6ecf0;
   display: flex;
