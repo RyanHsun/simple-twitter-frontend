@@ -39,6 +39,7 @@
 
       <button
         class="btn btn-lg btn-block mb-3"
+        :disabled="isProcessing"
         type="submit"
       >
         登入
@@ -60,22 +61,55 @@
 
 
 <script>
+import authorizationAPI from './../apis/authorization'
+import { Toast } from './../utils/helpers'
+
 export default {
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      isProcessing: false
     }
   },
   methods: {
-    handleSubmit () {
-      const data = JSON.stringify({
-        email: this.email,
-        password: this.password
-      })
+    async handleSubmit () {
+      try {
+        if (!this.email || !this.password) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請填入帳號和密碼'
+          })
+          return
+        }
 
-      // TODO: 向後端驗證使用者登入資訊是否合法
-      console.log('data', data)
+        this.isProcessing = true
+
+        const response = await authorizationAPI.logIn({
+          email: this.email,
+          password: this.password
+        })
+
+        const { data } = response
+        
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        localStorage.setItem('token', data.token)
+        
+        this.$router.push('/tweets')
+
+      } catch (error) {
+        this.isProcessing = false
+        this.password = ''
+
+        Toast.fire({
+          icon: 'warning',
+          title: '請確認您輸入了正確的帳號密碼'
+        })
+        console.log('error', error)
+      }
     }
   }
 }

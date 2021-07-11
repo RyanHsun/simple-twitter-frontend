@@ -173,10 +173,19 @@ export default {
       // this.user = { ...dummyDataUser };
     },
     addTweet() {
-      this.tweets.push({
+      this.tweets.unshift({
         // TODO: 透過 API 向後端伺服器新增tweet
-        //  id: uuid(),
+        id: uuidv4(),
         description: this.newTweet,
+        createdAt: new Date(),
+        likeNum: 0,
+        replyNum: 0,
+        Author: {
+          id: this.user.id,
+          account: this.user.account,
+          name: this.user.name,
+          avatar: this.user.avatar,
+        }
       });
       this.newTweet = "";
     },
