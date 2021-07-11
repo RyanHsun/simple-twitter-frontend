@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Sidebar @after-submit-tweet="afterSubmitTweet"/>
+    <Sidebar :tweets-id="tweets.id" @after-submit-tweet="afterSubmitTweet"/>
     <section class="user">
       <div class="user-wrap">
         <Headbar
@@ -45,6 +45,7 @@ import UserProfile from "./../components/UserProfile.vue";
 import TweetsList from "./../components/TweetsList.vue";
 import UserRepliedList from "./../components/UserRepliedList.vue";
 import UserLikesList from "./../components/UserLikesList.vue";
+import { v4 as uuidv4 } from "uuid"
 
 const dummyDataUser = {
   id: 1,
@@ -53,7 +54,7 @@ const dummyDataUser = {
   email: "user3@example.com",
   introduction:
     "Minima eum distinctio debitis reiciendis.\nConsequatur ad inventore.\nVoluptas exercitationem laudantium molestias.\nSed dolorem necessitatibus et totam maiores.",
-  avatar: "https://loremflickr.com/g/320/320/girl/?lock=1",
+  avatar: "https://randomuser.me/api/portraits/men/32.jpg",
   cover: "https://loremflickr.com/800/600/dog",
   tweetNum: 10,
   likeNum: 0,
@@ -284,12 +285,22 @@ export default {
       
     },
     afterSubmitTweet(payload) {
-      const { description } = payload
-      console.log('description',description)
-      this.tweets.push({
+      const { description } = payload;
+      console.log("description", description);
+      this.tweets.unshift({
         // id: commentId,
+        id: uuidv4(),
         description: description,
-      })
+        createdAt: new Date(),
+        likeNum: 0,
+        replyNum: 0,
+        Author: {
+          id: this.user.id,
+          account: this.user.account,
+          name: this.user.name,
+          avatar: this.user.avatar,
+        },
+      });
     },
   }
 }
