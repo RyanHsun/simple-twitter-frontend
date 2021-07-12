@@ -79,13 +79,18 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import $ from 'jquery'
+
 export default {
   data() {
     return {
       newTweet: '',
       isShowModal: false,
     };
+  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
   },
   methods: {
     addTweet() {

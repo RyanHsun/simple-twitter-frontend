@@ -9,7 +9,7 @@ export default new Vuex.Store({
       id: -1,
       name: '',
       email: '',
-      image: '',
+      avatar: '',
       isAdmin: false
     },
     isAuthenticated: false

@@ -97,6 +97,8 @@ export default {
         }
 
         localStorage.setItem('token', data.token)
+
+        this.$store.commit('setCurrentUser', data.User)
         
         this.$router.push('/tweets')
 
@@ -108,7 +110,7 @@ export default {
           icon: 'warning',
           title: '請確認您輸入了正確的帳號密碼'
         })
-        console.log('error', error)
+        console.error(error.message)
       }
     }
   }
