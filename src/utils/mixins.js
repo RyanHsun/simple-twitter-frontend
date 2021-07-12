@@ -10,6 +10,8 @@ export const fromNowFilter = {
         return dateTime ? moment(dateTime).fromNow() : '-'
       } if (fnString === '小時前' && fnNumber <= 23) {
         return dateTime ? moment(dateTime).fromNow() : '-'
+      } else if (fnString === ' 分鐘前') {
+        return dateTime ? moment(dateTime).fromNow() : '-'
       } else {
         return dateTime ? moment(dateTime).format('YYYY年M月D日') : '-'
       }
