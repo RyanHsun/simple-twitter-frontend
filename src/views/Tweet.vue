@@ -16,7 +16,7 @@
         />
         <TweetRepliedList 
           :tweet="tweet"
-          :initialTweetReplies="tweetReplies"
+          :tweetReplies="tweetReplies"
         />
       </div>
     </section>
@@ -30,62 +30,11 @@ import UsersTop from './../components/UsersTop.vue'
 import TweetDetail from './../components/TweetDetail.vue'
 import TweetRepliedList from './../components/TweetRepliedList.vue'
 // import ReplyTweetModal from './../components/ReplyTweetModal.vue'
-
-const dummyTweet = {
-  "id": 4,
-  "isLike": false,
-  "description": "Rerum molestiae quo doloribus sed earum vel ut omnis saepe. Quo aut ut ullam sit quia autem. Aperiam voluptas aliquid neque.",
-  "likeNum": 60,
-  "replyNum": 3,
-  "createdAt": "2021-07-10T02:02:38.000Z",
-  "updatedAt": "2021-06-18T10:02:28.000Z",
-  "deletedAt": null,
-  "AdminId": null,
-  "Author": {
-    "id": 4,
-    "account": "user4",
-    "name": "Yoshiko Kovacek",
-    "avatar": "https://loremflickr.com/g/320/320/girl/all"
-  }
-}
-
-const dummyTweetReplies = [
-  {
-    "id": 91,
-    "comment": "Et distinctio quo ex aspernatur magnam et quaerat voluptas. Minus inventore dolore sapiente laboriosam ut eum ex voluptatem. Dolorum nobis tempora pariatur officia.",
-    "createdAt": "2021-07-08T20:06:08.000Z",
-    "User": {
-      "id": 1,
-      "account": "user1",
-      "name": "Karianne Lang",
-      "avatar": "https://loremflickr.com/g/320/320/boy/?lock=1"
-    }
-  },
-  {
-    "id": 92,
-    "comment": "Sit atque enim dolores quia modi sed repellendus recusandae.",
-    "createdAt": "2021-07-02T20:06:08.000Z",
-    "User": {
-      "id": 3,
-      "account": "user3",
-      "name": "Alvah Thompson II",
-      "avatar": "https://loremflickr.com/g/320/320/boy/?lock=3"
-    }
-  },
-  {
-    "id": 93,
-    "comment": "Pariatur dolores nam deserunt cumque exercitationem.",
-    "createdAt": "2021-07-01T20:06:08.000Z",
-    "User": {
-      "id": 2,
-      "account": "user2",
-      "name": "Selmer Stanton",
-      "avatar": "https://loremflickr.com/g/320/320/boy/?lock=2"
-    }
-  }
-]
+import tweetsAPI from './../apis/tweets'
+import { Toast } from './../utils/helpers'
 
 export default {
+  name: 'tweet',
   components: {
     Sidebar,
     UsersTop,
@@ -110,28 +59,51 @@ export default {
   created () {
     const { id } = this.$route.params
     this.fetchTweet(id) 
+    this.fetchTweetReplies(id) 
   },
   methods: {
-    fetchTweet (tweetId) {
-      console.log('tweet Id', tweetId)
+    async fetchTweet (tweetId) {
+      try {
+        const { data } = await tweetsAPI.getTweet({ tweetId })
+        const {
+          id,
+          description,
+          likeNum,
+          replyNum,
+          isLike,
+          createdAt,
+          Author
+        } = data
 
-      this.tweet = {...dummyTweet}
-      // const { id, description, likeNum, replyNum, isLike, createdAt, Author } = this.tweet
-      // this.tweet = {
-      //   id,
-      //   description,
-      //   likeNum,
-      //   replyNum,
-      //   isLike,
-      //   createdAt,
-      //   Author
-      // }
-      
-      this.tweetReplies = [...dummyTweetReplies]
-      // this.tweetReplies = tweetReplies
-      
-      // this.tweetReplies = dummyTweetReplies.replies
+        this.tweet = {
+          id,
+          description,
+          likeNum,
+          replyNum,
+          isLike,
+          createdAt,
+          Author
+        }
 
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得推文資料，請稍後再試'
+        })
+      }
+    },
+    async fetchTweetReplies (tweetId) {
+      try {
+        const { data } = await tweetsAPI.getTweetReplies({ tweetId })
+        this.tweetReplies = [...data]
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得推文回覆資料，請稍後再試'
+        })
+      }
     }
   }
 }
