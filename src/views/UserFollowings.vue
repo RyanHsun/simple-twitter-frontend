@@ -8,13 +8,13 @@
           <div class="user-followships-tab">
             <div class="user-followships-followers">
               <router-link  class="nav-item"
-                to="/users/:id/followers"
+                :to="{ name: 'user-followers', params: {id: user.id}}"
                 >跟隨者</router-link
               >
             </div>
             <div class="user-followships-followings active">
               <router-link class="nav-item"
-                to="/users/:id/followings"
+                :to="{ name: 'user-followings', params: {id: user.id}}"
                 >正在跟隨</router-link
               >
             </div>
@@ -32,6 +32,8 @@ import Headbar from "../components/Headbar.vue";
 import Sidebar from "../components/Sidebar.vue";
 import UsersTop from "../components/UsersTop.vue";
 import UserFollowingsCard from "../components/UserFollowingsCard.vue";
+import usersAPI from "../apis/users";
+import { Toast } from "./../utils/helpers";
 
 export default {
   components: {
@@ -39,6 +41,74 @@ export default {
     Sidebar,
     UsersTop,
     UserFollowingsCard,
+  },
+  data() {
+    return {
+      user: {
+        id: -1,
+        account: "",
+        name: "",
+        email: "",
+        introduction: "",
+        avatar: "",
+        cover: "",
+        tweetNum: -1,
+        likeNum: -1,
+        followingNum: -1,
+        followerNum: -1,
+        lastLoginAt: -1,
+        isFollowing: false,
+      },
+    };
+  },
+    created() {
+    const { id: userId } = this.$route.params
+
+    this.fetchUser(userId)
+  },
+  methods: {
+    async fetchUser(userId) {
+      try {
+        const { data } = await usersAPI.get({ userId });
+        const {
+          id,
+          account,
+          name,
+          email,
+          introduction,
+          avatar,
+          cover,
+          tweetNum,
+          likeNum,
+          followingNum,
+          followerNum,
+          lastLoginAt,
+          isFollowing,
+        } = data;
+        this.user = {
+          id,
+          account,
+          name,
+          email,
+          introduction,
+          avatar,
+          cover,
+          tweetNum,
+          likeNum,
+          followingNum,
+          followerNum,
+          lastLoginAt,
+          isFollowing,
+        };
+        this.isLoading = false;
+      } catch (error) {
+        console.log(error);
+        Toast.fire({
+          icon: "error",
+          title: "無法取得使用者資料，請稍後再試",
+        });
+      }
+    },
   },
 };
 </script>
