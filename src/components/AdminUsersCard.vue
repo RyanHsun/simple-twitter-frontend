@@ -44,13 +44,13 @@ export default {
     };
   },
   created() {
-    this.fetchUsers();
+    this.fetchUsers()
   },
   methods: {
     async fetchUsers() {
       try{
         const response = await adminAPI.getAdminUsers ()
-        this.adminUsers = {...response.data};
+        this.adminUsers = {...response.data}
       } catch (error) {
         Toast.fire({
           icon: "warning",
