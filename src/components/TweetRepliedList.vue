@@ -34,17 +34,11 @@ export default {
       type: Object,
       required: true
     },
-    initialTweetReplies: {
+    tweetReplies: {
       type: Array,
       required: true
     }
-  },
-  data () {
-    return {
-      tweetReplies: this.initialTweetReplies
-    }
-  },
-
+  }
 }
 </script>
 
