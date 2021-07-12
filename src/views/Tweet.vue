@@ -57,9 +57,15 @@ export default {
     }
   },
   created () {
-    const { id } = this.$route.params
-    this.fetchTweet(id) 
-    this.fetchTweetReplies(id) 
+    const { id: tweetId } = this.$route.params
+    this.fetchTweet(tweetId)
+    this.fetchTweetReplies(tweetId)
+  },
+  beforeRouteUpdate (to, from, next) {
+    const { id: tweetId } = to.params
+    this.fetchTweet(tweetId)
+    this.fetchTweetReplies(tweetId)
+    next()
   },
   methods: {
     async fetchTweet (tweetId) {
