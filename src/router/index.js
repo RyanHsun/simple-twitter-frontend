@@ -83,8 +83,8 @@ const routes = [
     name: 'admin-login',
     component: () => import('../views/AdminLogin.vue')
   },
-  //test for UserFollow part
-  //test for UserFollow part
+  // test for UserFollow part
+  // test for UserFollow part
   {
     path: '/users/:id/followers',
     name: 'user-followers',
@@ -95,8 +95,8 @@ const routes = [
     name: 'user-followings',
     component: () => import('../views/UserFollowings.vue')
   },
-  //test for UserFollow part
-  //test for UserFollow part
+  // test for UserFollow part
+  // test for UserFollow part
   {
     path: '*',
     name: 'not-found',
@@ -105,7 +105,7 @@ const routes = [
 ]
 
 const originalPush = VueRouter.prototype.push
-VueRouter.prototype.push = function push(location) {
+VueRouter.prototype.push = function push (location) {
   return originalPush.call(this, location).catch((err) => err)
 }
 

@@ -1,13 +1,18 @@
 <template>
   <ul class="tweets-list">
-    <li v-for="tweet in tweets" :key="tweet.id" :to="{ name:'tweet', params: { id: tweet.id } }" class="tweet">
+    <li
+      v-for="tweet in tweets"
+      :key="tweet.id"
+      :to="{ name: 'tweet', params: { id: tweet.id } }"
+      class="tweet"
+    >
       <a href="" class="avatar">
-        <img :src="tweet.User.avatar" alt="" />
+        <img :src="tweet.Author.avatar" alt="" />
       </a>
       <div class="tweet-info">
         <div class="user-info">
-          <a class="name" href="">{{ tweet.User.name }}</a>
-          <span class="account">@{{ tweet.User.account }}</span>
+          <a class="name" href="">{{ tweet.Author.name }}</a>
+          <span class="account">@{{ tweet.Author.account }}</span>
           <span class="tweet-update-at">・{{ tweet.createdAt | fromNow }}</span>
         </div>
         <div class="tweet-content">
@@ -26,83 +31,54 @@
 </template>
 <script>
 import { fromNowFilter } from "./../utils/mixins";
+import adminAPI from "../apis/admin";
+import { Toast } from "./../utils/helpers";
 
-const dummyAdminTweersList = {
-  Tweets: [
-    {
-      id: 1,
-      description: "adslfuqafjds;ljilv;cvzldks;jareioj",
-      isLike: true,
-      likeNum: 10,
-      replyNum: 2,
-      createdAt: "2021-06-27 15:47:52",
-      User: {
-        id: 1,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/88.jpg",
-      },
-    },
-    {
-      id: 2,
-      description: "iqulhafdsnkjlfjqoiwejfdlsa;knlsdf",
-      isLike: false,
-      likeNum: 13,
-      replyNum: 5,
-      createdAt: "2021-06-27 15:47:52",
-      User: {
-        id: 1,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/68.jpg",
-      },
-    },
-    {
-      id: 3,
-      description: "iqulhafdsnkjlfjqoiwejfdlsa;knlsdf",
-      isLike: false,
-      likeNum: 13,
-      replyNum: 5,
-      createdAt: "2021-06-27 15:47:52",
-      User: {
-        id: 1,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/78.jpg",
-      },
-    },
-    {
-      id: 4,
-      description: "iqulhafdsnkjlfjqoiwejfdlsa;knlsdf",
-      isLike: false,
-      likeNum: 13,
-      replyNum: 5,
-      createdAt: "2021-06-27 15:47:52",
-      User: {
-        id: 1,
-        account: "user1",
-        name: "User1",
-        avatar: "https://randomuser.me/api/portraits/men/89.jpg",
-      },
-    },
-  ],
-};
 export default {
   mixins: [fromNowFilter],
   data() {
     return {
-      tweets: [],
+      tweets: {},
     };
   },
   created() {
     this.fetchTweets();
   },
   methods: {
-    fetchTweets() {
-      this.tweets = [...dummyAdminTweersList.Tweets];
+    async fetchTweets() {
+      try {
+        const response = await adminAPI.getAdminTweets();
+        this.tweets = { ...response.data };
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "無法取得後台推文清單，請稍後再試",
+        });
+      }
     },
-    deleteTweet(tweetId) {
-      this.tweets = this.tweets.filter((tweet) => tweet.id !== tweetId);
+    async deleteTweet(id) {
+      try {
+        const { data } = await adminAPI.deleteAdminTweets({ id });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        console.log("handleDeleteButtonClick", id);
+
+        Toast.fire({
+          icon: "success",
+          title: "移除推文成功",
+        });
+        //完成及時刪除的動作
+        this.fetchTweets();
+        // this.tweets = this.tweets.filter((tweet) => tweet.id !== id);
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "無法刪除後台推文清單，請稍後再試",
+        });
+      }
     },
   },
 };
