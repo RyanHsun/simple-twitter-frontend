@@ -1,6 +1,7 @@
 <template>
   <ul class="admin-users-list">
-    <li v-for="adminUser in adminUsers" :key="adminUser.id" :to="{ name:'user', params: { id: adminUser.id } }" class="admin-user">
+    <li v-for="adminUser in adminUsers" :key="adminUser.id" :to="{ name:'user', params: { id: adminUser.id } }" 
+    class="admin-user">
       <div class="user-profile-head">
         <div class="user-cover">
           <img :src="adminUser.cover" alt="" />
@@ -26,121 +27,36 @@
         </span>
       </div>
       <div class="user-followships">
-        <div class="user-following">{{ adminUser.followingNum }} 個跟隨中</div>
+        <div class="user-following" >{{ adminUser.followingNum }} 個跟隨中</div>
         <div class="user-follower">{{ adminUser.followerNum }} 位跟隨者</div>
       </div>
     </li>
   </ul>
 </template>
 <script>
-const dummyAdminUsers = {
-  AdminUsers: [
-    {
-      id: 1,
-      account: "user1",
-      name: "User1",
-      avatar: "https://randomuser.me/api/portraits/men/8.jpg",
-      cover: "https://loremflickr.com/320/240/restaurant,food/?random=35.43038308274238",
-      isFollowing: true,
-      tweetNum: 5,
-      likeNum: 35,
-      followingNum: 3,
-      followerNum: 15,
-      lastLoginAt: "2021-06-27 15:14:51",
-    },
-    {
-      id: 2,
-      account: "user2",
-      name: "User2",
-      avatar: "https://randomuser.me/api/portraits/men/81.jpg",
-      cover: "https://loremflickr.com/320/240/restaurant,food/?random=35.43038308274238",
-      isFollowing: false,
-      tweetNum: 10,
-      likeNum: 99,
-      followingNum: 19,
-      followerNum: 5,
-      lastLoginAt: "2021-06-27 15:14:51",
-    },
-    {
-      id: 3,
-      account: "user3",
-      name: "User3",
-      avatar: "https://randomuser.me/api/portraits/men/81.jpg",
-      cover: "https://loremflickr.com/320/240/restaurant,food/?random=35.43038308274238",
-      isFollowing: false,
-      tweetNum: 203,
-      likeNum: 300,
-      followingNum: 5,
-      followerNum: 34,
-      lastLoginAt: "2021-06-27 15:14:51",
-    },
-    {
-      id: 4,
-      account: "user4",
-      name: "User4",
-      avatar: "https://randomuser.me/api/portraits/women/15.jpg",
-      cover: "https://loremflickr.com/320/240/restaurant,food/?random=35.43038308274238",
-      isFollowing: false,
-      tweetNum: 2,
-      likeNum: 45,
-      followingNum: 78,
-      followerNum: 19,
-      lastLoginAt: "2021-06-27 15:14:51",
-    },
-    {
-      id: 5,
-      account: "user5",
-      name: "User5",
-      avatar: "https://randomuser.me/api/portraits/women/22.jpg",
-      cover: "https://loremflickr.com/320/240/restaurant,food/?random=35.43038308274238",
-      isFollowing: false,
-      tweetNum: 29,
-      likeNum: 109,
-      followingNum: 333,
-      followerNum: 235,
-      lastLoginAt: "2021-06-27 15:14:51",
-    },
-    {
-      id: 6,
-      account: "user6",
-      name: "User6",
-      avatar: "https://randomuser.me/api/portraits/men/11.jpg",
-      cover: "https://loremflickr.com/320/240/restaurant,food/?random=35.43038308274238",
-      isFollowing: false,
-      tweetNum: 33,
-      likeNum: 29,
-      followingNum: 11,
-      followerNum: 11,
-      lastLoginAt: "2021-06-27 15:14:51",
-    },
-    {
-      id: 7,
-      account: "user7",
-      name: "User7",
-      avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-      cover: "https://loremflickr.com/320/240/restaurant,food/?random=35.43038308274238",
-      isFollowing: false,
-      tweetNum: 1,
-      likeNum: 0,
-      followingNum: 100,
-      followerNum: 109,
-      lastLoginAt: "2021-06-27 15:14:51",
-    },
-  ],
-};
+import adminAPI from "../apis/admin";
+import { Toast } from "./../utils/helpers";
 
 export default {
   data() {
     return {
-      adminUsers: [],
+      adminUsers: {},
     };
   },
   created() {
     this.fetchUsers();
   },
   methods: {
-    fetchUsers() {
-      this.adminUsers = [...dummyAdminUsers.AdminUsers];
+    async fetchUsers() {
+      try{
+        const response = await adminAPI.getAdminUsers ()
+        this.adminUsers = {...response.data};
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "無法取得使用者清單，請稍後再試",
+        })
+      }
     },
   },
 };
@@ -194,6 +110,7 @@ export default {
 .user-info {
   display: inline-block;
   padding: 0 20px;
+  text-decoration: none;
 }
 .user-info span {
   display: block;
