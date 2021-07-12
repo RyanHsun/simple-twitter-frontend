@@ -27,7 +27,9 @@
       </button>
       <!-- Button trigger modal -->
       <div class="modal fade" id="replyTweetModal" tabindex="-1" aria-labelledby="replyTweetModalLabel" aria-hidden="true">
-        <ReplyTweetModal />
+        <ReplyTweetModal 
+          :tweet="tweet"
+        />
       </div>
       <button
         v-if="tweet.isLike"

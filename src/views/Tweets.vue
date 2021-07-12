@@ -8,7 +8,7 @@
             <div class="main-title">推文</div>
           </div>
         </h2>
-        <form class="create-tweet" action="">
+        <form class="create-tweet" @submit.stop.prevent="handleSubmit">
           <div class="create-tweet-wrap">
             <span class="avatar" href="">
               <img
@@ -27,7 +27,11 @@
               placeholder="有什麼新鮮事？"
             ></textarea>
           </div>
-          <button class="btn tweet-button" @click.stop.prevent="addTweet">
+          <button 
+            type="submit" 
+            class="btn tweet-button"
+            :disabled="isProcessing"
+          >
             推文
           </button>
         </form>
@@ -40,113 +44,23 @@
 </template>
 
 <script>
-import Sidebar from "./../components/Sidebar.vue";
-import UsersTop from "./../components/UsersTop.vue";
-import TweetsList from "./../components/TweetsList.vue";
-import { v4 as uuidv4 } from "uuid";
+import Sidebar from "./../components/Sidebar.vue"
+import UsersTop from "./../components/UsersTop.vue"
+import TweetsList from "./../components/TweetsList.vue"
+import { v4 as uuidv4 } from "uuid"
+import tweetsAPI from './../apis/tweets'
+import { Toast } from './../utils/helpers'
 
-const dummyDataUser = {
-  id: 1,
-  account: "user3",
-  name: "Glenna Kautzer DVM",
-  email: "user3@example.com",
-  introduction:
-    "Minima eum distinctio debitis reiciendis.\nConsequatur ad inventore.\nVoluptas exercitationem laudantium molestias.\nSed dolorem necessitatibus et totam maiores.",
-  avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  cover: "https://loremflickr.com/800/600/dog",
-  tweetNum: 10,
-  likeNum: 0,
-  followingNum: 37,
-  followerNum: 100,
-  lastLoginAt: "2021-07-08T04:20:22.000Z",
-  isFollowing: true,
-};
-const dummyData = [
-  {
-    id: 13,
-    isLike: false,
-    description: "Pariatur neque exercitationem dignissimos odio har",
-    likeNum: 0,
-    replyNum: 3,
-    createdAt: "2021-07-09T05:42:52.000Z",
-    Author: {
-      id: 3,
-      account: "user3",
-      name: "Rico Muller",
-      avatar: "https://loremflickr.com/g/320/320/girl/?lock=3",
-    },
+const dummyUser = {
+  currentUser: {
+    id: 1,
+    name: 'Melody Bins',
+    email: 'user1@example.com',
+    image: 'https://loremflickr.com/g/320/240/girl/all',
+    isAdmin: true
   },
-  {
-    id: 31,
-    isLike: false,
-    description: "Sed odio velit magni facilis aspernatur pariatur e",
-    likeNum: 0,
-    replyNum: 3,
-    createdAt: "2021-07-06T05:42:52.000Z",
-    Author: {
-      id: 5,
-      account: "user1",
-      name: "Mustafa Kunde",
-      avatar: "https://loremflickr.com/g/320/320/girl/?lock=5",
-    },
-  },
-  {
-    id: 34,
-    isLike: false,
-    description: "Sed odio velit magni facilis aspernatur pariatur e",
-    likeNum: 0,
-    replyNum: 3,
-    createdAt: "2021-07-04T05:42:52.000Z",
-    Author: {
-      id: 4,
-      account: "user1",
-      name: "Mustafa Kunde",
-      avatar: "https://loremflickr.com/g/320/320/girl/?lock=34",
-    },
-  },
-  {
-    id: 2,
-    isLike: false,
-    description: "Sed odio velit magni facilis aspernatur pariatur e",
-    likeNum: 0,
-    replyNum: 3,
-    createdAt: "2021-07-03T05:42:52.000Z",
-    Author: {
-      id: 1,
-      account: "user1",
-      name: "Mustafa Kunde",
-      avatar: "https://loremflickr.com/g/320/320/girl/?lock=1",
-    },
-  },
-  {
-    id: 7,
-    isLike: false,
-    description: "Sed odio velit magni facilis aspernatur pariatur e",
-    likeNum: 0,
-    replyNum: 3,
-    createdAt: "2021-07-01T05:42:52.000Z",
-    Author: {
-      id: 2,
-      account: "user1",
-      name: "Mustafa Kunde",
-      avatar: "https://loremflickr.com/g/320/320/girl/?lock=2",
-    },
-  },
-  {
-    id: 9,
-    isLike: false,
-    description: "Sed odio velit magni facilis aspernatur pariatur e",
-    likeNum: 0,
-    replyNum: 3,
-    createdAt: "2021-06-21T05:42:52.000Z",
-    Author: {
-      id: 4,
-      account: "user1",
-      name: "Mustafa Kunde",
-      avatar: "https://loremflickr.com/g/320/320/girl/?lock=4",
-    },
-  },
-];
+  isAuthenticated: true
+}
 
 export default {
   name: "tweets",
@@ -157,41 +71,81 @@ export default {
   },
   data() {
     return {
-      // user:[],
+      currentUser: dummyUser.currentUser,
       tweets: [],
-      newTweet: "",
+      newTweet: '',
       user: {},
-    };
+      isProcessing: false
+    }
   },
   created() {
-    this.fetchTweets();
+    const { offset = '', limit = '' } = this.$route.query
+    this.fetchTweets({ queryOffset: offset, queryLimit: limit })
+  },
+  beforeRouteUpdate (to, from, next) {
+    const { offset = '', limit = '' } = to.query
+    this.fetchTweets({ queryOffset: offset, queryLimit: limit })
+    next()
   },
   methods: {
-    fetchTweets() {
-      this.tweets = [...dummyData];
-      this.user = { ...dummyDataUser };
-      // this.user = { ...dummyDataUser };
+    async fetchTweets({ queryOffset, queryLimit }) {
+      try {
+        
+        const response = await tweetsAPI.getTweets({
+          offset: queryOffset,
+          limit: queryLimit
+        })
+
+        this.tweets = [...response.data]
+        // this.user = { ...dummyDataUser }
+
+      } catch (error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得推文資料，請稍後再試'
+        })
+      }
     },
-    addTweet() {
-      this.tweets.unshift({
-        // TODO: 透過 API 向後端伺服器新增tweet
-        id: uuidv4(),
-        description: this.newTweet,
-        createdAt: new Date(),
-        likeNum: 0,
-        replyNum: 0,
-        Author: {
-          id: this.user.id,
-          account: this.user.account,
-          name: this.user.name,
-          avatar: this.user.avatar,
+    async handleSubmit() {
+      try {
+        if (!this.newTweet) {
+          Toast.fire({
+            icon: 'warning',
+            title: '您的推文未填寫任何內容'
+          })
+          return
         }
-      });
-      this.newTweet = "";
+        this.isProcessing = true
+
+        const { data } = await tweetsAPI.createTweet({ 
+          description: this.newTweet
+        })
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+
+        Toast.fire({
+          icon: 'success',
+          title: '新增推文成功'
+        })
+        this.isProcessing = false
+        this.newTweet = ''
+
+        this.fetchTweets(0, 10)
+
+      } catch (error) {
+        console.log(error.message)
+        Toast.fire({
+          icon: 'warning',
+          title: '無法新增推文，請稍候在試'
+        })
+      }
     },
     afterSubmitTweet(payload) {
-      const { description } = payload;
-      console.log("description", description);
+      const { description } = payload
+      console.log("description", description)
       this.tweets.unshift({
         // id: commentId,
         id: uuidv4(),
@@ -205,10 +159,10 @@ export default {
           name: this.user.name,
           avatar: this.user.avatar,
         },
-      });
+      })
     },
   },
-};
+}
 </script>
 
 <style scoped>
