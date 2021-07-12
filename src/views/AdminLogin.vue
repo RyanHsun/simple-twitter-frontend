@@ -55,8 +55,8 @@
 
 
 <script>
-import adminAPI from "../apis/admin";
-import { Toast } from "./../utils/helpers";
+import adminAPI from "../apis/admin"
+import { Toast } from "./../utils/helpers"
 
 export default {
   data() {
@@ -64,7 +64,7 @@ export default {
       email: "",
       password: "",
       isProcessing: false,
-    };
+    }
   },
   methods: {
     async handleSubmit() {
@@ -73,41 +73,41 @@ export default {
           Toast.fire({
             icon: "warning",
             title: "請填入 email 和 password",
-          });
-          return;
+          })
+          return
         }
-        this.isProcessing = true;
+        this.isProcessing = true
         const response = await adminAPI.adminLogin({
           email: this.email,
           password: this.password,
-        });
-        const { data } = response;
+        })
+        const { data } = response
 
         if (data.status !== "success") {
-          throw new Error(data.message);
+          throw new Error(data.message)
         }
         // TODO: 向後端驗證使用者登入資訊是否合法
 
         // 將 token 存放在 localStorage 內
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.token)
 
         //呼叫setCurrentUser來做登入的動作
-        // this.$store.commit('setCurrentUser', data.user)
+        this.$store.commit('setCurrentUser', data.User)
 
         // 成功登入後轉址到後台推特清單
-        this.$router.push("/admin/tweets");
-        console.log("data", data);
+        this.$router.push("/admin/tweets")
+
       } catch (error) {
-        this.isProcessing = false;
-        this.password = "";
+        this.isProcessing = false
+        this.password = ""
         Toast.fire({
           icon: "warning",
           title: "請確認您輸入了正確的帳號密碼",
-        });
+        })
       }
     },
   },
-};
+}
 </script>
 
 
