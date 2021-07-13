@@ -2,8 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import NotFound from '../views/NotFound.vue'
 import Login from '../views/Login.vue'
-
 import Tweets from '../views/Tweets.vue'
+import store from './../store'
 
 Vue.use(VueRouter)
 
@@ -114,6 +114,11 @@ VueRouter.prototype.push = function push (location) {
 
 const router = new VueRouter({
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  store.dispatch('fetchCurrentUser')
+  next()
 })
 
 export default router

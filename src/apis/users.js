@@ -1,7 +1,12 @@
 import { apiHelper } from './../utils/helpers'
-const getToken = () => window.localStorage.getItem('token')
+const getToken = () => localStorage.getItem('token')
 
 export default {
+  getCurrentUser () {
+    return apiHelper.get('/users/current_user', {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
   get ({ userId }) {
     return apiHelper.get(`/users/${userId}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
@@ -20,7 +25,6 @@ export default {
   addFollowing ({ id }) {
     return apiHelper.post('/followships', { id })
   },
-
   deleteFollowing ({ userId }) {
     return apiHelper.delete(`/followships/${userId}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
