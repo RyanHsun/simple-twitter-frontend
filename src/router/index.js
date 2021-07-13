@@ -58,8 +58,11 @@ const routes = [
     name: 'account-setting',
     component: () => import('../views/AccountSetting.vue')
   },
+
+  // test for userFollowships
+
   // {
-  //   path: '/users/:id/followings',
+  //   path: '/users/:id/followings/test',
   //   name: 'user-followings',
   //   component: () => import('../views/UserFollowships.vue')
   // },

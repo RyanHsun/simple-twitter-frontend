@@ -32,96 +32,8 @@
 </template>
 
 <script>
-const dummyUsersTop = {
-  Users: [
-    {
-      id: 5,
-      followingId: 4,
-      followerId: 3,
-      following: {
-        id: 4,
-        account: "user4",
-        name: "Jefferey Jacobi",
-        avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-        introduction:
-          "unde reiciendxxxxis asdfasdvacaszavadfvaedfv zdf zfvadfzavdzfv zsfv azdfv dz zsfdsint",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: false,
-      },
-    },
-    {
-      id: 1,
-      followingId: 2,
-      followerId: 1,
-      following: {
-        id: 1,
-        account: "user1",
-        name: "Kendall Schinner",
-        avatar: "https://randomuser.me/api/portraits/women/9.jpg",
-        introduction: "Optio ea consectetur quisquam qui autem corporis e",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: false,
-      },
-    },
-    {
-      id: 2,
-      followingId: 2,
-      followerId: 3,
-      following: {
-        id: 7,
-        account: "user2",
-        name: "Cesar Shanahan",
-        avatar: "https://randomuser.me/api/portraits/women/58.jpg",
-        introduction: "aut earum enim",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: false,
-      },
-    },
-    {
-      id: 9,
-      followingId: 2,
-      followerId: 3,
-      following: {
-        id: 8,
-        account: "user2",
-        name: "Cesar Shanahan",
-        avatar: "https://randomuser.me/api/portraits/women/8.jpg",
-        introduction: "aut earum enim",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: true,
-      },
-    },
-    {
-      id: 7,
-      followingId: 2,
-      followerId: 3,
-      following: {
-        id: 9,
-        account: "user2",
-        name: "Cesar Shanahan",
-        avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-        introduction: "aut earum enim",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: true,
-      },
-    },
-  ],
-};
+import usersAPI from "../apis/users";
+import { Toast } from "./../utils/helpers";
 
 export default {
   data() {
@@ -129,14 +41,23 @@ export default {
       users: [],
     };
   },
-  created() {
-    this.fetchusers();
+    created() {
+    const { id: userId } = this.$route.params;
+    this.fetchusers(userId);
   },
-  methods: {
-    fetchusers() {
-      this.users = [...dummyUsersTop.Users];
-    },
 
+  methods: {
+    async fetchusers(userId) {
+      try {
+        const response = await usersAPI.getFollowings({ userId })
+        this.users = {...response.data};
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "無法取得正在跟隨清單，請稍後再試",
+        })
+      }
+    },
     toggleFollowing(user) {
       console.log("原本的user.following.isFollowing", user.following.isFollowing);
       if (user.following.isFollowing) {
