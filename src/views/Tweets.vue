@@ -35,8 +35,13 @@
             推文
           </button>
         </form>
-
-        <TweetsList :tweets="tweets" />
+        <ul class="tweets-list">
+          <TweetsList 
+            v-for="tweet in tweets"
+            :key="tweet.id"
+            :initinalTweet="tweet" 
+          />
+        </ul>
       </div>
     </section>
     <UsersTop />
@@ -51,16 +56,6 @@ import { v4 as uuidv4 } from "uuid"
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
 
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: 'Melody Bins',
-    email: 'user1@example.com',
-    image: 'https://loremflickr.com/g/320/240/girl/all',
-    isAdmin: true
-  },
-  isAuthenticated: true
-}
 
 export default {
   name: "tweets",
@@ -71,7 +66,6 @@ export default {
   },
   data() {
     return {
-      currentUser: dummyUser.currentUser,
       tweets: [],
       newTweet: '',
       user: {},
@@ -161,6 +155,19 @@ export default {
         },
       })
     },
+    // afterToggleLike(toggleTweet) {
+    //   // rerender
+    //   this.tweets = this.tweets.map((tweet) => {
+    //     if (tweet.id === toggleTweet.id) {
+    //       return {
+    //         ...tweet,
+    //         isLiked: toggleTweet.isLiked,
+    //       };
+    //     } else {
+    //       return tweet;
+    //     }
+    //   })
+    // }
   },
 }
 </script>
