@@ -4,7 +4,7 @@
     <section class="user-followships">
       <div class="user-wrap">
         <div class="headbar-wrap">
-          <Headbar />
+          <Headbar :initial-user="user"/>
           <div class="user-followships-tab">
             <div class="user-followships-followers active">
               <router-link class="nav-item" :to="{ name: 'user-followers', params: {id: user.id}}"
@@ -18,7 +18,7 @@
             </div>
           </div>
         </div>
-        <UserFollowersCard />
+        <UserFollowersCard :initial-user="user"/>
       </div>
     </section>
     <UsersTop />

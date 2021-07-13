@@ -4,7 +4,7 @@
     <section class="user-followships">
       <div class="user-wrap">
         <div class="headbar-wrap">
-          <Headbar />
+          <Headbar :initial-user="user"/>
           <div class="user-followships-tab">
             <div class="user-followships-followers">
               <router-link  class="nav-item"
