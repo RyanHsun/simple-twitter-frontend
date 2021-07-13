@@ -8,102 +8,36 @@
         <img :src="user.avatar" alt="" />
       </p>
 
-      <!-- <EditProfileModal
-        :user="user"
-        @after-submit="handleAfterSubmit"
-      /> -->
-  
-      <!-- Button trigger modal -->
-      <button 
-        type="button" 
-        class="btn user-edit" 
-        data-toggle="modal" 
-        data-target="#editProfileModal"
-        @click="handleEditModalShow('open')"
-      >
-        編輯個人資料
-      </button>
-      <!-- Modal -->
-      <div 
-        v-if="isShowModal"
-        class="modal fade" 
-        id="editProfileModal" 
-        data-backdrop="static" 
-        data-keyboard="false" 
-        tabindex="-1" 
-        aria-labelledby="staticBackdropLabel" 
-        aria-hidden="true" 
-      >
-        <div class="modal-dialog">
-          <form class="modal-content" @submit.stop.prevent="handleSubmit">
-            <div class="modal-header">
-              <button 
-                type="button" 
-                class="close" 
-                data-dismiss="modal" 
-                aria-label="Close" 
-                @click="handleEditModalShow('close')"
-              >
-                <img src="~@/assets/img/icon_close-og.svg" alt="">
-              </button>
-              <p>編輯個人資料</p>
-              <button class="btn update-profile" type="submit">儲存</button>
-            </div>
-            <div class="modal-body">
-              <div class="user-profile-edit">
-                <div class="user-cover">
-                  <label for="upload-image-cover" class="upload-image">
-                    <img src="~@/assets/img/icon_upload.svg" alt="">
-                  </label>
-                  <input 
-                    id="upload-image-cover" 
-                    type="file" 
-                    name="image-cover" 
-                    accept="image/*" 
-                    class="form-control-file"
-                    @change="handleFileChange">
-                  <img :src="profile.cover" alt="">
-                </div>
-                <div class="user-avatar avatar">
-                  <label for="upload-image-avatar" class="upload-image">
-                    <img src="~@/assets/img/icon_upload.svg" alt="">
-                  </label>
-                  <input 
-                    id="upload-image-avatar" 
-                    type="file" 
-                    name="image-avatar" 
-                    accept="image/*" 
-                    class="form-control-file"
-                    @change="handleFileChange">
-                  <img :src="profile.avatar" alt="">
-                </div>
-                <div class="user-name">
-                  <label for="">名稱</label>
-                  <input 
-                    v-model="profile.name"
-                    type="text" 
-                    maxlength="50" 
-                    name="name"
-                    class="user-name-input">
-                  <span class="text-count">
-                    {{ profile.name ? profile.name.length : 0 }}/50</span>
-                </div>
-                <div class="user-intro">
-                  <label for="">自我介紹</label>
-                  <textarea 
-                    v-model="profile.introduction"
-                    name="introduction"
-                    cols="30"
-                    rows="5"
-                    maxlength="160"
-                    class="user-intro-textarea"></textarea>
-                  <span class="text-count">{{ profile.introduction ? profile.introduction.length : 0 }}/160</span>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+      <!-- <template v-if="isCurrentUser">
+        <EditProfileModal
+          :user="user"
+        /> 
+      </template> -->
+      <template v-if="isCurrentUser">
+        <EditProfileModal
+          :initial-user="user"
+          :is-processing="isProcessing"
+          @after-submit="handleAfterSubmit"
+        />
+      </template>
+      <template v-else>
+        <button
+          v-if="isFollowing"
+          type="submit" 
+          class="btn" 
+          @click.prevent.stop="deleteFollowing(user.id)"
+        >
+          正在跟隨
+        </button>
+        <button
+          v-else
+          type="submit" 
+          class="btn" 
+          @click.prevent.stop="addFollowing(user.id)"
+        > 
+          跟隨
+        </button>
+      </template>
     </div>
     <p class="user-info">
       <span class="name">{{ user.name }}</span>
@@ -128,84 +62,210 @@
 </template>
 
 <script>
-// import EditProfileModal from './../components/EditProfileModal.vue'
+import { mapState } from 'vuex'
+import EditProfileModal from './EditProfileModal.vue'
+import usersAPI from './../apis/users'
+import { Toast } from './../utils/helpers'
 import $ from 'jquery'
 
 export default {
   props: {
-    user: {
-      type: Object,
-      required: true,
+    isCurrentUser: {
+      type: Boolean,
+      required: true
     },
+    initialUser: {
+      type: Object,
+      required: true
+    },
+    isFollowing: {
+      type: Boolean,
+      required: false
+    }
+  },
+  components: {
+    EditProfileModal
   },
   data () {
     return {
-      profile: {
-        cover: '',
-        avatar: '',
+      user: {
+        id: -1,
+        account: '',
         name: '',
-        introduction: ''  
+        email: '',
+        introduction: '',
+        avatar: '',
+        cover: '',
+        tweetNum: -1,
+        likeNum: -1,
+        followingNum: -1,
+        followerNum: -1,
+        lastLoginAt: '',
+        isFollowing: false
       },
-      isShowModal: false
+      isProcessing: false
+    }
+  },
+  computed: {
+    ...mapState(['currentUser'])
+  },
+  watch: {
+    initialUser (newValue) {
+      this.user = {
+        ...this.user,
+        ...newValue
+      }
     }
   },
   created () {
     const { id } = this.$route.params
-    this.fetchProfile(id)
+    this.fetchUser(id)
+  },
+  beforeRouteUpdate (to, from, next) {
+    const { id } = to.params
+    this.fetchUser(id)
+    next()
   },
   methods: {
-    fetchProfile (profileId) {
-      console.log('Profile Id:', profileId)
-      this.profile = {...this.user}
-    },
-    handleFileChange (e) {
-      const files = e.target.files
+    async fetchUser(userId) {
+      try {
+        const { data } = await usersAPI.get({ userId })
 
-      if ( e.target.matches('#upload-image-cover') ) {
-        if (files.length === 0 ) {
-          this.profile.cover = this.user.cover
-        } else {
-          const imageURL = window.URL.createObjectURL(files[0])
-          this.profile.cover = imageURL
+        if (data.status === 'error') {
+          throw new Error(data.message)
         }
-      } else if ( e.target.matches('#upload-image-avatar') ) {
-        if (files.length === 0 ) {
-          this.profile.avatar = this.user.avatar
-        } else {
-          const imageURL = window.URL.createObjectURL(files[0])
-          this.profile.avatar = imageURL
+
+        const {
+          id,
+          account,
+          name,
+          email,
+          introduction,
+          avatar,
+          cover,
+          tweetNum,
+          likeNum,
+          followingNum,
+          followerNum,
+          lastLoginAt,
+          isFollowing
+        } = data
+        this.user = {
+          id,
+          account,
+          name,
+          email,
+          introduction,
+          avatar,
+          cover,
+          tweetNum,
+          likeNum,
+          followingNum,
+          followerNum,
+          lastLoginAt,
+          isFollowing
         }
-      }
-    },
-    handleEditModalShow (mode) {
-      if (mode === 'open') {
-        this.$router.push({ name: 'user-edit' })
-        this.isShowModal = true
-      } else if (mode === 'close') {
-        this.profile = {...this.user}
-        this.isShowModal = false
-        this.$router.push({
-          name: 'user',
-          params: { id: this.user.id }
+
+        // this.user = { ...data }
+        // this.tweetsSwitchTabs = [...tweetsSwitchTabs]
+        // this.tweets = [...dummyDataUserTweets]
+      } catch (error) {
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得使用者資料，請稍後再試'
         })
       }
     },
-    handleSubmit (e) {
-      const form = e.target  
-      const formData = new FormData(form)
-      this.$emit('after-submit', formData)
+    async handleAfterSubmit (formData) {
+      // for (let [name, value] of formData.entries()) {
+      //   console.log(name + ': ' + value)
+      // }
+      try {
+        this.isProcessing = true
+        const { data } = await usersAPI.update({
+          userId: this.user.id,
+          formData
+        })
 
-      $("#editProfileModal").modal('hide')
-      this.isShowModal = false
-      this.$router.push({
-        name: 'user',
-        params: { id: this.user.id }
-      })
-      this.user = {...this.profile}
-    }
+        console.log(data)
+        
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+
+        $("#editProfileModal").modal('hide')
+
+        Toast.fire({
+          icon: 'success',
+          title: '資料更新成功'
+        })
+
+
+        this.$router.push({ name: 'user', params: { id: this.id } })
+      } catch (error) {
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新個人資料，請稍後再試'
+        })
+      }
+    },
+    async addFollowing (userId) {
+      console.log(userId)
+      try {
+        const { data } = await usersAPI.addFollowing({ userId })
+        
+        if(data.status === 'error') {
+          throw new Error(data.message)
+        }
+
+        this.isFollowing = true
+
+      } catch (error) {
+        console.error(error.message)
+        Toast.fire({
+          icon: 'error',
+          title: '無法跟隨使用者，請稍後再試'
+        })
+      }
+    },
+    async deleteFollowing (userId) {
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId })
+        
+        if(data.status === 'error') {
+          throw new Error(data.message)
+        }
+
+        this.isFollowing = false
+
+      } catch (error) {
+        console.error(error.message)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消跟隨，請稍後再試'
+        })
+      }
+    },
+    // handleEditModalShow (mode) {
+    //   if (mode === 'open') {
+    //     this.$router.push({ name: 'user-edit' })
+    //     this.isShowModal = true
+    //   } else if (mode === 'close') {
+    //     this.profile = {...this.user}
+    //     this.isShowModal = false
+    //     this.$router.push({
+    //       name: 'user',
+    //       params: { id: this.user.id }
+    //     })
+    //   }
+    // }
   }
 }
 </script>
+
 
 <style>
 

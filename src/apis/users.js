@@ -12,6 +12,11 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+  update ({ userId, formData }) {
+    return apiHelper.put(`/users/${userId}`, formData, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
   getFollowings ({ userId }) {
     return apiHelper.get(`/users/${userId}/followings`, {
       headers: { Authorization: `Bearer ${getToken()}` }
