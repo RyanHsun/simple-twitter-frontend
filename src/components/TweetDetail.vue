@@ -36,7 +36,8 @@
         class="likes" 
         :class="{ 'is-like': tweet.isLike }"
         type="button" 
-        @click.stop.prevent="toggleLike(tweet)"
+        :disabled="isProcessing"
+        @click.stop.prevent="deleteLike(tweet.id)"
       >
         <img src="~@/assets/img/icon_like-fill.svg" alt="">
       </button>
@@ -44,7 +45,8 @@
         v-else
         class="likes" 
         type="button" 
-        @click.stop.prevent="toggleLike(tweet)"
+        :disabled="isProcessing"
+        @click.stop.prevent="addLike(tweet.id)"
       >
         <img src="~@/assets/img/icon_like.svg" alt="">
       </button>
@@ -55,11 +57,13 @@
 <script>
 import { exactDateFilter } from "./../utils/mixins"
 import ReplyTweetModal from './../components/ReplyTweetModal.vue'
+import tweetsAPI from './../apis/tweets'
+import { Toast } from './../utils/helpers'
 
 export default {
   mixins: [exactDateFilter],
   props: {
-    tweet: {
+    initialTweet: {
       type: Object,
       required: true
     }
@@ -67,18 +71,67 @@ export default {
   components: {
     ReplyTweetModal
   },
-  methods: {
-    toggleLike (tweet) {
-      if (tweet.isLike) {
-        tweet.isLike = false
-        tweet.likeNum -= 1
-        // 串接 API 更新推文資料
-      } else {
-        tweet.isLike = true
-        tweet.likeNum += 1
-        // 串接 API 更新推文資料
+  data () {
+    return {
+      tweet: this.initialTweet,
+      isProcessing: false
+    }
+  },
+  watch: {
+    initialTweet (newValue) {
+      this.tweet = {
+        ...this.tweet,
+        ...newValue
       }
     }
+  },
+  methods: {
+    async addLike(tweetId) {
+      try {
+        this.isProcessing = true
+        const { data } = await tweetsAPI.addLike({ tweetId })
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.tweet.isLike = true
+        this.tweet.likeNum = this.tweet.likeNum + 1
+        this.isProcessing = false
+        Toast.fire({
+          icon: "success",
+          title: "操作成功！",
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法按讚，請稍後再試',
+        })
+        this.isProcessing = false
+      }
+    },
+    async deleteLike(tweetId) {
+      try {
+        this.isProcessing = true
+        const { data } = await tweetsAPI.deleteLike({ tweetId })
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.tweet.isLike = false
+        this.tweet.likeNum = this.tweet.likeNum - 1
+        this.isProcessing = false
+        Toast.fire({
+          icon: "success",
+          title: "操作成功！",
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消按讚，請稍後再試',
+        })
+        this.isProcessing = false
+      }
+    },
   }
 }
 </script>

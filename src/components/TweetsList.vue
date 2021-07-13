@@ -106,7 +106,7 @@ export default {
   //   this.tweets = this.initinalTweets
   // },
   methods: {
-
+    
     async addLike(tweetId) {
       try {
         this.isProcessing = true

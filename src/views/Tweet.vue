@@ -12,7 +12,7 @@
           </div>
         </h2>
         <TweetDetail 
-          :tweet="tweet"
+          :initialTweet="tweet"
         />
         <TweetRepliedList 
           :tweet="tweet"
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Sidebar from './../components/Sidebar.vue'
 import UsersTop from './../components/UsersTop.vue'
 import TweetDetail from './../components/TweetDetail.vue'
@@ -32,6 +33,7 @@ import TweetRepliedList from './../components/TweetRepliedList.vue'
 // import ReplyTweetModal from './../components/ReplyTweetModal.vue'
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
+
 
 export default {
   name: 'tweet',
@@ -55,6 +57,9 @@ export default {
       },
       tweetReplies: []
     }
+  },
+  computed: {
+    ...mapState(['currentUser'])
   },
   created () {
     const { id: tweetId } = this.$route.params
