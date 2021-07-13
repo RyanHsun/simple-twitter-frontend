@@ -20,7 +20,7 @@
             </div>
           </div>
         </div>
-        <UserFollowingsCard />
+        <UserFollowingsCard :initial-user="user"/>
       </div>
     </section>
     <UsersTop />

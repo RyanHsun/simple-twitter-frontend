@@ -5,13 +5,16 @@
         <img :src="user.following.avatar" alt="" />
       </a>
       <div class="followships-content">
-        <a class="followships-info" href="">
+        <router-link
+          class="followships-info"
+          :to="{ name: 'user', params: { id: user.followingId } }"
+        >
           <span class="name">{{ user.following.name }}</span>
           <span class="account">@{{ user.following.account }}</span>
-        </a>
+        </router-link>
         <button
           v-if="user.following.isFollowing"
-          @click.stop.prevent="toggleFollowing(user)"
+          @click.stop.prevent="deleteFollowing(user.followingId)"
           class="btn toggle-follow is-following"
         >
           正在跟隨
@@ -36,12 +39,19 @@ import usersAPI from "../apis/users";
 import { Toast } from "./../utils/helpers";
 
 export default {
+  props: {
+    initialUser: {
+      type: Object,
+      require: true,
+    },
+  },
   data() {
     return {
       users: [],
+      user: this.initialUser,
     };
   },
-    created() {
+  created() {
     const { id: userId } = this.$route.params;
     this.fetchusers(userId);
   },
@@ -49,23 +59,49 @@ export default {
   methods: {
     async fetchusers(userId) {
       try {
-        const response = await usersAPI.getFollowings({ userId })
-        this.users = {...response.data};
+        const response = await usersAPI.getFollowings({ userId });
+        this.users = { ...response.data };
       } catch (error) {
         Toast.fire({
           icon: "warning",
           title: "無法取得正在跟隨清單，請稍後再試",
-        })
+        });
       }
     },
-    toggleFollowing(user) {
-      console.log("原本的user.following.isFollowing", user.following.isFollowing);
-      if (user.following.isFollowing) {
-        user.following.isFollowing = false;
-      } else {
-        user.following.isFollowing = true;
+
+    async deleteFollowing(userId) {
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        Toast.fire({
+          icon: "success",
+          title: "取消追蹤成功，請重新整理",
+        });
+        // 需要用一個方法，不用重新整理就可以更新清單
+
+        // this.fetchusers(userId)
+
+
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法取消追蹤，請稍後再試",
+        });
+        console.log("error", error);
       }
     },
+
+    // toggleFollowing(user) {
+    //   console.log("原本的user.following.isFollowing", user.following.isFollowing);
+    //   if (user.following.isFollowing) {
+    //     user.following.isFollowing = false;
+    //   } else {
+    //     user.following.isFollowing = true;
+    //   }
+    // },
   },
 };
 </script>
@@ -94,6 +130,7 @@ export default {
   width: calc(100% - 60px);
 }
 .followships-info {
+  text-decoration: none;
   flex-grow: 1;
 }
 .followships-info span {
@@ -103,7 +140,9 @@ export default {
   width: 100%;
   margin-top: 10px;
 }
-
+.name:hover {
+  color: #ff6600;
+}
 .is-following {
   color: #fff;
   background-color: #ff6600;
