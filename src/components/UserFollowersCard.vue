@@ -1,69 +1,99 @@
 <template>
-  <ul class="followships-list">
-    <li v-for="user in users" :key="user.id" class="followships-item">
+  <div class="followships-list">
+    <li class="followships-item">
       <a class="followships-avatar avatar">
-        <img :src="user.follower.avatar" alt="" />
+        <img :src="followerUser.follower.avatar" alt="" />
       </a>
       <div class="followships-content">
-        <a class="followships-info" href="">
-          <span class="name">{{ user.follower.name }}</span>
-          <span class="account">@{{ user.follower.account }}</span>
-        </a>
+        <router-link
+          class="followships-info"
+          :to="{ name: 'user', params: { id: followerUser.followingId } }"
+        >
+          <span class="name">{{ followerUser.follower.name }}</span>
+          <span class="account">@{{ followerUser.follower.account }}</span>
+        </router-link>
         <button
-          v-if="user.follower.isFollowing"
-          @click.stop.prevent="toggleFollowing(user)"
+          v-if="followerUser.follower.isFollowing"
+          @click.stop.prevent="deleteFollowing(followerUser.followerId)"
           class="btn toggle-follow is-following"
+          :disabled="isProcessing"
         >
           正在跟隨
         </button>
         <button
           v-else
-          @click.stop.prevent="toggleFollowing(user)"
+          @click.stop.prevent="addFollowing(user.followerId)"
           class="btn toggle-follow"
         >
           跟隨
         </button>
         <div class="followships-intro">
-          {{ user.follower.introduction }}
+          {{ followerUser.follower.introduction }}
         </div>
       </div>
     </li>
-  </ul>
+  </div>
 </template>
 
 <script>
 import usersAPI from "../apis/users";
 import { Toast } from "./../utils/helpers";
 
-
 export default {
+  props: {
+    initinalFollowerUser: {
+      type: Object,
+      require: true,
+    },
+  },
   data() {
     return {
-      users: [],
-    }
-  },
-  created() {
-    const { id: userId } = this.$route.params;
-    this.fetchusers(userId)
-  },
+      followerUser: this.initinalFollowerUser,
+      isProcessing: false
+    };
+  }, 
   methods: {
-    async fetchusers(userId) {
+    async deleteFollowing(userId) {
       try {
-        const response = await usersAPI.getFollowers ({ userId })
-        this.users = { ...response.data };
-      } catch (error) {
+        this.isProcessing = true
+        const { data } = await usersAPI.deleteFollowing({ userId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        
+        this.followerUser.follower.isFollowing = false
+
         Toast.fire({
-          icon: "warning",
-          title: "無法取得跟隨者清單，請稍後再試"
-        })
+          icon: "success",
+          title: "取消追蹤成功",
+        });
+
+      } catch (error) {
+        this.isProcessing = false
+        Toast.fire({
+          icon: "error",
+          title: "無法取消追蹤，請稍後再試",
+        });
+        console.log("error", error);
       }
     },
-    toggleFollowing(user) {
-      console.log("原本的user.follower.isFollowing", user.follower.isFollowing)
-      if (user.follower.isFollowing) {
-        user.follower.isFollowing = false;
-      } else {
-        user.follower.isFollowing = true;
+
+    async addFollowing(userId) {
+      try {
+        const { data } = await usersAPI.addFollowing({ id: userId});
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.users.follower.isFollowed = true
+
+      } catch (error) {
+        // console.log('error', error)
+        Toast.fire({
+          icon: "error",
+          title: "無法追蹤，請稍後再試",
+        });
+        console.log("error", error);
       }
     },
   },
@@ -72,7 +102,7 @@ export default {
 
 <style scoped>
 .followships-list {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
@@ -95,9 +125,13 @@ export default {
 }
 .followships-info {
   flex-grow: 1;
+  text-decoration: none;
 }
 .followships-info span {
   display: block;
+}
+.name:hover {
+  color: #ff6600;
 }
 .followships-intro {
   width: 100%;

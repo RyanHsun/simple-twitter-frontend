@@ -4,23 +4,31 @@
     <section class="user-followships">
       <div class="user-wrap">
         <div class="headbar-wrap">
-          <Headbar :initial-user="user"/>
+          <Headbar :initial-user="user" />
           <div class="user-followships-tab">
             <div class="user-followships-followers">
-              <router-link  class="nav-item"
-                :to="{ name: 'user-followers', params: {id: user.id}}"
+              <router-link
+                class="nav-item"
+                :to="{ name: 'user-followers', params: { id: user.id } }"
                 >跟隨者</router-link
               >
             </div>
             <div class="user-followships-followings active">
-              <router-link class="nav-item"
-                :to="{ name: 'user-followings', params: {id: user.id}}"
+              <router-link
+                class="nav-item"
+                :to="{ name: 'user-followings', params: { id: user.id } }"
                 >正在跟隨</router-link
               >
             </div>
           </div>
         </div>
-        <UserFollowingsCard />
+        <!-- <UserFollowingsCard :initial-user="user"/> -->
+        
+        <UserFollowingsCard
+          v-for="followingUser in followingUsers"
+          :key="followingUser.id"
+          :initinalFollowingUser="followingUser"
+        />
       </div>
     </section>
     <UsersTop />
@@ -59,17 +67,25 @@ export default {
         lastLoginAt: -1,
         isFollowing: false,
       },
+      followingUsers: []
+      
     };
   },
-    created() {
-    const { id: userId } = this.$route.params
-
+  created() {
+    const { id: userId } = this.$route.params;
     this.fetchUser(userId)
+    this.fetchFollowingusers(userId);
+  },
+    beforeRouteUpdate (to, from, next) {
+    const { id: userId } = to.params
+    this.fetchUser(userId)
+    this.fetchFollowingusers(userId)
+    next()
   },
   methods: {
     async fetchUser(userId) {
       try {
-        const { data } = await usersAPI.get({ userId });
+        const { data } = await usersAPI.get({ userId })
         const {
           id,
           account,
@@ -84,7 +100,8 @@ export default {
           followerNum,
           lastLoginAt,
           isFollowing,
-        } = data;
+        } = data 
+
         this.user = {
           id,
           account,
@@ -99,13 +116,24 @@ export default {
           followerNum,
           lastLoginAt,
           isFollowing,
-        };
-        this.isLoading = false;
+        }
+
       } catch (error) {
         console.log(error);
         Toast.fire({
           icon: "error",
           title: "無法取得使用者資料，請稍後再試",
+        });
+      }
+    },
+    async fetchFollowingusers(userId) {
+      try {
+        const response = await usersAPI.getFollowings({ userId });
+        this.followingUsers = { ...response.data };
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "無法取得正在跟隨清單，請稍後再試",
         });
       }
     },
