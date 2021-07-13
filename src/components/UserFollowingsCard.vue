@@ -1,21 +1,22 @@
 <template>
-  <ul class="followships-list">
-    <li v-for="user in users" :key="user.id" class="followships-item">
+  <div class="followships-list">
+    <li class="followships-item">
       <a class="followships-avatar avatar">
-        <img :src="user.following.avatar" alt="" />
+        <img :src="followingUser.following.avatar" alt="" />
       </a>
       <div class="followships-content">
         <router-link
           class="followships-info"
-          :to="{ name: 'user', params: { id: user.followingId } }"
+          :to="{ name: 'user', params: { id: followingUser.followingId } }"
         >
-          <span class="name">{{ user.following.name }}</span>
-          <span class="account">@{{ user.following.account }}</span>
+          <span class="name">{{ followingUser.following.name }}</span>
+          <span class="account">@{{ followingUser.following.account }}</span>
         </router-link>
         <button
-          v-if="user.following.isFollowing"
-          @click.stop.prevent="deleteFollowing(user.followingId)"
-          class="btn toggle-follow is-following"
+          v-if="followingUser.following.isFollowing"
+          @click.stop.prevent="deleteFollowing(followingUser.followingId)"
+          class="btn toggle-follow is-following" 
+          :disabled="isProcessing"
         >
           正在跟隨
         </button>
@@ -27,11 +28,11 @@
           跟隨
         </button>
         <div class="followships-intro">
-          {{ user.following.introduction }}
+          {{ followingUser.following.introduction }}
         </div>
       </div>
     </li>
-  </ul>
+  </div>
 </template>
 
 <script>
@@ -40,52 +41,36 @@ import { Toast } from "./../utils/helpers";
 
 export default {
   props: {
-    initialUser: {
+    initinalFollowingUser: {
       type: Object,
       require: true,
     },
   },
   data() {
     return {
-      users: [],
-      user: this.initialUser,
+      followingUser: this.initinalFollowingUser,
+      isProcessing: false
     };
   },
-  created() {
-    const { id: userId } = this.$route.params;
-    this.fetchusers(userId);
-  },
-
   methods: {
-    async fetchusers(userId) {
-      try {
-        const response = await usersAPI.getFollowings({ userId });
-        this.users = { ...response.data };
-      } catch (error) {
-        Toast.fire({
-          icon: "warning",
-          title: "無法取得正在跟隨清單，請稍後再試",
-        });
-      }
-    },
-
     async deleteFollowing(userId) {
       try {
+        this.isProcessing = true
         const { data } = await usersAPI.deleteFollowing({ userId });
 
         if (data.status !== "success") {
           throw new Error(data.message);
         }
+        
+        this.followingUser.following.isFollowing = false
+        
         Toast.fire({
           icon: "success",
-          title: "取消追蹤成功，請重新整理",
+          title: "取消追蹤成功",
         });
-        // 需要用一個方法，不用重新整理就可以更新清單
-
-        // this.fetchusers(userId)
-
-
+      
       } catch (error) {
+        this.isProcessing = false
         Toast.fire({
           icon: "error",
           title: "無法取消追蹤，請稍後再試",
@@ -93,22 +78,13 @@ export default {
         console.log("error", error);
       }
     },
-
-    // toggleFollowing(user) {
-    //   console.log("原本的user.following.isFollowing", user.following.isFollowing);
-    //   if (user.following.isFollowing) {
-    //     user.following.isFollowing = false;
-    //   } else {
-    //     user.following.isFollowing = true;
-    //   }
-    // },
   },
 };
 </script>
 
 <style scoped>
 .followships-list {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;

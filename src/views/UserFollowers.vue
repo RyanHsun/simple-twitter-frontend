@@ -4,21 +4,31 @@
     <section class="user-followships">
       <div class="user-wrap">
         <div class="headbar-wrap">
-          <Headbar :initial-user="user"/>
+          <Headbar :initial-user="user" />
           <div class="user-followships-tab">
             <div class="user-followships-followers active">
-              <router-link class="nav-item" :to="{ name: 'user-followers', params: {id: user.id}}"
+              <router-link
+                class="nav-item"
+                :to="{ name: 'user-followers', params: { id: user.id } }"
                 >跟隨者</router-link
               >
             </div>
             <div class="user-followships-followings">
-              <router-link class="nav-item" :to="{ name: 'user-followings', params: {id: user.id}}"
+              <router-link
+                class="nav-item"
+                :to="{ name: 'user-followings', params: { id: user.id } }"
                 >正在跟隨</router-link
               >
             </div>
           </div>
         </div>
-        <UserFollowersCard :initial-user="user"/>
+        <!-- <UserFollowersCard :initial-user="user"/> -->
+
+        <UserFollowersCard
+          v-for="followerUser in followerUsers"
+          :key="followerUser.id"
+          :initinalFollowerUser="followerUser"
+        />
       </div>
     </section>
     <UsersTop />
@@ -57,12 +67,13 @@ export default {
         lastLoginAt: -1,
         isFollowing: false,
       },
+      followerUsers: []
     };
   },
   created() {
-    const { id: userId } = this.$route.params
-
-    this.fetchUser(userId)
+    const { id: userId } = this.$route.params;
+    this.fetchUser(userId);
+    this.fetchFollowerusers(userId);
   },
   methods: {
     async fetchUser(userId) {
@@ -104,6 +115,17 @@ export default {
         Toast.fire({
           icon: "error",
           title: "無法取得使用者資料，請稍後再試",
+        });
+      }
+    },
+    async fetchFollowerusers(userId) {
+      try {
+        const response = await usersAPI.getFollowers({ userId });
+        this.followerUsers = { ...response.data };
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "無法取得跟隨清單，請稍後再試",
         });
       }
     },
