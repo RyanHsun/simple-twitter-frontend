@@ -8,7 +8,7 @@
     <div class="tweet-wrap">
       <div class="replied-tweet">
         <router-link class="avatar" :to="{ name: 'user', params: { id: replied.RepliedTweet.Author.id } }">
-          <img :src="replied.RepliedTweet.Author.avatar" alt="">
+          <img :src="replied.RepliedTweet.Author.avatar | emptyImage" alt="">
         </router-link>
         <div class="tweet-info">
           <div class="user-info">
@@ -56,7 +56,7 @@
       </div>
       <div class="tweet-replied">
         <router-link class="avatar" :to="{ name: 'user', params: { id: user.id } }">
-          <img :src="user.avatar" alt="">
+          <img :src="user.avatar | emptyImage" alt="">
         </router-link>
         <div class="tweet-info">
           <div class="user-info">
@@ -89,7 +89,7 @@
           <div class="modal-body">
             <div class="modal-tweet">
               <a href="" class="avatar">
-                <img :src="replied.RepliedTweet.Author.avatar" alt="">
+                <img :src="replied.RepliedTweet.Author.avatar | emptyImage" alt="">
               </a>
               <div class="modal-tweet-info">
                 <div class="user-info">
@@ -121,10 +121,11 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from "./../utils/mixins"
 
 export default {
-  mixins: [fromNowFilter],
+  mixins: [fromNowFilter,emptyImageFilter],
   props: {
     user: {
       type: Object,

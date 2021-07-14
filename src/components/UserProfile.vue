@@ -2,12 +2,11 @@
   <div class="user-profile">
     <div class="user-profile-head">
       <div class="user-cover">
-        <img :src="user.cover" alt="" />
+        <img :src="user.cover | emptyImage" alt="" />
       </div>
       <p class="user-avatar avatar">
-        <img :src="user.avatar" alt="" />
+        <img :src="user.avatar | emptyImage" alt="" />
       </p>
-
       <!-- <template v-if="isCurrentUser">
         <EditProfileModal
           :user="user"
@@ -63,13 +62,16 @@
 </template>
 
 <script>
+
 import { mapState } from 'vuex'
 import EditProfileModal from './EditProfileModal.vue'
 import usersAPI from './../apis/users'
 import { Toast } from './../utils/helpers'
+import { emptyImageFilter } from '../utils/mixins'
 import $ from 'jquery'
 
 export default {
+  mixins: [emptyImageFilter],
   props: {
     isCurrentUser: {
       type: Boolean,
@@ -278,7 +280,7 @@ export default {
         })
 
 
-        this.$router.push({ name: 'user', params: { id: this.id } })
+        // this.$router.push({ name: 'user', params: { id: this.id } })
       } catch (error) {
         this.isProcessing = false
         Toast.fire({

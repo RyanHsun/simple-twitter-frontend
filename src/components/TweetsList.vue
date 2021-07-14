@@ -5,7 +5,7 @@
         :to="{ name: 'user', params: { id: tweet.Author.id } }"
         @click.stop="linkToUserProfile"
       >
-        <img :src="tweet.Author.avatar" alt="">
+        <img :src="tweet.Author.avatar | emptyImage" alt="">
       </router-link>
       <div class="tweet-info">
         <div class="user-info">
@@ -78,6 +78,7 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from './../utils/mixins'
 import ReplyTweetModal from './../components/ReplyTweetModal.vue'
 import tweetsAPI from './../apis/tweets'
@@ -88,7 +89,7 @@ export default {
   components: {
     ReplyTweetModal
   },
-  mixins: [fromNowFilter],
+  mixins: [fromNowFilter,emptyImageFilter],
   props: {
     initinalTweet: {
       type: Object,
