@@ -8,7 +8,7 @@
             class="avatar"
             :to="{ name: 'user', params: { id: user.id } }"
           >
-            <img :src="user.avatar" alt="" />
+            <img :src="user.avatar | emptyImage" alt="" />
           </router-link>
           <router-link
             class="info"
@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 const dummyUsersTop = {
   Users: [
     {
@@ -59,6 +60,7 @@ const dummyUsersTop = {
 };
 
 export default {
+  mixins: [emptyImageFilter],
   data() {
     return {
       users: [],

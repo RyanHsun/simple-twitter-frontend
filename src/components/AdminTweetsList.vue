@@ -7,7 +7,7 @@
       class="tweet"
     >
       <a href="" class="avatar">
-        <img :src="tweet.Author.avatar" alt="" />
+        <img :src="tweet.Author.avatar | emptyImage" alt="" />
       </a>
       <div class="tweet-info">
         <div class="user-info">
@@ -30,12 +30,13 @@
   </ul>
 </template>
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from "./../utils/mixins";
 import adminAPI from "../apis/admin";
 import { Toast } from "./../utils/helpers";
 
 export default {
-  mixins: [fromNowFilter],
+  mixins: [fromNowFilter,emptyImageFilter],
   data() {
     return {
       tweets: {},

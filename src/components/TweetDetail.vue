@@ -2,7 +2,7 @@
   <div class="tweet-detail">
     <div class="user">
       <router-link class="avatar" :to="{ name: 'user', params: { id: tweet.Author.id } }">
-        <img :src="tweet.Author.avatar" alt="">
+        <img :src="tweet.Author.avatar | emptyImage" alt="">
       </router-link>
       <div class="info">
         <router-link class="name" :to="{ name: 'user', params: { id: tweet.Author.id } }">
@@ -55,13 +55,14 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 import { exactDateFilter } from "./../utils/mixins"
 import ReplyTweetModal from './../components/ReplyTweetModal.vue'
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
 
 export default {
-  mixins: [exactDateFilter],
+  mixins: [exactDateFilter,emptyImageFilter],
   props: {
     initialTweet: {
       type: Object,

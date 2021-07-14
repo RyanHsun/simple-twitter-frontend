@@ -4,10 +4,10 @@
     class="admin-user">
       <div class="user-profile-head">
         <div class="user-cover">
-          <img :src="adminUser.cover" alt="" />
+          <img :src="adminUser.cover | emptyImage" alt="" />
         </div>
         <a class="user-avatar avatar">
-          <img :src="adminUser.avatar" alt="" />
+          <img :src="adminUser.avatar | emptyImage" alt="" />
         </a>
       </div>
       <a href="" class="user-info">
@@ -36,8 +36,10 @@
 <script>
 import adminAPI from "../apis/admin";
 import { Toast } from "./../utils/helpers";
+import { emptyImageFilter } from "../utils/mixins";
 
 export default {
+  mixins: [emptyImageFilter],
   data() {
     return {
       adminUsers: {},

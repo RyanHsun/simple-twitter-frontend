@@ -2,10 +2,10 @@
   <div class="user-profile">
     <div class="user-profile-head">
       <div class="user-cover">
-        <img :src="user.cover" alt="" />
+        <img :src="user.cover | emptyImage" alt="" />
       </div>
       <p class="user-avatar avatar">
-        <img :src="user.avatar" alt="" />
+        <img :src="user.avatar | emptyImage" alt="" />
       </p>
 
       <!-- <EditProfileModal
@@ -62,7 +62,7 @@
                     accept="image/*" 
                     class="form-control-file"
                     @change="handleFileChange">
-                  <img :src="profile.cover" alt="">
+                  <img :src="profile.cover | emptyImage" alt="">
                 </div>
                 <div class="user-avatar avatar">
                   <label for="upload-image-avatar" class="upload-image">
@@ -75,7 +75,7 @@
                     accept="image/*" 
                     class="form-control-file"
                     @change="handleFileChange">
-                  <img :src="profile.avatar" alt="">
+                  <img :src="profile.avatar | emptyImage" alt="">
                 </div>
                 <div class="user-name">
                   <label for="">名稱</label>
@@ -128,10 +128,12 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 // import EditProfileModal from './../components/EditProfileModal.vue'
 import $ from 'jquery'
 
 export default {
+  mixins: [emptyImageFilter],
   props: {
     user: {
       type: Object,

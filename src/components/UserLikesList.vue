@@ -6,7 +6,7 @@
     class="tweet"
   >
     <router-link class="avatar" :to="{ name: 'user', params: { id: like.LikedTweet.Author.id } }">
-      <img :src="like.LikedTweet.Author.avatar" alt="">
+      <img :src="like.LikedTweet.Author.avatar | emptyImage" alt="">
     </router-link>
     <div class="tweet-info">
       <div class="user-info">
@@ -70,7 +70,7 @@
           <div class="modal-body">
             <div class="modal-tweet">
               <a href="" class="avatar">
-                <img :src="like.LikedTweet.Author.avatar" alt="">
+                <img :src="like.LikedTweet.Author.avatar | emptyImage" alt="">
               </a>
               <div class="modal-tweet-info">
                 <div class="user-info">
@@ -102,6 +102,7 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from "./../utils/mixins"
 // import ReplyTweetModal from './../components/ReplyTweetModal.vue'
 
@@ -109,7 +110,7 @@ export default {
   components: {
     // ReplyTweetModal
   },
-  mixins: [fromNowFilter],
+  mixins: [fromNowFilter,emptyImageFilter],
   props: {
     likes: {
       type: Array,

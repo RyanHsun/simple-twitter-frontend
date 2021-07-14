@@ -79,10 +79,12 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 import { mapState } from 'vuex'
 import $ from 'jquery'
 
 export default {
+  mixins: [emptyImageFilter],
   data() {
     return {
       newTweet: '',

@@ -48,7 +48,7 @@
                   accept="image/*" 
                   class="form-control-file"
                   @change="handleFileChange">
-                <img :src="profile.cover" alt="">
+                <img :src="profile.cover | emptyImage" alt="">
               </div>
               <div class="user-avatar avatar">
                 <label for="upload-image-avatar" class="upload-image">
@@ -61,7 +61,7 @@
                   accept="image/*" 
                   class="form-control-file"
                   @change="handleFileChange">
-                <img :src="profile.avatar" alt="">
+                <img :src="profile.avatar | emptyImage" alt="">
               </div>
               <div class="user-name">
                 <label for="">名稱</label>
@@ -93,7 +93,9 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 export default {
+  mixins: [emptyImageFilter],
   props: {
     user: {
       type: Object,

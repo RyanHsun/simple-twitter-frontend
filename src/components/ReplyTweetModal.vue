@@ -10,7 +10,7 @@
         <div class="modal-body">
           <div class="tweet">
             <a href="" class="avatar">
-              <img :src="tweet.Author.avatar" alt="">
+              <img :src="tweet.Author.avatar | emptyImage" alt="">
             </a>
             <div class="tweet-info">
               <div class="user-info">
@@ -39,10 +39,11 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from './../utils/mixins'
 
 export default {
-  mixins: [fromNowFilter],
+  mixins: [fromNowFilter,emptyImageFilter],
   props: {
     tweet: {
       type: Object,
