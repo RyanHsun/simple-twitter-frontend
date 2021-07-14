@@ -79,7 +79,7 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-block mb-3" type="submit">
+      <button class="btn btn-lg btn-block mb-3" type="submit" :disabled="isProcessing">
         註冊
       </button>
 
@@ -94,6 +94,9 @@
 
 
 <script>
+import authorizationAPI from './../apis/authorization'
+import { Toast } from './../utils/helpers'
+
 export default {
   data () {
     return {
@@ -101,21 +104,78 @@ export default {
       name: '',
       email: '',
       password: '',
-      checkPassword: ''
+      checkPassword: '',
+      isProcessing: false
     }
   },
   methods: {
-    handleSubmit () {
-      const data = JSON.stringify({
+    async handleSubmit () {
+      try {
+          if (!this.account || !this.name || !this.email || !this.password || !this.checkPassword) {
+          Toast.fire({
+            icon: "warning",
+            title: "請填寫完整的資料",
+          });
+          return;
+        }
+        if (this.password !== this.checkPassword) {
+          this.password = "";
+          this.checkPassword = "";
+          Toast.fire({
+            icon: "warning",
+            title: "兩次密碼不一樣，請確認",
+          });
+          return;
+        }
+        // 無法抓取messsage，會直接跳下面的error
+        // if (data.message === 'Account was already used.') {
+        //   this.account = "",
+        //   Toast.fire({
+        //     icon: "warning",
+        //     title: "帳戶已被使用",
+        //   });
+        //   return;
+        // }
+        //   if (data.message === 'Email was already used.') {
+        //   this.email = "",
+        //   Toast.fire({
+        //     icon: "warning",
+        //     title: "信箱已被使用",
+        //   });
+        //   return;
+        // }
+        this.isProcessing = true
+        const { data } = await authorizationAPI.regist({
         account: this.account,
         name: this.name,
         email: this.email,
         password: this.password,
         checkPassword: this.checkPassword,
-      })
+        })
 
-      // TODO: 向後端驗證使用者登入資訊是否合法
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        Toast.fire({
+          icon: "success",
+          title: "註冊成功",
+        });
+
+
+        this.$router.push('/login')
+
       console.log('data', data)
+      } catch (error) {
+        this.isProcessing = false
+        this.password = ''
+        this.checkPassword = ''
+
+        Toast.fire({
+          icon: 'warning',
+          title: '無法註冊，請稍後再試'
+        })
+        console.error(error.message)
+      }
     }
   }
 }
