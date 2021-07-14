@@ -2,7 +2,7 @@
   <div class="followships-list">
     <li class="followships-item">
       <a class="followships-avatar avatar">
-        <img :src="followerUser.follower.avatar" alt="" />
+        <img :src="followerUser.follower.avatar | emptyImage" alt="" />
       </a>
       <div class="followships-content">
         <router-link
@@ -20,10 +20,11 @@
         >
           正在跟隨
         </button>
-        <button
+          <button
           v-else
-          @click.stop.prevent="addFollowing(user.followerId)"
+          @click.stop.prevent="addFollowing"
           class="btn toggle-follow"
+          :disabled="isProcessing"
         >
           跟隨
         </button>
@@ -36,10 +37,12 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 import usersAPI from "../apis/users";
 import { Toast } from "./../utils/helpers";
 
 export default {
+  mixins: [emptyImageFilter],
   props: {
     initinalFollowerUser: {
       type: Object,
@@ -57,18 +60,19 @@ export default {
       try {
         this.isProcessing = true
         const { data } = await usersAPI.deleteFollowing({ userId });
+        console.log('data',data.response)
 
         if (data.status !== "success") {
           throw new Error(data.message);
         }
         
         this.followerUser.follower.isFollowing = false
-
+        console.log('data',data.response)
         Toast.fire({
           icon: "success",
           title: "取消追蹤成功",
         });
-
+        this.isProcessing = false
       } catch (error) {
         this.isProcessing = false
         Toast.fire({
@@ -79,21 +83,26 @@ export default {
       }
     },
 
-    async addFollowing(userId) {
+    async addFollowing() {
       try {
-        const { data } = await usersAPI.addFollowing({ id: userId});
+        this.isProcessing = true
+        const { data } = await usersAPI.addFollowing({ id: this.followerUser.followerId });
+
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-        this.users.follower.isFollowed = true
-
+        this.followerUser.follower.isFollowing = true
+        Toast.fire({
+          icon: "success",
+          title: "追蹤成功",
+        });
+        this.isProcessing = false
       } catch (error) {
-        // console.log('error', error)
+        this.isProcessing = false
         Toast.fire({
           icon: "error",
           title: "無法追蹤，請稍後再試",
         });
-        console.log("error", error);
       }
     },
   },
