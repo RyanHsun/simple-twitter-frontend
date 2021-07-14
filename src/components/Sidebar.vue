@@ -13,13 +13,19 @@
           </div>
           <div>首頁</div>
         </router-link>
-        <router-link class="nav-item" to="/users/:id">
+        <router-link 
+          class="nav-item" 
+          :to="{ name: 'user', params: { id: currentUser.id } }"
+        >
           <div class="icon user">
             <img src="~@/assets/img/icon_user.svg" alt="" />
           </div>
           <div>個人資料</div>
         </router-link>
-        <router-link class="nav-item" to="/users/:id/setting">
+        <router-link 
+          class="nav-item" 
+          :to="{ name: 'account-setting', params: { id: currentUser.id } }"
+        >
           <div class="icon cog">
             <img src="~@/assets/img/icon_cog.svg" alt="" />
           </div>
