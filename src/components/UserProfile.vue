@@ -278,8 +278,7 @@ export default {
           icon: 'success',
           title: '資料更新成功'
         })
-
-
+        this.isProcessing = false
         // this.$router.push({ name: 'user', params: { id: this.id } })
       } catch (error) {
         this.isProcessing = false
