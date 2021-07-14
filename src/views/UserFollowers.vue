@@ -109,7 +109,6 @@ export default {
           lastLoginAt,
           isFollowing,
         };
-        this.isLoading = false;
       } catch (error) {
         console.log(error);
         Toast.fire({
