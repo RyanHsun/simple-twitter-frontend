@@ -39,66 +39,114 @@
 </template>
 
 <script>
-import { emptyImageFilter } from "../utils/mixins";
-const dummyUsersTop = {
-  Users: [
-    {
-      id: 3,
-      account: "user2",
-      name: "User2",
-      avatar: "https://randomuser.me/api/portraits/men/88.jpg",
-      isFollowing: true,
-    },
-    {
-      id: 2,
-      account: "user1",
-      name: "User1",
-      avatar: "https://randomuser.me/api/portraits/men/78.jpg",
-      isFollowing: false,
-    },
-  ],
-};
+import { mapState } from 'vuex'
+import { emptyImageFilter } from "../utils/mixins"
+import usersAPI from './../apis/users'
+import { Toast } from './../utils/helpers'
 
 export default {
   mixins: [emptyImageFilter],
+  props: {
+    isCurrentUser: {
+      type: Boolean,
+      required: true
+    }
+  },
   data() {
     return {
-      users: [],
-    };
+      users: []
+    }
+  },
+  computed: {
+    ...mapState(['currentUser'])
   },
   created() {
-    this.fetchusers();
+    this.fetchTopUsers()
   },
   methods: {
-    fetchusers() {
-      this.users = [...dummyUsersTop.Users];
-    },
-    addFollowing(userId) {
-      this.users = this.users.map((user) => {
-        if (user.id !== userId) {
-          return user;
-        } else {
-          return {
-            ...user,
-            isFollowing: true,
-          };
+    async fetchTopUsers() {
+      try {
+        const { data } = await usersAPI.getTopUsers()
+
+        this.users = [...data]
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
         }
-      });
+
+      } catch (error) {
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新個人資料，請稍後再試'
+        })
+      }
     },
-    deleteFollowing(userId) {
-      this.users = this.users.map((user) => {
-        if (user.id !== userId) {
-          return user;
-        } else {
-          return {
-            ...user,
-            isFollowing: false,
-          };
+    async addFollowing (userId) {
+      try {
+        const { data } = await usersAPI.addFollowing({ id: userId })
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
         }
-      });
+
+        this.users = this.users.map((user) => {
+          if (user.id !== userId) {
+            return user
+          } else {
+            return {
+              ...user,
+              isFollowing: true,
+            }
+          }
+        })
+        
+        Toast.fire({
+          icon: 'success',
+          title: '追隨成功'
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增追隨，請稍後再試',
+        })
+      }
     },
-  },
-};
+    async deleteFollowing (userId) {
+      console.log(userId)
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId })
+        
+        if(data.status === 'error') {
+          throw new Error(data.message)
+        }
+
+        this.users = this.users.map((user) => {
+          if (user.id !== userId) {
+            return user
+          } else {
+            return {
+              ...user,
+              isFollowing: false,
+            }
+          }
+        })
+
+        Toast.fire({
+          icon: 'success',
+          title: '取消追隨'
+        })
+      } catch (error) {
+        console.error(error.message)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消跟隨，請稍後再試'
+        })
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>
