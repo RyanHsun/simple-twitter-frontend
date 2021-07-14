@@ -7,7 +7,7 @@
       <div class="followships-content">
         <router-link
           class="followships-info"
-          :to="{ name: 'user', params: { id: followerUser.followingId } }"
+          :to="{ name: 'user', params: { id: followerUser.followerId } }"
         >
           <span class="name">{{ followerUser.follower.name }}</span>
           <span class="account">@{{ followerUser.follower.account }}</span>

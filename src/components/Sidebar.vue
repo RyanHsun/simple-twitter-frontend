@@ -44,27 +44,50 @@
         aria-labelledby="newTweetModalLabel"
         aria-hidden="true"
       >
-      <!-- Modal -->
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <img src="~@/assets/img/icon_close-og.svg" alt="">
-            </button>
-          </div>
-          <div class="modal-body">
-            <form class="create-tweet" action="">
-              <div class="create-tweet-wrap">
-                <span class="avatar" href="">
-                  <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
-                </span>
-                <textarea v-model="newTweet" class="tweet-textarea" name="" id="" cols="30" rows="5" maxlength="140" placeholder="有什麼新鮮事？"></textarea>
-              </div>
-              <button class="btn tweet-button" @click="addTweet">推文</button>
-            </form>
+        <!-- Modal -->
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <img src="~@/assets/img/icon_close-og.svg" alt="" />
+              </button>
+            </div>
+            <div class="modal-body">
+              <form class="create-tweet" action="">
+                <div class="create-tweet-wrap">
+                  <span class="avatar" href="">
+                    <img
+                      :src="currentUser.avatar"
+                      alt=""
+                    />
+                  </span>
+                  <textarea
+                    v-model="newTweet"
+                    class="tweet-textarea"
+                    name=""
+                    id=""
+                    cols="30"
+                    rows="5"
+                    maxlength="140"
+                    placeholder="有什麼新鮮事？"
+                  ></textarea>
+                </div>
+                <button
+                  class="btn tweet-button"
+                  :disabled="isProcessing"
+                  @click="addTweet"
+                >
+                  推文
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
     <div class="bottom">
@@ -80,33 +103,64 @@
 
 <script>
 import { emptyImageFilter } from "../utils/mixins";
-import { mapState } from 'vuex'
-import $ from 'jquery'
+import { mapState } from "vuex";
+import tweetsAPI from "./../apis/tweets";
+import { Toast } from "./../utils/helpers";
+import $ from "jquery";
 
 export default {
   mixins: [emptyImageFilter],
   data() {
     return {
-      newTweet: '',
+      newTweet: "",
       isShowModal: false,
+      isProcessing: false
     };
   },
   computed: {
-    ...mapState(['currentUser', 'isAuthenticated'])
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
   methods: {
-    addTweet() {
-      //使用API向後端發送post推文
+    async addTweet() {
+      try {
+        if (!this.newTweet) {
+          Toast.fire({
+            icon: "warning",
+            title: "您的推文未填寫任何內容",
+          });
+          return;
+        }
+        this.isProcessing = true;
+        const { data } = await tweetsAPI.createTweet({
+          description: this.newTweet,
+        });
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
 
-      this.$emit('after-submit-tweet',{description: this.newTweet})
-      $("#newTweetModal").modal('hide')
-      this.newTweet = ''
+        this.$emit("after-submit-tweet", { description: this.newTweet
+         });
+        $("#newTweetModal").modal("hide");
+        Toast.fire({
+          icon: "success",
+          title: "新增推文成功",
+        });
+        this.isProcessing = false;
+
+        this.newTweet = "";
+      } catch (error) {
+        console.log(error.message);
+        Toast.fire({
+          icon: "warning",
+          title: "無法新增推文，請稍候在試",
+        });
+      }
     },
     showModal() {
-      this.isShowModal = true
+      this.isShowModal = true;
     },
     cancelModal() {
-      this.isShowModal = false
+      this.isShowModal = false;
     },
   },
 };
@@ -166,10 +220,10 @@ export default {
 }
 .tweet-textarea {
   font-size: 18px;
-  color: #9197A3;
+  color: #9197a3;
   border: none;
   outline: none;
-  width: calc( 100% - 60px);
+  width: calc(100% - 60px);
   resize: none;
 }
 .avatar {
@@ -178,6 +232,6 @@ export default {
 .tweet-button {
   align-self: flex-end;
   color: #fff;
-  background-color: #FF6600;
+  background-color: #ff6600;
 }
 </style>

@@ -72,7 +72,7 @@ export default {
       user: {},
       isProcessing: false
     }
-  },
+  }, 
   computed: {
     ...mapState(['currentUser'])
   },
@@ -158,6 +158,7 @@ export default {
           avatar: this.user.avatar,
         },
       })
+      this.fetchTweets(0, 10)
     }
   }
 }
