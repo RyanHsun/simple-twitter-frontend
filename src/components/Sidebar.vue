@@ -2,12 +2,12 @@
   <section class="sidebar">
     <div class="top">
       <h1 class="logo">
-        <router-link to="/">
+        <router-link to="/tweets">
           <img src="~@/assets/img/logo.svg" alt="" />
         </router-link>
       </h1>
       <nav class="navigation">
-        <router-link class="nav-item" to="/">
+        <router-link class="nav-item" to="/tweets">
           <div class="icon index">
             <img src="~@/assets/img/icon_index.svg" alt="" />
           </div>
