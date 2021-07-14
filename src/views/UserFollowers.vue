@@ -78,7 +78,7 @@ export default {
   methods: {
     async fetchUser(userId) {
       try {
-        const { data } = await usersAPI.get({ userId });
+        const { data } = await usersAPI.getUser({ userId });
         const {
           id,
           account,

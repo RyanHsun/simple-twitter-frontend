@@ -140,7 +140,7 @@ export default {
   methods: {
     async fetchUser(userId) {
       try {
-        const { data } = await usersAPI.get({ userId })
+        const { data } = await usersAPI.getUser({ userId })
 
         if (data.status === 'error') {
           throw new Error(data.message)

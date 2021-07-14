@@ -135,7 +135,7 @@ export default {
   methods: {
     async fetchUser(userId) {
       try {
-        const { data } = await usersAPI.get({ userId })
+        const { data } = await usersAPI.getUser({ userId })
 
         if (data.status === 'error') {
           throw new Error(data.message)
@@ -261,7 +261,7 @@ export default {
       // }
       try {
         this.isProcessing = true
-        const { data } = await usersAPI.update({
+        const { data } = await usersAPI.updateUser({
           userId: this.user.id,
           formData
         })

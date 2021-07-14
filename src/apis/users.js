@@ -7,12 +7,12 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  get ({ userId }) {
+  getUser ({ userId }) {
     return apiHelper.get(`/users/${userId}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  update ({ userId, formData }) {
+  updateUser ({ userId, formData }) {
     return apiHelper.put(`/users/${userId}`, formData, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
@@ -49,6 +49,11 @@ export default {
   },
   deleteFollowing ({ userId }) {
     return apiHelper.delete(`/followships/${userId}`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  getTopUsers () {
+    return apiHelper.get('/users', {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   }
