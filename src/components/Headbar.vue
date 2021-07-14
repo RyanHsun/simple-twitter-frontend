@@ -1,8 +1,8 @@
 <template>
   <h2 class="headbar">
-    <a class="back" href="">
+    <button class="back" @click="$router.back()">
       <img src="~@/assets/img/icon_back.svg" alt="" />
-    </a>
+    </button>
     <div class="title">
       <div class="main-title">{{ user.name }}</div>
       <div class="sub-title">{{ user.tweetNum }} 推文</div>
