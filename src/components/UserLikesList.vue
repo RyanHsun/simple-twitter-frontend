@@ -112,7 +112,7 @@ export default {
   mixins: [fromNowFilter],
   props: {
     likes: {
-      type: Array,
+      type: Object,
       required: true
     }
   },

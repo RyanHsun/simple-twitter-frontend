@@ -131,7 +131,7 @@ export default {
       required: true
     },
     replies: {
-      type: Array,
+      type: Object,
       required: true
     }
   },

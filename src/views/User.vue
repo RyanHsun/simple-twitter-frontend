@@ -28,14 +28,14 @@
           </button>
         </div>
 
-        <template v-if="currentTab === 'tweets'">
+
+        <ul class="tweets-list" v-if="currentTab === 'tweets'">
           <TweetsList 
             v-for="tweet in tweets"
             :key="tweet.id"
             :initinalTweet="tweet" 
-            @afterToggleLike="afterToggleLike"
           />
-        </template>
+        </ul>
         <template v-if="currentTab === 'replied_tweets'">
           <UserRepliedList :user="user" :replies="replies" />
         </template>
@@ -114,13 +114,27 @@ export default {
   computed: {
     ...mapState(['currentUser'])
   },
+  watch: {
+    initialUser (newValue) {
+      this.user = {
+        ...this.user,
+        ...newValue
+      }
+    }
+  },
   created () {
     const { id } = this.$route.params
     this.fetchUser(id)
+    this.fetchUserTweets(id)
+    this.fetchUserRepliedTweets(id)
+    this.fetchUserLikes(id)
   },
   beforeRouteUpdate (to, from, next) {
     const { id } = to.params
     this.fetchUser(id)
+    this.fetchUserTweets(id)
+    this.fetchUserRepliedTweets(id)
+    this.fetchUserLikes(id)
     next()
   },
   methods: {
@@ -162,8 +176,24 @@ export default {
           lastLoginAt,
           isFollowing
         }
+      } catch (error) {
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得使用者資料，請稍後再試'
+        })
+      }
+    },
+    async fetchUserTweets (userId) {
+      try {
+        const { data } = await usersAPI.getUserTweets({ userId })
 
-        // this.user = { ...data }
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+        this.tweets = { ...data }
+
         // this.tweetsSwitchTabs = [...tweetsSwitchTabs]
         // this.tweets = [...dummyDataUserTweets]
       } catch (error) {
@@ -174,39 +204,77 @@ export default {
           title: '無法取得使用者資料，請稍後再試'
         })
       }
-      
-      // this.replies = [...dummyDataUserReplied]
-      // this.likes = [...dummyDataUserlikes]
     },
-    switchTweetTab(currentTab) {
-      switch (currentTab) {
-        case "tweets":
-          this.currentTab = currentTab
-          this.$router.push({
-            name: "user",
-            params: { id: this.user.id }
-          })
-          // this.tweets = [...dummyDataUserTweets]
-          console.log("tweets")
-          break
-        case "replied_tweets":
-          this.currentTab = currentTab
-          this.$router.push({
-            name: "user-replied-tweets",
-            params: { id: this.user.id }
-          })
-          // this.replies = [...dummyDataUserReplied]
-          console.log("replied")
-          break
-        case "likes":
-          this.currentTab = currentTab
-          this.$router.push({
-            name: "user-likes-tweets",
-            params: { id: this.user.id }
-          })
-          // this.likes = [...dummyDataUserlikes]
-          console.log("likes")
-          break
+    async fetchUserRepliedTweets (userId) {
+      try {
+        const { data } = await usersAPI.getUserRepliedTweets({ userId })
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+        this.replies = { ...data }
+
+      } catch (error) {
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得使用者資料，請稍後再試'
+        })
+      }
+    },
+    async fetchUserLikes (userId) {
+      try {
+        const { data } = await usersAPI.getUserLikes({ userId })
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+        this.likes = { ...data }
+
+      } catch (error) {
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得使用者資料，請稍後再試'
+        })
+      }
+    },
+    async switchTweetTab(currentTab) {
+      try {
+        switch (currentTab) {
+          case "tweets":
+            this.currentTab = currentTab
+            this.$router.push({
+              name: "user",
+              params: { id: this.user.id }
+            })
+            console.log("tweets")
+            break
+          case "replied_tweets":
+            this.currentTab = currentTab
+            this.$router.push({
+              name: "user-replied-tweets",
+              params: { id: this.user.id }
+            })
+            console.log("replied")
+            break
+          case "likes":
+            this.currentTab = currentTab
+            this.$router.push({
+              name: "user-likes-tweets",
+              params: { id: this.user.id }
+            })
+            console.log("likes")
+            break
+        }
+      } catch (error) {
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新個人資料，請稍後再試'
+        })
       }
     },
     afterSubmitTweet(payload) {
@@ -232,6 +300,7 @@ export default {
 </script>
 
 <style scoped>
+
   .container {
     display: grid;
     grid-template-columns: 20% auto 30%;

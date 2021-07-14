@@ -12,7 +12,7 @@
           <div class="create-tweet-wrap">
             <span class="avatar" href="">
               <img
-                src="https://randomuser.me/api/portraits/men/32.jpg"
+                :src="currentUser.avatar"
                 alt=""
               />
             </span>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Sidebar from "./../components/Sidebar.vue"
 import UsersTop from "./../components/UsersTop.vue"
 import TweetsList from "./../components/TweetsList.vue"
@@ -71,6 +72,9 @@ export default {
       user: {},
       isProcessing: false
     }
+  },
+  computed: {
+    ...mapState(['currentUser'])
   },
   created() {
     const { offset = '', limit = '' } = this.$route.query
@@ -154,21 +158,8 @@ export default {
           avatar: this.user.avatar,
         },
       })
-    },
-    // afterToggleLike(toggleTweet) {
-    //   // rerender
-    //   this.tweets = this.tweets.map((tweet) => {
-    //     if (tweet.id === toggleTweet.id) {
-    //       return {
-    //         ...tweet,
-    //         isLiked: toggleTweet.isLiked,
-    //       };
-    //     } else {
-    //       return tweet;
-    //     }
-    //   })
-    // }
-  },
+    }
+  }
 }
 </script>
 

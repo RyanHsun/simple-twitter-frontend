@@ -22,18 +22,19 @@
       </template>
       <template v-else>
         <button
-          v-if="isFollowing"
+          v-if="this.user.isFollowing"
           type="submit" 
           class="btn" 
-          @click.prevent.stop="deleteFollowing(user.id)"
+          :class="{ 'is-following': this.user.isFollowing }" 
+          @click.prevent.stop="deleteFollowing"
         >
           正在跟隨
         </button>
         <button
           v-else
-          type="submit" 
+          type="click"
           class="btn" 
-          @click.prevent.stop="addFollowing(user.id)"
+          @click.prevent.stop="addFollowing"
         > 
           跟隨
         </button>
@@ -78,9 +79,9 @@ export default {
       type: Object,
       required: true
     },
-    isFollowing: {
+    initialisFollowing: {
       type: Boolean,
-      required: false
+      required: true
     }
   },
   components: {
@@ -120,10 +121,13 @@ export default {
   created () {
     const { id } = this.$route.params
     this.fetchUser(id)
+    this.checkFollow(id)
   },
   beforeRouteUpdate (to, from, next) {
     const { id } = to.params
     this.fetchUser(id)
+    this.checkFollow(id)
+
     next()
   },
   methods: {
@@ -178,6 +182,77 @@ export default {
         })
       }
     },
+    checkIsSelf() {
+      if (this.user.id === this.currentUser.id) {
+        console.log('是自己')
+        this.isSelf = true
+      } else {
+        console.log('不是自己')
+        this.isSelf = false
+      }
+    },
+    async checkFollow() {
+      try {
+        const { data } = await usersAPI.getFollowings({ userId: this.currentUser.id })
+        data.map((followingId) => {
+          if (followingId === this.currentUser.id) {
+            this.isFollowing = true
+          } else {
+            this.isFollowing = false
+          }
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法讀取追隨狀態，請稍後再試',
+        })
+      }
+    },
+    async addFollowing () {
+      try {
+        const { data } = await usersAPI.addFollowing({ id: this.user.id })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.user.isFollowing = true
+        this.user.followerNum++
+        
+        Toast.fire({
+          icon: 'success',
+          title: '追隨成功'
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增追隨，請稍後再試',
+        })
+      }
+    },
+    async deleteFollowing () {
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId: this.user.id })
+        
+        if(data.status === 'error') {
+          throw new Error(data.message)
+        }
+        this.user.isFollowing = false
+        this.user.followerNum--
+
+        Toast.fire({
+          icon: 'success',
+          title: '取消追隨'
+        })
+      } catch (error) {
+        console.error(error.message)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消跟隨，請稍後再試'
+        })
+      }
+    },
     async handleAfterSubmit (formData) {
       // for (let [name, value] of formData.entries()) {
       //   console.log(name + ': ' + value)
@@ -209,43 +284,6 @@ export default {
         Toast.fire({
           icon: 'error',
           title: '無法更新個人資料，請稍後再試'
-        })
-      }
-    },
-    async addFollowing (userId) {
-      console.log(userId)
-      try {
-        const { data } = await usersAPI.addFollowing({ userId })
-        
-        if(data.status === 'error') {
-          throw new Error(data.message)
-        }
-
-        this.isFollowing = true
-
-      } catch (error) {
-        console.error(error.message)
-        Toast.fire({
-          icon: 'error',
-          title: '無法跟隨使用者，請稍後再試'
-        })
-      }
-    },
-    async deleteFollowing (userId) {
-      try {
-        const { data } = await usersAPI.deleteFollowing({ userId })
-        
-        if(data.status === 'error') {
-          throw new Error(data.message)
-        }
-
-        this.isFollowing = false
-
-      } catch (error) {
-        console.error(error.message)
-        Toast.fire({
-          icon: 'error',
-          title: '無法取消跟隨，請稍後再試'
         })
       }
     },
@@ -462,5 +500,9 @@ export default {
   .nav-item:hover,
   .nav-item.active {
     color: #ff6600;
+  }
+  .is-following {
+    color: #fff;
+    background-color: #ff6600;
   }
 </style>
