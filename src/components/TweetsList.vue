@@ -67,6 +67,7 @@
       >
         <ReplyTweetModal
           :tweet="tweet"
+          @after-create-comment="afterCreateComment"
         />
       </div>
       <div 
@@ -86,10 +87,10 @@ import { Toast } from './../utils/helpers'
 
 export default {
   name: 'TweetsList',
+  mixins: [fromNowFilter,emptyImageFilter],
   components: {
     ReplyTweetModal
   },
-  mixins: [fromNowFilter,emptyImageFilter],
   props: {
     initinalTweet: {
       type: Object,
@@ -103,11 +104,7 @@ export default {
       isProcessing: false
     }
   },
-  // create () {
-  //   this.tweets = this.initinalTweets
-  // },
   methods: {
-    
     async addLike(tweetId) {
       try {
         this.isProcessing = true
@@ -120,13 +117,13 @@ export default {
         this.isProcessing = false
         Toast.fire({
           icon: "success",
-          title: "操作成功！",
+          title: "加入喜歡！",
         })
       } catch (error) {
         console.log(error)
         Toast.fire({
           icon: 'error',
-          title: '無法按讚，請稍後再試',
+          title: '無法加入喜歡，請稍後再試',
         })
         this.isProcessing = false
       }
@@ -143,23 +140,28 @@ export default {
         this.isProcessing = false
         Toast.fire({
           icon: "success",
-          title: "操作成功！",
+          title: "收回喜歡！",
         })
       } catch (error) {
         console.log(error)
         Toast.fire({
           icon: 'error',
-          title: '無法取消按讚，請稍後再試',
+          title: '無法收回喜歡，請稍後再試',
         })
         this.isProcessing = false
       }
     },
     handleReplyTweetModal () {
       this.isShowReplyModal = true
-      console.log('回覆')
     },
     linkToTweetDetail (tweetId) {
       this.$router.push(`/tweets/${tweetId}`)
+    },
+    afterCreateComment (payload) {
+      const { tweetId, replyNum } = payload
+      console.log(tweetId, replyNum, payload)
+
+      this.tweet.replyNum += 1
     }
   }
 }
@@ -182,7 +184,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: calc( 100% - 60px);
+  width: calc( 100% - 50px);
   text-align: left;
   pointer-events: none;
 }

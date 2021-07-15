@@ -20,7 +20,7 @@
               v-model="newTweet"
               class="tweet-textarea"
               name=""
-              id=""
+              id="index-tweet"
               cols="30"
               rows="2"
               maxlength="140"
@@ -32,7 +32,7 @@
             class="btn tweet-button"
             :disabled="isProcessing"
           >
-            推文
+            {{ isProcessing ? '推文中...' : '推文' }}
           </button>
         </form>
         <ul class="tweets-list">
@@ -57,9 +57,8 @@ import { v4 as uuidv4 } from "uuid"
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
 
-
 export default {
-  name: "tweets",
+  name: "Tweets",
   components: {
     Sidebar,
     TweetsList,
@@ -67,9 +66,9 @@ export default {
   },
   data() {
     return {
+      user: {},
       tweets: [],
       newTweet: '',
-      user: {},
       isProcessing: false
     }
   }, 
@@ -77,7 +76,7 @@ export default {
     ...mapState(['currentUser'])
   },
   created() {
-    const { offset = '', limit = '' } = this.$route.query
+    const { offset = 0, limit = 100 } = this.$route.query
     this.fetchTweets({ queryOffset: offset, queryLimit: limit })
   },
   beforeRouteUpdate (to, from, next) {
@@ -95,7 +94,6 @@ export default {
         })
 
         this.tweets = [...response.data]
-        // this.user = { ...dummyDataUser }
 
       } catch (error) {
         console.log('error', error)
@@ -134,7 +132,7 @@ export default {
         this.fetchTweets(0, 10)
 
       } catch (error) {
-        console.log(error.message)
+        console.log(error)
         Toast.fire({
           icon: 'warning',
           title: '無法新增推文，請稍候在試'
@@ -159,7 +157,7 @@ export default {
         },
       })
       this.fetchTweets(0, 10)
-    }
+    },
   }
 }
 </script>

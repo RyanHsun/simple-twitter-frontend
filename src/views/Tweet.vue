@@ -12,7 +12,9 @@
           </div>
         </h2>
         <TweetDetail 
+          :tweetId="tweet.id"
           :initialTweet="tweet"
+          @after-create-comment="afterCreateComment"
         />
         <TweetRepliedList 
           :tweet="tweet"
@@ -30,10 +32,8 @@ import Sidebar from './../components/Sidebar.vue'
 import UsersTop from './../components/UsersTop.vue'
 import TweetDetail from './../components/TweetDetail.vue'
 import TweetRepliedList from './../components/TweetRepliedList.vue'
-// import ReplyTweetModal from './../components/ReplyTweetModal.vue'
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
-
 
 export default {
   name: 'tweet',
@@ -42,7 +42,6 @@ export default {
     UsersTop,
     TweetDetail,
     TweetRepliedList,
-    // ReplyTweetModal
   },
   data () {
     return {
@@ -97,7 +96,8 @@ export default {
         }
 
       } catch (error) {
-        console.log('error', error)
+        console.error(error.response)
+        // console.log('error', error)
         Toast.fire({
           icon: 'error',
           title: '無法取得推文資料，請稍後再試'
@@ -115,6 +115,21 @@ export default {
           title: '無法取得推文回覆資料，請稍後再試'
         })
       }
+    },
+    afterCreateComment (payload) {
+      const { commentId, comment } = payload
+
+      this.tweetReplies.push({
+        id: commentId,
+        comment: comment,
+        createdAt: new Date(),
+        User: {
+          id: this.currentUser.id,
+          account: this.currentUser.account,
+          name: this.currentUser.name,
+          avatar: this.currentUser.avatar,
+        },
+      })
     }
   }
 }
@@ -134,7 +149,7 @@ export default {
   }
   .tweet-wrap {
     overflow-y: scroll;
-    max-height: 100vh;
+    max-height: calc( 100vh - 50px );
   }
   .headbar {
     position: absolute;
