@@ -96,7 +96,7 @@
         </div>
       </div>
     </div>
-    <div class="bottom">
+    <div class="bottom" @click="logout">
       <router-link class="logout" to="/login">
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="" />
@@ -127,6 +127,10 @@ export default {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
   methods: {
+    logout () {
+      this.$store.commit('revokeAuthentication')
+      this.$router.push('/login')
+    },
     async addTweet() {
       try {
         if (!this.newTweet) {
