@@ -3,7 +3,8 @@
     <div class="wrap">
       <h2 class="title">跟隨誰</h2>
       <ul class="users">
-        <li v-for="user in users" :key="user.id" class="user">
+        <Spinner v-if="isLoading"/>
+        <li v-else v-for="user in users" :key="user.id" class="user">
           <router-link
             class="avatar"
             :to="{ name: 'user', params: { id: user.id } }"
@@ -41,20 +42,20 @@
 <script>
 import { mapState } from 'vuex'
 import { emptyImageFilter } from "../utils/mixins"
+import Spinner from './../components/Spinner'
 import usersAPI from './../apis/users'
 import { Toast } from './../utils/helpers'
 
 export default {
   mixins: [emptyImageFilter],
-  // props: {
-  //   isCurrentUser: {
-  //     type: Boolean,
-  //     required: true
-  //   }
-  // },
+  components: {
+    Spinner
+  },
   data() {
     return {
-      users: []
+      users: [],
+      isLoading: true,
+      isProcessing: false
     }
   },
   computed: {
@@ -73,8 +74,12 @@ export default {
         if (data.status === 'error') {
           throw new Error(data.message)
         }
+        this.isLoading = false
 
       } catch (error) {
+        
+        this.isLoading = false
+
         this.isProcessing = false
         Toast.fire({
           icon: 'error',

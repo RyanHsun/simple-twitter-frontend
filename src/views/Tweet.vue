@@ -11,15 +11,19 @@
             <div class="main-title">推文</div>
           </div>
         </h2>
-        <TweetDetail 
-          :tweetId="tweet.id"
-          :initialTweet="tweet"
-          @after-create-comment="afterCreateComment"
-        />
-        <TweetRepliedList 
-          :tweet="tweet"
-          :tweetReplies="tweetReplies"
-        />
+        <Spinner v-if="isLoading"/>
+        <div>
+          <TweetDetail 
+            :tweetId="tweet.id"
+            :initialTweet="tweet"
+            @after-create-comment="afterCreateComment"
+          />
+        <Spinner v-if="isLoading"/>
+          <TweetRepliedList 
+            :tweet="tweet"
+            :tweetReplies="tweetReplies"
+          />
+        </div>
       </div>
     </section>
     <UsersTop />
@@ -32,6 +36,7 @@ import Sidebar from './../components/Sidebar.vue'
 import UsersTop from './../components/UsersTop.vue'
 import TweetDetail from './../components/TweetDetail.vue'
 import TweetRepliedList from './../components/TweetRepliedList.vue'
+import Spinner from './../components/Spinner'
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
 
@@ -42,6 +47,8 @@ export default {
     UsersTop,
     TweetDetail,
     TweetRepliedList,
+    Spinner
+
   },
   data () {
     return {
@@ -54,7 +61,8 @@ export default {
         createdAt: '',
         Author: {}
       },
-      tweetReplies: []
+      tweetReplies: [],
+      isLoading: true
     }
   },
   computed: {
@@ -108,7 +116,13 @@ export default {
       try {
         const { data } = await tweetsAPI.getTweetReplies({ tweetId })
         this.tweetReplies = [...data]
+        
+        this.isLoading = false
+
       } catch (error) {
+
+        this.isLoading = false
+
         console.log('error', error)
         Toast.fire({
           icon: 'error',

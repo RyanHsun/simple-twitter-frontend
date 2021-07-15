@@ -2,7 +2,10 @@
   <div class="container">
     <Sidebar :tweets-id="tweets.id" @after-submit-tweet="afterSubmitTweet"/>
     <section class="user-page">
-      <div class="user-wrap">
+      <Spinner v-if="isLoading"/>
+      <div
+        v-else
+        class="user-wrap">
         <Headbar
           :initialUser="user"
         />
@@ -62,6 +65,7 @@ import UserProfile from './../components/UserProfile.vue'
 import TweetsList from './../components/TweetsList.vue'
 import UserRepliedList from './../components/UserRepliedList.vue'
 import UserLikesList from './../components/UserLikesList.vue'
+import Spinner from './../components/Spinner'
 import { v4 as uuidv4 } from 'uuid'
 import usersAPI from './../apis/users'
 import { Toast } from './../utils/helpers'
@@ -77,6 +81,7 @@ export default {
     TweetsList,
     UserRepliedList,
     UserLikesList,
+    Spinner
   },
   data() {
     return {
@@ -116,6 +121,7 @@ export default {
         }
       ],
       currentTab: "tweets",
+      isLoading: true
     }
   },
   computed: {
@@ -183,7 +189,13 @@ export default {
           lastLoginAt,
           isFollowing
         }
+
+        this.isLoading = false
+
       } catch (error) {
+
+        this.isLoading = false
+
         console.error(error.message)
         this.isProcessing = false
         Toast.fire({

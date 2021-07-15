@@ -35,7 +35,10 @@
             {{ isProcessing ? '推文中...' : '推文' }}
           </button>
         </form>
-        <ul class="tweets-list">
+        <Spinner v-if="isLoading"/>
+        <ul
+          v-else 
+          class="tweets-list">
           <TweetsList 
             v-for="tweet in tweets"
             :key="tweet.id"
@@ -53,9 +56,11 @@ import { mapState } from 'vuex'
 import Sidebar from "./../components/Sidebar.vue"
 import UsersTop from "./../components/UsersTop.vue"
 import TweetsList from "./../components/TweetsList.vue"
+import Spinner from './../components/Spinner'
 import { v4 as uuidv4 } from "uuid"
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
+// import { component } from 'vue/types/umd'
 
 export default {
   name: "Tweets",
@@ -63,13 +68,15 @@ export default {
     Sidebar,
     TweetsList,
     UsersTop,
+    Spinner
   },
   data() {
     return {
       user: {},
       tweets: [],
       newTweet: '',
-      isProcessing: false
+      isProcessing: false,
+      isLoading: true
     }
   }, 
   computed: {
@@ -104,8 +111,13 @@ export default {
         })
 
         this.tweets = [...response.data]
+        
+        this.isLoading = false
 
       } catch (error) {
+
+        this.isLoading = false
+
         console.log('error', error)
         Toast.fire({
           icon: 'error',
