@@ -84,6 +84,16 @@ export default {
     this.fetchTweets({ queryOffset: offset, queryLimit: limit })
     next()
   },
+  watch: {
+    newTweet(newValue) {
+      if (newValue.length === 140) {
+        Toast.fire({
+          icon: 'warning',
+          title: '字數限制140字',
+        })
+      }
+    },
+  },
   methods: {
     async fetchTweets({ queryOffset, queryLimit }) {
       try {

@@ -270,10 +270,17 @@ export default {
           title: '資料更新成功'
         })
 
+        //即時更新
+        const {name, introduction, avatar, cover}  = data
+        this.user.name = name
+        this.user.introduction = introduction
+        this.user.avatar = avatar
+        this.user.cover = cover
 
-        this.$router.push({ name: 'user', params: { id: this.currentUser.id } })
-
+        this.isProcessing = false
+        // this.$router.push({ name: 'user', params: { id: this.id } })
       } catch (error) {
+        console.log('error', error)
         this.isProcessing = false
         Toast.fire({
           icon: 'error',

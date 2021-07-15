@@ -10,8 +10,9 @@ export default {
       password
     })
   },
-  getAdminTweets () {
-    return apiHelper.get('/admin/tweets', {
+  getAdminTweets ({ limit, offset }) {
+    const searchParams = new URLSearchParams({ limit, offset })
+    return apiHelper.get(`/admin/tweets?${searchParams.toString()}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
@@ -20,8 +21,9 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  getAdminUsers () {
-    return apiHelper.get('/admin/users', {
+  getAdminUsers ({ limit, offset }) {
+    const searchParams = new URLSearchParams({ limit, offset })
+    return apiHelper.get(`/admin/users?${searchParams.toString()}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   }

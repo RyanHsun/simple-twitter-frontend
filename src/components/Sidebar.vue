@@ -2,12 +2,12 @@
   <section class="sidebar">
     <div class="top">
       <h1 class="logo">
-        <router-link to="/">
+        <router-link to="/tweets">
           <img src="~@/assets/img/logo.svg" alt="" />
         </router-link>
       </h1>
       <nav class="navigation">
-        <router-link class="nav-item" to="/">
+        <router-link class="nav-item" to="/tweets">
           <div class="icon index">
             <img src="~@/assets/img/icon_index.svg" alt="" />
           </div>
@@ -96,7 +96,7 @@
         </div>
       </div>
     </div>
-    <div class="bottom">
+    <div class="bottom" @click="logout">
       <router-link class="logout" to="/login">
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="" />
@@ -123,10 +123,24 @@ export default {
       isProcessing: false
     };
   },
+  watch: {
+    newTweet(newValue) {
+      if (newValue.length === 140) {
+        Toast.fire({
+          icon: 'warning',
+          title: '字數限制140字',
+        })
+      }
+    },
+  },
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
   methods: {
+    logout () {
+      this.$store.commit('revokeAuthentication')
+      this.$router.push('/login')
+    },
     async addTweet() {
       try {
         if (!this.newTweet) {

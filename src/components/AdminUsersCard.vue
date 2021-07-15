@@ -46,12 +46,21 @@ export default {
     };
   },
   created() {
-    this.fetchUsers()
+    const { limit = 100, offset = 0 } = this.$route.query
+    this.fetchUsers({ queryLimit: limit, queryOffset: offset })
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { limit = '', offset = '' } = to.query;
+    this.fetchUsers({ queryLimit: limit, queryOffset: offset });
+    next();
   },
   methods: {
-    async fetchUsers() {
+    async fetchUsers({queryLimit, queryOffset}) {
       try{
-        const response = await adminAPI.getAdminUsers ()
+        const response = await adminAPI.getAdminUsers ({
+          limit: queryLimit,
+          offset: queryOffset,
+        })
         this.adminUsers = {...response.data}
       } catch (error) {
         Toast.fire({

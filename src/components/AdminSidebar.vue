@@ -26,11 +26,22 @@
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="">
         </div>
-        <div>登出</div>
+        <div @click="logout">登出</div>
       </router-link>
     </div>
   </section>
 </template>
+<script>
+
+export default {
+  methods: {
+    logout () {
+      this.$store.commit('revokeAuthentication')
+      this.$router.push('/login')
+    },
+  }
+}
+</script>
 
 <style scoped>
   .sidebar {

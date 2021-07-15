@@ -43,12 +43,21 @@ export default {
     };
   },
   created() {
-    this.fetchTweets();
+    const { limit = 200, offset = 0 } = this.$route.query
+    this.fetchTweets({ queryLimit: limit, queryOffset: offset })
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { limit = '', offset = '' } = to.query;
+    this.fetchTweets({ queryLimit: limit, queryOffset: offset });
+  next();
   },
   methods: {
-    async fetchTweets() {
+    async fetchTweets({queryLimit, queryOffset}) {
       try {
-        const response = await adminAPI.getAdminTweets();
+        const response = await adminAPI.getAdminTweets({
+          limit: queryLimit,
+          offset: queryOffset
+          });
         this.tweets = { ...response.data };
       } catch (error) {
         Toast.fire({
@@ -72,8 +81,7 @@ export default {
           title: "移除推文成功",
         });
         //完成及時刪除的動作
-        this.fetchTweets();
-        // this.tweets = this.tweets.filter((tweet) => tweet.id !== id);
+        this.fetchTweets({ queryLimit: 200, queryOffset: 0 });
       } catch (error) {
         Toast.fire({
           icon: "warning",

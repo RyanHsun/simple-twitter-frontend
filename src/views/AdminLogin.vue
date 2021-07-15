@@ -14,7 +14,7 @@
           name="email"
           type="email"
           class="form-control"
-          placeholder="請輸入註冊的信箱"
+          placeholder=""
           autocomplete="username"
           required
           autofocus
@@ -29,7 +29,7 @@
           name="password"
           type="password"
           class="form-control"
-          placeholder="請輸入密碼"
+          placeholder=""
           autocomplete="current-password"
           required
         />
@@ -98,12 +98,29 @@ export default {
         this.$router.push("/admin/tweets")
 
       } catch (error) {
+        console.log('error',error.response.data.message)
         this.isProcessing = false
-        this.password = ""
-        Toast.fire({
-          icon: "warning",
-          title: "請確認您輸入了正確的帳號密碼",
+        if(error.response.data.message === "This admin account doesn't exist.") {
+          this.email = ''
+          this.password = ''
+          Toast.fire({
+          icon: 'warning',
+          title: '沒有這個帳戶'
         })
+        } else if (error.response.data.message === "Password incorrect."){
+          this.password = ''
+          Toast.fire({
+          icon: 'warning',
+          title: '密碼有誤'
+        })
+        } else {
+          Toast.fire({
+          icon: 'warning',
+          title: '請確認您輸入了正確的帳號密碼'
+        })
+        }
+        
+        console.error(error.message)
       }
     },
   },

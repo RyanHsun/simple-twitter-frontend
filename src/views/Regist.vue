@@ -127,23 +127,6 @@ export default {
           });
           return;
         }
-        // 無法抓取messsage，會直接跳下面的error
-        // if (data.message === 'Account was already used.') {
-        //   this.account = "",
-        //   Toast.fire({
-        //     icon: "warning",
-        //     title: "帳戶已被使用",
-        //   });
-        //   return;
-        // }
-        //   if (data.message === 'Email was already used.') {
-        //   this.email = "",
-        //   Toast.fire({
-        //     icon: "warning",
-        //     title: "信箱已被使用",
-        //   });
-        //   return;
-        // }
         this.isProcessing = true
         const { data } = await authorizationAPI.regist({
         account: this.account,
@@ -163,17 +146,32 @@ export default {
 
 
         this.$router.push('/login')
-
-      console.log('data', data)
       } catch (error) {
+        console.log('error',error.response.data.message)
         this.isProcessing = false
-        this.password = ''
-        this.checkPassword = ''
-
-        Toast.fire({
+        if(error.response.data.message === "Account was already used.") {
+          this.account = ''
+          this.name = ''
+          this.email = ''
+          this.password = ''
+          this.checkPassword = ''
+          Toast.fire({
           icon: 'warning',
-          title: '無法註冊，請稍後再試'
+          title: '帳號已被使用'
         })
+        } else if (error.response.data.message === "Email was already used."){
+          this.password = ''
+          Toast.fire({
+          icon: 'warning',
+          title: '信箱已被使用'
+        })
+        } 
+        else {
+          Toast.fire({
+          icon: 'warning',
+          title: '註冊失敗，請稍後再試'
+        })
+        } 
         console.error(error.message)
       }
     }
