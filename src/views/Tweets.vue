@@ -12,7 +12,7 @@
           <div class="create-tweet-wrap">
             <span class="avatar" href="">
               <img
-                :src="currentUser.avatar"
+                :src="currentUser.avatar | emptyImage"
                 alt=""
               />
             </span>
@@ -56,9 +56,11 @@ import TweetsList from "./../components/TweetsList.vue"
 import { v4 as uuidv4 } from "uuid"
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
+import { emptyImageFilter } from '../utils/mixins'
 
 
 export default {
+  mixins: [emptyImageFilter],
   name: "tweets",
   components: {
     Sidebar,

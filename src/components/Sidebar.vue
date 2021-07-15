@@ -68,7 +68,7 @@
                 <div class="create-tweet-wrap">
                   <span class="avatar" href="">
                     <img
-                      :src="currentUser.avatar"
+                      :src="currentUser.avatar | emptyImage"
                       alt=""
                     />
                   </span>
@@ -212,6 +212,7 @@ export default {
 .logout:hover,
 .nav-item.active {
   color: #ff6600;
+  text-decoration: none;
 }
 .icon {
   margin-right: 20px;
