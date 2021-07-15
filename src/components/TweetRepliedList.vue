@@ -72,4 +72,8 @@ export default {
   .tweet-panel img{
     margin-right: 20px;
   }
+  .name:hover {
+  color: #ff6600;
+  text-decoration: none;
+  }
 </style>
