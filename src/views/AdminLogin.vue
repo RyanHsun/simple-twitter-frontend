@@ -14,7 +14,7 @@
           name="email"
           type="email"
           class="form-control"
-          placeholder="請輸入註冊的信箱"
+          placeholder=""
           autocomplete="username"
           required
           autofocus
@@ -29,7 +29,7 @@
           name="password"
           type="password"
           class="form-control"
-          placeholder="請輸入密碼"
+          placeholder=""
           autocomplete="current-password"
           required
         />
