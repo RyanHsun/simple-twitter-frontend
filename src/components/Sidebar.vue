@@ -85,10 +85,10 @@
                 </div>
                 <button
                   class="btn tweet-button"
-                  :disabled="isProcessing"
                   @click="addTweet"
+                  :disabled="isProcessing"
                 >
-                  推文
+                  {{ isProcessing ? '推文中...' : '推文' }}
                 </button>
               </form>
             </div>
