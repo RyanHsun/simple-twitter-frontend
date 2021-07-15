@@ -52,7 +52,7 @@
         </ul>
       </div>
     </section>
-    <UsersTop />
+    <UsersTop @after-add-follow="afterAddFollow" @after-delete-follow="afterDeleteFollow"/>
   </div>
 </template>
 
@@ -345,6 +345,14 @@ export default {
         },
       })
     },
+    afterAddFollow() {
+      const { id } = this.$route.params
+      this.fetchUser(id)
+    },
+    afterDeleteFollow() {
+      const { id } = this.$route.params
+      this.fetchUser(id)
+    }
   }
 }
 </script>

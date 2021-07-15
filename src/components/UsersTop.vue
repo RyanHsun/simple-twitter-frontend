@@ -105,7 +105,10 @@ export default {
             }
           }
         })
-        
+
+        // 做傳送到User
+        this.$emit('after-add-follow')
+
         Toast.fire({
           icon: 'success',
           title: '追隨成功'
@@ -137,7 +140,7 @@ export default {
             }
           }
         })
-
+        this.$emit('after-delete-follow')
         Toast.fire({
           icon: 'success',
           title: '取消追隨'
