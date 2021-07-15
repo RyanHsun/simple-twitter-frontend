@@ -46,12 +46,12 @@ import { Toast } from './../utils/helpers'
 
 export default {
   mixins: [emptyImageFilter],
-  props: {
-    isCurrentUser: {
-      type: Boolean,
-      required: true
-    }
-  },
+  // props: {
+  //   isCurrentUser: {
+  //     type: Boolean,
+  //     required: true
+  //   }
+  // },
   data() {
     return {
       users: []

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <Sidebar :tweets-id="tweets.id" @after-submit-tweet="afterSubmitTweet"/>
-    <section class="user">
+    <section class="user-page">
       <div class="user-wrap">
         <Headbar
           :initialUser="user"
@@ -11,11 +11,7 @@
           :is-current-user="currentUser.id === user.id"
           :initial-is-following="user.isFollowing" 
         />
-        <!-- <UserProfile 
-          :user="user"
-          :is-current-user="currentUser.id === user.id"
-          :initial-is-following="user.isFollowing" 
-        />-->
+
         <div class="tweets-switch-tab">
           <button 
             v-for="tweetsSwitchTab in tweetsSwitchTabs"
@@ -28,7 +24,6 @@
           </button>
         </div>
 
-
         <ul class="tweets-list" v-if="currentTab === 'tweets'">
           <TweetsList 
             v-for="tweet in tweets"
@@ -36,12 +31,22 @@
             :initinalTweet="tweet" 
           />
         </ul>
-        <template v-if="currentTab === 'replied_tweets'">
-          <UserRepliedList :user="user" :replies="replies" />
-        </template>
-        <template v-if="currentTab === 'likes'">
-          <UserLikesList :likes="likes" />
-        </template>
+        <ul class="tweets-list" v-if="currentTab === 'replied_tweets'">
+          <UserRepliedList 
+            v-for="reply in replies"
+            :key="reply.id"
+            :user="user" 
+            :initialReply="reply" 
+          />
+        </ul>
+        <ul class="tweets-list" v-if="currentTab === 'likes'">
+          <UserLikesList 
+            v-for="like in likes"
+            :key="like.id"
+            :user="user" 
+            :initialLike="like" 
+          />
+        </ul>
       </div>
     </section>
     <UsersTop />
@@ -50,18 +55,20 @@
 
 <script>
 import { mapState } from 'vuex'
-import Headbar from "./../components/Headbar.vue";
-import Sidebar from "./../components/Sidebar.vue";
-import UsersTop from "./../components/UsersTop.vue";
-import UserProfile from "./../components/UserProfile.vue";
-import TweetsList from "./../components/TweetsList.vue";
-import UserRepliedList from "./../components/UserRepliedList.vue";
-import UserLikesList from "./../components/UserLikesList.vue";
-import { v4 as uuidv4 } from "uuid"
+import Headbar from './../components/Headbar.vue'
+import Sidebar from './../components/Sidebar.vue'
+import UsersTop from './../components/UsersTop.vue'
+import UserProfile from './../components/UserProfile.vue'
+import TweetsList from './../components/TweetsList.vue'
+import UserRepliedList from './../components/UserRepliedList.vue'
+import UserLikesList from './../components/UserLikesList.vue'
+import { v4 as uuidv4 } from 'uuid'
 import usersAPI from './../apis/users'
 import { Toast } from './../utils/helpers'
+import tweetsAPI from './../apis/tweets'
 
 export default {
+  name: 'User',
   components: {
     Headbar,
     Sidebar,
@@ -241,6 +248,40 @@ export default {
         })
       }
     },
+    async handleAfterSubmitReply () {
+      try {
+        if (!this.text) {
+          Toast.fire({
+            icon: 'warning',
+            title: '您尚未填寫任何評論'
+          })
+          return
+        }
+        this.isProcessing = true
+        const { data } = await tweetsAPI.createTweetReply({
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+        this.$emit('after-create-comment', {
+          commentId: data.commentId,
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+        this.isProcessing = false
+        this.text = ''
+
+      } catch (error) {
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增評論，請稍後再試'
+        })
+      }
+    },
     async switchTweetTab(currentTab) {
       try {
         switch (currentTab) {
@@ -250,7 +291,6 @@ export default {
               name: "user",
               params: { id: this.user.id }
             })
-            console.log("tweets")
             break
           case "replied_tweets":
             this.currentTab = currentTab
@@ -258,7 +298,6 @@ export default {
               name: "user-replied-tweets",
               params: { id: this.user.id }
             })
-            console.log("replied")
             break
           case "likes":
             this.currentTab = currentTab
@@ -266,7 +305,6 @@ export default {
               name: "user-likes-tweets",
               params: { id: this.user.id }
             })
-            console.log("likes")
             break
         }
       } catch (error) {
@@ -308,9 +346,11 @@ export default {
     margin: 0 auto;
     padding: 0 20px;
   }
-  .user {
+  .user-page {
     position: relative;
     margin-top: 50px;
+    border-left: 1px solid #e6ecf0;
+    border-right: 1px solid #e6ecf0;
   }
   .user-wrap {
     overflow-y: scroll;
