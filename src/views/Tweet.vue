@@ -11,13 +11,19 @@
             <div class="main-title">推文</div>
           </div>
         </h2>
-        <TweetDetail 
-          :initialTweet="tweet"
-        />
-        <TweetRepliedList 
-          :tweet="tweet"
-          :tweetReplies="tweetReplies"
-        />
+        <Spinner v-if="isLoading"/>
+        <div>
+          <TweetDetail 
+            :tweetId="tweet.id"
+            :initialTweet="tweet"
+            @after-create-comment="afterCreateComment"
+          />
+        <Spinner v-if="isLoading"/>
+          <TweetRepliedList 
+            :tweet="tweet"
+            :tweetReplies="tweetReplies"
+          />
+        </div>
       </div>
     </section>
     <UsersTop />
@@ -30,10 +36,9 @@ import Sidebar from './../components/Sidebar.vue'
 import UsersTop from './../components/UsersTop.vue'
 import TweetDetail from './../components/TweetDetail.vue'
 import TweetRepliedList from './../components/TweetRepliedList.vue'
-// import ReplyTweetModal from './../components/ReplyTweetModal.vue'
+import Spinner from './../components/Spinner'
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
-
 
 export default {
   name: 'tweet',
@@ -42,7 +47,8 @@ export default {
     UsersTop,
     TweetDetail,
     TweetRepliedList,
-    // ReplyTweetModal
+    Spinner
+
   },
   data () {
     return {
@@ -55,7 +61,8 @@ export default {
         createdAt: '',
         Author: {}
       },
-      tweetReplies: []
+      tweetReplies: [],
+      isLoading: true
     }
   },
   computed: {
@@ -97,7 +104,8 @@ export default {
         }
 
       } catch (error) {
-        console.log('error', error)
+        console.error(error.response)
+        // console.log('error', error)
         Toast.fire({
           icon: 'error',
           title: '無法取得推文資料，請稍後再試'
@@ -108,13 +116,34 @@ export default {
       try {
         const { data } = await tweetsAPI.getTweetReplies({ tweetId })
         this.tweetReplies = [...data]
+        
+        this.isLoading = false
+
       } catch (error) {
+
+        this.isLoading = false
+
         console.log('error', error)
         Toast.fire({
           icon: 'error',
           title: '無法取得推文回覆資料，請稍後再試'
         })
       }
+    },
+    afterCreateComment (payload) {
+      const { commentId, comment } = payload
+
+      this.tweetReplies.push({
+        id: commentId,
+        comment: comment,
+        createdAt: new Date(),
+        User: {
+          id: this.currentUser.id,
+          account: this.currentUser.account,
+          name: this.currentUser.name,
+          avatar: this.currentUser.avatar,
+        },
+      })
     }
   }
 }
@@ -134,7 +163,7 @@ export default {
   }
   .tweet-wrap {
     overflow-y: scroll;
-    max-height: 100vh;
+    max-height: calc( 100vh - 50px );
   }
   .headbar {
     position: absolute;

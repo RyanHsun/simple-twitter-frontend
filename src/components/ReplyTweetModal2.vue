@@ -10,21 +10,21 @@
         <div class="modal-body">
           <div class="tweet">
             <a href="" class="avatar">
-              <img :src="tweet.Author.avatar | emptyImage" alt="">
+              <img :src="reply.RepliedTweet.Author.avatar | emptyImage" alt="">
             </a>
             <div class="tweet-info">
               <div class="user-info">
-                <a class="name" href="">{{ tweet.Author.name }}</a>
-                <span class="account">@{{ tweet.Author.account }}</span>
-                <span class="tweet-update-at">・{{ tweet.createdAt | fromNow }}</span>
+                <a class="name" href="">{{ reply.RepliedTweet.Author.name }}</a>
+                <span class="account">@{{ reply.RepliedTweet.Author.account }}</span>
+                <span class="tweet-update-at">・{{ reply.createdAt | fromNow }}</span>
               </div>
               <div class="tweet-content">
-                {{ tweet.description}}
+                {{ reply.RepliedTweet.description}}
               </div>
-              <div class="tweet-reply-to">回覆給<span>@{{ tweet.Author.account }}</span></div>
+              <div class="tweet-reply-to">回覆給<span>@{{ reply.RepliedTweet.Author.account }}</span></div>
             </div>
           </div>
-          <form class="reply-tweet" @submit.stop.prevent="handleSubmit(tweet)">
+          <form class="reply-tweet" @submit.stop.prevent="handleSubmit(reply)">
             <div class="reply-tweet-wrap">
               <span class="avatar" href="">
                 <img :src="currentUser.avatar" alt="">
@@ -40,7 +40,13 @@
                 placeholder="推你的回覆">
               </textarea>
             </div>
-            <button class="btn reply-button">回覆</button>
+            <button 
+              type="submit"
+              class="btn reply-button" 
+              :disabled="isProcessing"
+            >
+              {{ isProcessing ? '回覆中...' : '回覆' }}
+              </button>
           </form>
         </div>
       </div>
@@ -58,7 +64,7 @@ import $ from 'jquery'
 export default {
   mixins: [fromNowFilter,emptyImageFilter],
   props: {
-    tweet: {
+    reply: {
       type: Object,
       required: true
     }
@@ -68,14 +74,12 @@ export default {
   },
   data () {
     return {
-      comment: ''
+      comment: '',
+      isProcessing: false
     }
   },
   methods: {
-    async handleSubmit(tweet) {
-      console.log(tweet.id)
-      console.log(tweet.replyNum)
-      console.log(this.comment)
+    async handleSubmit(reply) {
       try {
         if (!this.comment.trim()) {
           Toast.fire({
@@ -86,10 +90,10 @@ export default {
         }
         this.isProcessing = true
 
-        console.log('要送去後端的的 Id:', tweet.id)
+        console.log('要送去後端的的 Id:', reply.TweetId)
         console.log('要送去後端的的 comment:', this.comment)
         const { data } = await tweetsAPI.createTweetReply({
-          tweetId: this.tweet.id,
+          tweetId: this.reply.TweetId,
           comment: this.comment
         })
 
@@ -98,11 +102,11 @@ export default {
         }
 
         this.$emit("after-create-comment", {
-          tweetId: this.tweetId,
-          replyNum: this.tweet.replyNum
+          tweetId: this.reply.TweetId,
+          replyNum: this.reply.RepliedTweet.replyNum
         })
 
-        $(`#replyTweetModal-${tweet.id}`).modal("hide")
+        $(`#replyTweetModal-${reply.id}`).modal("hide")
 
         Toast.fire({
           icon: "success",
@@ -111,7 +115,7 @@ export default {
         this.isProcessing = false;
 
         this.comment = ''
-
+        
       } catch (error) {
         console.error(error.response);
         Toast.fire({

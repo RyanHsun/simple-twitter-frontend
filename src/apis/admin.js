@@ -1,5 +1,4 @@
 import { apiHelper } from '../utils/helpers'
-const getToken = () => window.localStorage.getItem('token')
 
 export default {
   // 帶入需要的參數
@@ -12,19 +11,13 @@ export default {
   },
   getAdminTweets ({ limit, offset }) {
     const searchParams = new URLSearchParams({ limit, offset })
-    return apiHelper.get(`/admin/tweets?${searchParams.toString()}`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get(`/admin/tweets?${searchParams.toString()}`)
   },
   deleteAdminTweets ({ id }) {
-    return apiHelper.delete(`/admin/tweets/${id}`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.delete(`/admin/tweets/${id}`)
   },
   getAdminUsers ({ limit, offset }) {
     const searchParams = new URLSearchParams({ limit, offset })
-    return apiHelper.get(`/admin/users?${searchParams.toString()}`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get(`/admin/users?${searchParams.toString()}`)
   }
 }

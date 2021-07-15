@@ -23,7 +23,7 @@
         <button
           v-if="this.user.isFollowing"
           type="submit" 
-          class="btn" 
+          class="btn btn-follow" 
           :class="{ 'is-following': this.user.isFollowing }" 
           @click.prevent.stop="deleteFollowing"
         >
@@ -32,7 +32,7 @@
         <button
           v-else
           type="click"
-          class="btn" 
+          class="btn btn-follow" 
           @click.prevent.stop="addFollowing"
         > 
           跟隨
@@ -80,10 +80,6 @@ export default {
     initialUser: {
       type: Object,
       required: true
-    },
-    initialisFollowing: {
-      type: Boolean,
-      required: true
     }
   },
   components: {
@@ -106,7 +102,8 @@ export default {
         lastLoginAt: '',
         isFollowing: false
       },
-      isProcessing: false
+      isProcessing: false,
+      isSelf: false
     }
   },
   computed: {
@@ -124,12 +121,13 @@ export default {
     const { id } = this.$route.params
     this.fetchUser(id)
     this.checkFollow(id)
+    this.checkIsSelf()
   },
   beforeRouteUpdate (to, from, next) {
     const { id } = to.params
     this.fetchUser(id)
     this.checkFollow(id)
-
+    this.checkIsSelf()
     next()
   },
   methods: {
@@ -172,9 +170,6 @@ export default {
           isFollowing
         }
 
-        // this.user = { ...data }
-        // this.tweetsSwitchTabs = [...tweetsSwitchTabs]
-        // this.tweets = [...dummyDataUserTweets]
       } catch (error) {
         console.error(error.message)
         this.isProcessing = false
@@ -186,10 +181,8 @@ export default {
     },
     checkIsSelf() {
       if (this.user.id === this.currentUser.id) {
-        console.log('是自己')
         this.isSelf = true
       } else {
-        console.log('不是自己')
         this.isSelf = false
       }
     },
@@ -265,8 +258,6 @@ export default {
           userId: this.user.id,
           formData
         })
-
-        console.log(data)
         
         if (data.status === 'error') {
           throw new Error(data.message)
@@ -296,20 +287,7 @@ export default {
           title: '無法更新個人資料，請稍後再試'
         })
       }
-    },
-    // handleEditModalShow (mode) {
-    //   if (mode === 'open') {
-    //     this.$router.push({ name: 'user-edit' })
-    //     this.isShowModal = true
-    //   } else if (mode === 'close') {
-    //     this.profile = {...this.user}
-    //     this.isShowModal = false
-    //     this.$router.push({
-    //       name: 'user',
-    //       params: { id: this.user.id }
-    //     })
-    //   }
-    // }
+    }
   }
 }
 </script>
@@ -514,5 +492,8 @@ export default {
   .is-following {
     color: #fff;
     background-color: #ff6600;
+  }
+  .btn-follow {
+    margin-right: 20px;
   }
 </style>

@@ -31,6 +31,11 @@ export default new Vuex.Store({
       state.isAuthenticated = false
       state.token = ''
       localStorage.removeItem('token')
+      sessionStorage.removeItem('rooms')
+      console.log('[RevokeAuthentication completed]')
+    },
+    setCurrentRoomId(state, newRoomId) {
+      state.currentRoomId = newRoomId
     }
   },
   actions: {
@@ -38,18 +43,21 @@ export default new Vuex.Store({
       try {
         const { data } = await usersAPI.getCurrentUser()
 
+        if (data.statusText === 'error') {
+          throw new Error(data.message)
+        }
+
         const { id, account, name, email, avatar, role } = data
 
         commit('setCurrentUser', {
-          id,
-          account,
-          name,
-          email,
-          avatar,
-          role
+          id, account, name, email, avatar, role
         })
+
+        return true
       } catch (error) {
         console.error(error.message)
+        commit('revokeAuthentication')
+        return false
       }
     }
   },

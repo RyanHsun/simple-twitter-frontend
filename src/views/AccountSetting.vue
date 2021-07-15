@@ -93,7 +93,11 @@
           />
         </div>
 
-        <button class="save-btn btn" type="submit">
+        <button 
+          type="submit" 
+          class="save-btn btn" 
+          :disabled="isProcessing"
+        >
           {{ isProcessing ? '資料更新中...' : '儲存' }}
         </button>
       </form>
@@ -262,6 +266,9 @@ export default {
 .account-setting {
   position: relative;
   margin-top: 50px;
+  border-width: 0 1px;
+  border-style: solid;
+  border-color: #e6ecf0;
 }
 
 .account-setting-wrap {
@@ -269,11 +276,8 @@ export default {
   max-height: calc(100vh - 62px);
 }
 form {
-  border-width: 0 1px;
-  border-style: solid;
-  border-color: #e6ecf0;
-  padding: 30px 20px
-  ;
+  max-width: 540px;
+  padding: 30px 20px;
 }
 .form-label-group {
   border-bottom: 1px solid black;
@@ -299,6 +303,8 @@ form {
   color: #657786;
 }
 .save-btn {
+  display: block;
+  margin: 0 0 0 auto;
   border-radius: 50px;
   color: #fff;
   background: #ff6600;

@@ -85,10 +85,10 @@
                 </div>
                 <button
                   class="btn tweet-button"
-                  :disabled="isProcessing"
                   @click="addTweet"
+                  :disabled="isProcessing"
                 >
-                  推文
+                  {{ isProcessing ? '推文中...' : '推文' }}
                 </button>
               </form>
             </div>
@@ -101,27 +101,32 @@
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="" />
         </div>
-        <div>登出</div>
+        <button
+          type="button"
+          class="btn-logout"
+          @click="logout"
+        >
+          登出</button>
       </router-link>
     </div>
   </section>
 </template>
 
 <script>
-import { emptyImageFilter } from "../utils/mixins";
-import { mapState } from "vuex";
-import tweetsAPI from "./../apis/tweets";
-import { Toast } from "./../utils/helpers";
-import $ from "jquery";
+import { emptyImageFilter } from "../utils/mixins"
+import { mapState } from "vuex"
+import tweetsAPI from "./../apis/tweets"
+import { Toast } from "./../utils/helpers"
+import $ from "jquery"
 
 export default {
   mixins: [emptyImageFilter],
   data() {
     return {
-      newTweet: "",
+      newTweet: '',
       isShowModal: false,
       isProcessing: false
-    };
+    }
   },
   watch: {
     newTweet(newValue) {
@@ -147,43 +152,44 @@ export default {
           Toast.fire({
             icon: "warning",
             title: "您的推文未填寫任何內容",
-          });
-          return;
+          })
+          return
         }
-        this.isProcessing = true;
+        this.isProcessing = true
         const { data } = await tweetsAPI.createTweet({
           description: this.newTweet,
-        });
+        })
         if (data.status === "error") {
-          throw new Error(data.message);
+          throw new Error(data.message)
         }
 
         this.$emit("after-submit-tweet", { description: this.newTweet
-         });
-        $("#newTweetModal").modal("hide");
+         })
+        $("#newTweetModal").modal("hide")
         Toast.fire({
           icon: "success",
           title: "新增推文成功",
-        });
-        this.isProcessing = false;
+        })
+        this.isProcessing = false
 
-        this.newTweet = "";
+        this.newTweet = ''
+
       } catch (error) {
-        console.log(error.message);
+        console.log(error.message)
         Toast.fire({
           icon: "warning",
           title: "無法新增推文，請稍候在試",
-        });
+        })
       }
     },
     showModal() {
-      this.isShowModal = true;
+      this.isShowModal = true
     },
     cancelModal() {
-      this.isShowModal = false;
-    },
-  },
-};
+      this.isShowModal = false
+    }
+  }
+}
 </script>
 
 <style scoped>
