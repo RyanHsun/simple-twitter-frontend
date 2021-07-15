@@ -12,6 +12,11 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+  createTweetReply ({ tweetId, comment }) {
+    return apiHelper.post(`/tweets/${tweetId}/replies`, { comment }, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
   getTweets ({ offset, limit }) {
     const searchParams = new URLSearchParams({ offset, limit })
 
