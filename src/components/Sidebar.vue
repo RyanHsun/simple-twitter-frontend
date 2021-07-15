@@ -123,6 +123,16 @@ export default {
       isProcessing: false
     };
   },
+  watch: {
+    newTweet(newValue) {
+      if (newValue.length === 140) {
+        Toast.fire({
+          icon: 'warning',
+          title: '字數限制140字',
+        })
+      }
+    },
+  },
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
