@@ -1,14 +1,40 @@
 <template>
   <h2 class="headbar">
-    <a class="back" href="">
-      <img src="~@/assets/img/icon_back.svg" alt="">
-    </a>
+    <button class="back" @click="$router.back()">
+      <img src="~@/assets/img/icon_back.svg" alt="" />
+    </button>
     <div class="title">
-      <div class="main-title">John Doe</div>
-      <div class="sub-title">25 推文</div>
+      <div class="main-title">{{ user.name }}</div>
+      <div class="sub-title">{{ user.tweetNum }} 推文</div>
     </div>
   </h2>
 </template>
+
+
+<script>
+export default {
+  props: {
+    initialUser: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      user: this.initialUser,
+    };
+  },
+  watch: {
+    //監控父層傳過來的資料是否更新，如有更新，以新資料為準
+    initialUser(newValue) {
+      this.user = {
+        ...this.user,
+        ...newValue,
+      };
+    },
+  },
+};
+</script>
 
 <style scoped>
 .headbar {
@@ -25,7 +51,7 @@
   text-align: left;
   border-width: 0 1px 1px 1px;
   border-style: solid;
-  border-color: #E6ECF0;
+  border-color: #e6ecf0;
   background: #fff;
 }
 .back {

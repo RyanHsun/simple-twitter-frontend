@@ -1,169 +1,97 @@
 <template>
   <ul class="tweets-list">
-    <li class="tweet">
+    <li
+      v-for="tweet in tweets"
+      :key="tweet.id"
+      :to="{ name: 'tweet', params: { id: tweet.id } }"
+      class="tweet"
+    >
       <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
+        <img :src="tweet.Author.avatar | emptyImage" alt="" />
       </a>
       <div class="tweet-info">
         <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
+          <a class="name" href="">{{ tweet.Author.name }}</a>
+          <span class="account">@{{ tweet.Author.account }}</span>
+          <span class="tweet-update-at">・{{ tweet.createdAt | fromNow }}</span>
         </div>
         <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
+          {{ tweet.description }}
         </div>
       </div>
-      <button class="delete-tweet" type="button">
-        <img src="~@/assets/img/icon_close.svg" alt="">
-      </button>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-      </div>
-      <button class="delete-tweet" type="button">
-        <img src="~@/assets/img/icon_close.svg" alt="">
-      </button>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-      </div>
-      <button class="delete-tweet" type="button">
-        <img src="~@/assets/img/icon_close.svg" alt="">
-      </button>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-      </div>
-      <button class="delete-tweet" type="button">
-        <img src="~@/assets/img/icon_close.svg" alt="">
-      </button>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-      </div>
-      <button class="delete-tweet" type="button">
-        <img src="~@/assets/img/icon_close.svg" alt="">
-      </button>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-      </div>
-      <button class="delete-tweet" type="button">
-        <img src="~@/assets/img/icon_close.svg" alt="">
-      </button>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-      </div>
-      <button class="delete-tweet" type="button">
-        <img src="~@/assets/img/icon_close.svg" alt="">
-      </button>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-      </div>
-      <button class="delete-tweet" type="button">
-        <img src="~@/assets/img/icon_close.svg" alt="">
-      </button>
-    </li>
-    <li class="tweet">
-      <a href="" class="avatar">
-        <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="">
-      </a>
-      <div class="tweet-info">
-        <div class="user-info">
-          <a class="name" href="">user1</a>
-          <span class="account">@user1</span>
-          <span class="tweet-update-at">・3小時</span>
-        </div>
-        <div class="tweet-content">
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum. 
-        </div>
-      </div>
-      <button class="delete-tweet" type="button">
-        <img src="~@/assets/img/icon_close.svg" alt="">
+      <button
+        @click.stop.prevent="deleteTweet(tweet.id)"
+        class="delete-tweet"
+        type="button"
+      >
+        <img src="~@/assets/img/icon_close.svg" alt="" />
       </button>
     </li>
   </ul>
 </template>
+<script>
+import { emptyImageFilter } from "../utils/mixins";
+import { fromNowFilter } from "./../utils/mixins";
+import adminAPI from "../apis/admin";
+import { Toast } from "./../utils/helpers";
+
+export default {
+  mixins: [fromNowFilter,emptyImageFilter],
+  data() {
+    return {
+      tweets: {},
+    };
+  },
+  created() {
+    const { limit = 200, offset = 0 } = this.$route.query
+    this.fetchTweets({ queryLimit: limit, queryOffset: offset })
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { limit = '', offset = '' } = to.query;
+    this.fetchTweets({ queryLimit: limit, queryOffset: offset });
+  next();
+  },
+  methods: {
+    async fetchTweets({queryLimit, queryOffset}) {
+      try {
+        const response = await adminAPI.getAdminTweets({
+          limit: queryLimit,
+          offset: queryOffset
+          });
+        this.tweets = { ...response.data };
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "無法取得後台推文清單，請稍後再試",
+        });
+      }
+    },
+    async deleteTweet(id) {
+      try {
+        const { data } = await adminAPI.deleteAdminTweets({ id });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        console.log("handleDeleteButtonClick", id);
+
+        Toast.fire({
+          icon: "success",
+          title: "移除推文成功",
+        });
+        //完成及時刪除的動作
+        this.fetchTweets({ queryLimit: 200, queryOffset: 0 });
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "無法刪除後台推文清單，請稍後再試",
+        });
+      }
+    },
+  },
+};
+</script>
 
 <style scoped>
 .tweet {
@@ -177,7 +105,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: calc( 100% - 60px);
+  width: calc(100% - 60px);
   text-align: left;
 }
 .name {
@@ -190,7 +118,7 @@
 .tweet-panel span {
   padding-right: 40px;
 }
-.tweet-panel img{
+.tweet-panel img {
   margin-right: 20px;
 }
 .delete-tweet {

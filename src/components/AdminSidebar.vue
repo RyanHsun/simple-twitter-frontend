@@ -7,30 +7,46 @@
         </a>
       </h1>
       <nav class="navigation">
-        <a class="nav-item" href="#">
+        <router-link class="nav-item" to="/admin/tweets">
           <div class="icon index">
             <img src="~@/assets/img/icon_index.svg" alt="">
           </div>
           <div>推文清單</div>
-        </a>
-        <a class="nav-item" href="#">
+        </router-link>
+        <router-link class="nav-item" to="/admin/users">
           <div class="icon user">
             <img src="~@/assets/img/icon_user.svg" alt="">
           </div>
           <div>使用者列表</div>
-        </a>
+        </router-link>
       </nav>
     </div>
     <div class="bottom">
-      <a class="logout" href="#">
+      <router-link class="logout" to="/admin/login">
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="">
         </div>
-        <div>登出</div>
-      </a>
+        <div @click="logout">登出</div>
+      </router-link>
     </div>
   </section>
 </template>
+
+<script>
+import { mapState } from "vuex"
+
+export default {
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
+  },
+  methods: {
+    logout () {
+      this.$store.commit('revokeAuthentication')
+      this.$router.push('/login')
+    },
+  }
+}
+</script>
 
 <style scoped>
   .sidebar {
@@ -50,6 +66,7 @@
   }
   .nav-item,
   .logout {
+    text-decoration: none;
     display: flex;
     align-items: center;
     margin-bottom: 30px;
@@ -59,8 +76,13 @@
   .nav-item.active {
     color: #FF6600;
   }
+  .nav-item.active .icon img,
+  .nav-item:hover .icon {
+    filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
+  }
   .icon {
-    margin-right: 20px;
+    width: 30px;
+    margin-right: 10px;
   }
   .new-tweet {
     width: 80%;

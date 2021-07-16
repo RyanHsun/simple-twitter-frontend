@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 <script>
-import 'bootstrap'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import "bootstrap"
+import "bootstrap/dist/css/bootstrap.min.css"
 
 export default {
-  name: 'App'
+  name: "App",
 }
 </script>
 
@@ -45,17 +45,24 @@ button {
   background: no-repeat;
   border: none;
   padding: 0;
+  outline: none;
 }
 ul {
   list-style: none;
   padding: 0;
 }
 .btn {
-  padding: 10px 20px;
+  padding: 10px 15px;
+  min-width: 95px;
   color: #FF6600;
   border-radius: 30px;
   border: 1px solid #FF6600;
 }
+.btn:hover {
+  color: #ff6600;
+  background: #faece3;
+}
+
 
 .avatar {
   display: block;
@@ -65,6 +72,7 @@ ul {
 }
 .avatar img {
   width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: 50% 50%;
   border-radius: 50%;

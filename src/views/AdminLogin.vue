@@ -1,11 +1,9 @@
 <template>
   <div class="container py-5">
     <form class="w-100" @submit.prevent.stop="handleSubmit">
-      <img class="mb-4" src="../assets/logo.svg" alt="">
+      <img class="mb-4" src="../assets/logo.svg" alt="" />
       <div class="text-center mb-4">
-        <h1 class="h3 mb-3 font-weight-normal">
-          後台登入
-        </h1>
+        <h1 class="h3 mb-3 font-weight-normal">後台登入</h1>
       </div>
 
       <div class="form-label-group mb-2">
@@ -16,11 +14,11 @@
           name="email"
           type="email"
           class="form-control"
-          placeholder="請輸入註冊的信箱"
+          placeholder=""
           autocomplete="username"
           required
           autofocus
-        >
+        />
       </div>
 
       <div class="form-label-group mb-3">
@@ -31,15 +29,16 @@
           name="password"
           type="password"
           class="form-control"
-          placeholder="請輸入密碼"
+          placeholder=""
           autocomplete="current-password"
           required
-        >
+        />
       </div>
 
       <button
         class="btn btn-lg btn-block mb-3"
         type="submit"
+        :disabled="isProcessing"
       >
         登入
       </button>
@@ -49,7 +48,6 @@
           <router-link to="/login">前台登入</router-link>
         </p>
       </div>
-
     </form>
   </div>
 </template>
@@ -57,24 +55,75 @@
 
 
 <script>
+import adminAPI from "../apis/admin"
+import { Toast } from "./../utils/helpers"
+
 export default {
-  data () {
+  data() {
     return {
-      email: '',
-      password: ''
+      email: "",
+      password: "",
+      isProcessing: false,
     }
   },
   methods: {
-    handleSubmit () {
-      const data = JSON.stringify({
-        email: this.email,
-        password: this.password
-      })
+    async handleSubmit() {
+      try {
+        if (!this.email || !this.password) {
+          Toast.fire({
+            icon: "warning",
+            title: "請填入 email 和 password",
+          })
+          return
+        }
+        this.isProcessing = true
+        const response = await adminAPI.adminLogin({
+          email: this.email,
+          password: this.password,
+        })
+        const { data } = response
 
-      // TODO: 向後端驗證使用者登入資訊是否合法
-      console.log('data', data)
-    }
-  }
+        if (data.status !== "success") {
+          throw new Error(data.message)
+        }
+        // TODO: 向後端驗證使用者登入資訊是否合法
+
+        // 將 token 存放在 localStorage 內
+        localStorage.setItem("token", data.token)
+
+        //呼叫setCurrentUser來做登入的動作
+        this.$store.commit('setCurrentUser', data.User)
+
+        // 成功登入後轉址到後台推特清單
+        this.$router.push("/admin/tweets")
+
+      } catch (error) {
+        console.log('error',error.response.data.message)
+        this.isProcessing = false
+        if(error.response.data.message === "This admin account doesn't exist.") {
+          this.email = ''
+          this.password = ''
+          Toast.fire({
+          icon: 'warning',
+          title: '沒有這個帳戶'
+        })
+        } else if (error.response.data.message === "Password incorrect."){
+          this.password = ''
+          Toast.fire({
+          icon: 'warning',
+          title: '密碼有誤'
+        })
+        } else {
+          Toast.fire({
+          icon: 'warning',
+          title: '請確認您輸入了正確的帳號密碼'
+        })
+        }
+        
+        console.error(error.message)
+      }
+    },
+  },
 }
 </script>
 
@@ -85,7 +134,7 @@ img {
   margin-top: 30px;
 }
 h1 {
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: "Noto Sans TC", sans-serif;
   font-size: 23px;
   line-height: 33px;
 }
@@ -96,11 +145,10 @@ h1 {
   max-height: 212px;
   margin: 0 auto;
   border-radius: 4px;
-
 }
 
 .form-control {
-  background: #F5F8FA;
+  background: #f5f8fa;
   height: 50px;
   border: 0;
   margin-top: 20px;
