@@ -12,7 +12,7 @@ export default new Vuex.Store({
       name: '',
       email: '',
       avatar: '',
-      role: false
+      role: 'user'
     },
     isAuthenticated: false,
     token: ''
