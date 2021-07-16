@@ -52,11 +52,17 @@ ul {
   padding: 0;
 }
 .btn {
-  padding: 10px 20px;
+  padding: 10px 15px;
+  min-width: 95px;
   color: #FF6600;
   border-radius: 30px;
   border: 1px solid #FF6600;
 }
+.btn:hover {
+  color: #ff6600;
+  background: #faece3;
+}
+
 
 .avatar {
   display: block;

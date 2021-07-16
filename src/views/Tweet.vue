@@ -12,18 +12,17 @@
           </div>
         </h2>
         <Spinner v-if="isLoading"/>
-        <div>
+        <template v-else>
           <TweetDetail 
             :tweetId="tweet.id"
             :initialTweet="tweet"
             @after-create-comment="afterCreateComment"
           />
-        <Spinner v-if="isLoading"/>
           <TweetRepliedList 
             :tweet="tweet"
             :tweetReplies="tweetReplies"
           />
-        </div>
+        </template>
       </div>
     </section>
     <UsersTop />

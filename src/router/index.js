@@ -7,14 +7,14 @@ import store from './../store'
 
 Vue.use(VueRouter)
 
-const authorizeIsAdmin = (to, from, next) => {
-  const currentUser = store.state.currentUser
-  if (currentUser && !currentUser.isAdmin) {
-    next('/404')
-    return
-  }
-  next()
-}
+// const authorizeIsAdmin = (to, from, next) => {
+//   const currentUser = store.state.currentUser
+//   if (currentUser && currentUser.role !== 'Admin') {
+//     next('/404')
+//     return
+//   }
+//   next()
+// }
 
 const routes = [
   {
@@ -85,14 +85,14 @@ const routes = [
   {
     path: '/admin/users',
     name: 'admin-users',
-    component: () => import('../views/AdminUsers.vue'),
-    beforeEnter: authorizeIsAdmin
+    component: () => import('../views/AdminUsers.vue')
+    // beforeEnter: authorizeIsAdmin
   },
   {
     path: '/admin/tweets',
     name: 'admin-tweets',
-    component: () => import('../views/AdminTweets.vue'),
-    beforeEnter: authorizeIsAdmin
+    component: () => import('../views/AdminTweets.vue')
+    // beforeEnter: authorizeIsAdmin
   },
   {
     path: '*',

@@ -12,7 +12,7 @@
           <div class="create-tweet-wrap">
             <span class="avatar" href="">
               <img
-                :src="currentUser.avatar"
+                :src="currentUser.avatar | emptyImage"
                 alt=""
               />
             </span>
@@ -53,6 +53,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { emptyImageFilter } from "../utils/mixins";
 import Sidebar from "./../components/Sidebar.vue"
 import UsersTop from "./../components/UsersTop.vue"
 import TweetsList from "./../components/TweetsList.vue"
@@ -63,6 +64,7 @@ import { Toast } from './../utils/helpers'
 // import { component } from 'vue/types/umd'
 
 export default {
+  mixins: [emptyImageFilter],
   name: "Tweets",
   components: {
     Sidebar,

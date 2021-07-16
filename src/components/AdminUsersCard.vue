@@ -128,6 +128,9 @@ export default {
 }
 .name {
   font-size: 19px;
+  height: 45px;
+  margin-top: 15px;
+  line-height: 21px;
 }
 .admin-user .user-panel {
   width: 100px;

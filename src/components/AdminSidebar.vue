@@ -31,9 +31,14 @@
     </div>
   </section>
 </template>
+
 <script>
+import { mapState } from "vuex"
 
 export default {
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
+  },
   methods: {
     logout () {
       this.$store.commit('revokeAuthentication')
@@ -61,6 +66,7 @@ export default {
   }
   .nav-item,
   .logout {
+    text-decoration: none;
     display: flex;
     align-items: center;
     margin-bottom: 30px;
@@ -70,8 +76,13 @@ export default {
   .nav-item.active {
     color: #FF6600;
   }
+  .nav-item.active .icon img,
+  .nav-item:hover .icon {
+    filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
+  }
   .icon {
-    margin-right: 20px;
+    width: 30px;
+    margin-right: 10px;
   }
   .new-tweet {
     width: 80%;

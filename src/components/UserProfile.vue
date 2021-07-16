@@ -337,8 +337,7 @@ export default {
 .name {
   font-size: 19px;
 }
-.user-introduction,
-.user-followships {
+.user-introduction {
   padding: 10px 20px;
 }
 .user-followships {
@@ -364,7 +363,9 @@ export default {
   .user-info span{
     display: block;
   }
-  
+  .user-followships {
+    padding: 10px 20px;
+  }
   .modal-header {
     position: relative;
     justify-content: flex-start;

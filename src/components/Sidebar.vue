@@ -260,4 +260,15 @@ export default {
   color: #fff;
   background-color: #ff6600;
 }
+.nav-item.active .icon img,
+.nav-item:hover .icon {
+  filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
+}
+.icon {
+  width: 30px;
+  margin-right: 10px;
+}
+.btn-logout:hover {
+  color: #ff6600;
+}
 </style>
