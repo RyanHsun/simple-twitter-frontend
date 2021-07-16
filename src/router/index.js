@@ -95,6 +95,21 @@ const routes = [
     // beforeEnter: authorizeIsAdmin
   },
   {
+    path: '/room',
+    name: 'room',
+    component: () => import('../views/PublicMessage.vue')
+  },
+  {
+    path: '/message',
+    name: 'message',
+    component: () => import('../views/PrivateMessage.vue')
+  },
+  {
+    path: '/notification',
+    name: 'notification',
+    component: () => import('../views/Notification.vue')
+  },
+  {
     path: '*',
     name: 'not-found',
     component: NotFound
