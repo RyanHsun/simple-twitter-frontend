@@ -371,5 +371,8 @@ export default {
     color: #fff;
     background-color: #FF6600;
   }
-
+  .name:hover {
+  color: #ff6600;
+  text-decoration: none;
+  }
 </style>

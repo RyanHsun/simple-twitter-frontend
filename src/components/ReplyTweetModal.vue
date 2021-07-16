@@ -27,7 +27,7 @@
           <form class="reply-tweet" @submit.stop.prevent="handleSubmit(tweet)">
             <div class="reply-tweet-wrap">
               <span class="avatar" href="">
-                <img :src="currentUser.avatar" alt="">
+                <img :src="currentUser.avatar | emptyImage" alt="">
               </span>
               <textarea 
                 v-model="comment"

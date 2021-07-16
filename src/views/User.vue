@@ -66,7 +66,6 @@ import TweetsList from './../components/TweetsList.vue'
 import UserRepliedList from './../components/UserRepliedList.vue'
 import UserLikesList from './../components/UserLikesList.vue'
 import Spinner from './../components/Spinner'
-import { v4 as uuidv4 } from 'uuid'
 import usersAPI from './../apis/users'
 import { Toast } from './../utils/helpers'
 import tweetsAPI from './../apis/tweets'
@@ -327,23 +326,9 @@ export default {
         })
       }
     },
-    afterSubmitTweet(payload) {
-      const { description } = payload
-      console.log("description", description)
-      this.tweets.unshift({
-        // id: commentId,
-        id: uuidv4(),
-        description: description,
-        createdAt: new Date(),
-        likeNum: 0,
-        replyNum: 0,
-        Author: {
-          id: this.user.id,
-          account: this.user.account,
-          name: this.user.name,
-          avatar: this.user.avatar,
-        },
-      })
+    afterSubmitTweet() {
+      const { id } = this.$route.params
+      this.fetchUserTweets(id)
     },
     afterAddFollow() {
       const { id } = this.$route.params

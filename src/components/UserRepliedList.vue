@@ -371,4 +371,8 @@ pointer-events: none;
   cursor: pointer;
   transition: .2s ease-in-out;
 }
+.name:hover {
+color: #ff6600;
+text-decoration: none;
+}
 </style>

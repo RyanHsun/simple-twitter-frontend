@@ -191,4 +191,10 @@ export default {
   padding: 20px;
   color: #ff6600;
 }
+.info:hover {
+  text-decoration: none;
+}
+.name:hover {
+  color: #ff6600;
+}
 </style>

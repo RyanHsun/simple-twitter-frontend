@@ -489,6 +489,7 @@ export default {
   .nav-item:hover,
   .nav-item.active {
     color: #ff6600;
+    text-decoration: none;
   }
   .is-following {
     color: #fff;
