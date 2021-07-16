@@ -6,7 +6,7 @@
       class="tweet-replied"
     >
       <router-link class="avatar" :to="{ name: 'user', params: { id: tweetReplied.User.id } }">
-        <img :src="tweetReplied.User.avatar" alt="">
+        <img :src="tweetReplied.User.avatar | emptyImage" alt="">
       </router-link>
       <div class="tweet-replied-detail">
         <div class="tweet-replied-user-info">
@@ -26,9 +26,10 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from './../utils/mixins'
 export default {
-  mixins: [fromNowFilter],
+  mixins: [fromNowFilter,emptyImageFilter],
   props: {
     tweet: {
       type: Object,
@@ -70,5 +71,9 @@ export default {
   }
   .tweet-panel img{
     margin-right: 20px;
+  }
+  .name:hover {
+  color: #ff6600;
+  text-decoration: none;
   }
 </style>

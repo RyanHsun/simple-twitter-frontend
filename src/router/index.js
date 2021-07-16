@@ -2,10 +2,19 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import NotFound from '../views/NotFound.vue'
 import Login from '../views/Login.vue'
-
 import Tweets from '../views/Tweets.vue'
+import store from './../store'
 
 Vue.use(VueRouter)
+
+// const authorizeIsAdmin = (to, from, next) => {
+//   const currentUser = store.state.currentUser
+//   if (currentUser && currentUser.role !== 'Admin') {
+//     next('/404')
+//     return
+//   }
+//   next()
+// }
 
 const routes = [
   {
@@ -22,16 +31,6 @@ const routes = [
     path: '/regist',
     name: 'regist',
     component: () => import('../views/Regist.vue')
-  },
-  {
-    path: '/tweets',
-    name: 'tweets',
-    component: Tweets
-  },
-  {
-    path: '/tweets/:id',
-    name: 'tweet',
-    component: () => import('../views/Tweet.vue')
   },
   {
     path: '/users/:id',
@@ -58,33 +57,6 @@ const routes = [
     name: 'account-setting',
     component: () => import('../views/AccountSetting.vue')
   },
-  // {
-  //   path: '/users/:id/followings',
-  //   name: 'user-followings',
-  //   component: () => import('../views/UserFollowships.vue')
-  // },
-  // {
-  //   path: '/users/:id/followers',
-  //   name: 'user-followers',
-  //   component: () => import('../views/UserFollowships.vue')
-  // },
-  {
-    path: '/admin/tweets',
-    name: 'admin-tweets',
-    component: () => import('../views/AdminTweets.vue')
-  },
-  {
-    path: '/admin/users',
-    name: 'admin-users',
-    component: () => import('../views/AdminUsers.vue')
-  },
-  {
-    path: '/admin/login',
-    name: 'admin-login',
-    component: () => import('../views/AdminLogin.vue')
-  },
-  // test for UserFollow part
-  // test for UserFollow part
   {
     path: '/users/:id/followers',
     name: 'user-followers',
@@ -95,8 +67,33 @@ const routes = [
     name: 'user-followings',
     component: () => import('../views/UserFollowings.vue')
   },
-  // test for UserFollow part
-  // test for UserFollow part
+  {
+    path: '/tweets',
+    name: 'tweets',
+    component: Tweets
+  },
+  {
+    path: '/tweets/:id',
+    name: 'tweet',
+    component: () => import('../views/Tweet.vue')
+  },
+  {
+    path: '/admin/login',
+    name: 'admin-login',
+    component: () => import('../views/AdminLogin.vue')
+  },
+  {
+    path: '/admin/users',
+    name: 'admin-users',
+    component: () => import('../views/AdminUsers.vue')
+    // beforeEnter: authorizeIsAdmin
+  },
+  {
+    path: '/admin/tweets',
+    name: 'admin-tweets',
+    component: () => import('../views/AdminTweets.vue')
+    // beforeEnter: authorizeIsAdmin
+  },
   {
     path: '*',
     name: 'not-found',
@@ -110,7 +107,36 @@ VueRouter.prototype.push = function push (location) {
 }
 
 const router = new VueRouter({
+  linkExactActiveClass: 'active',
   routes
+})
+
+router.beforeEach(async (to, from, next) => {
+  // get token from localStorage
+  const tokenInLocalStorage = localStorage.getItem('token')
+  const tokenInStore = store.state.token
+
+  let isAuthenticated = store.state.isAuthenticated
+
+  if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
+    // check currentUser with server
+    console.log('[Token-check]: token no match!')
+    console.log('[Token-check]: check with server!')
+    isAuthenticated = await store.dispatch('fetchCurrentUser')
+  }
+
+  const pathsWithoutAuthentication = ['login', 'regist', 'admin-login']
+
+  if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name)) {
+    next('/login')
+    return
+  }
+
+  if (isAuthenticated && pathsWithoutAuthentication.includes(to.name)) {
+    next('/tweets')
+    return
+  }
+  next()
 })
 
 export default router

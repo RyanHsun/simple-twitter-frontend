@@ -2,24 +2,30 @@
   <section class="sidebar">
     <div class="top">
       <h1 class="logo">
-        <router-link to="/">
+        <router-link to="/tweets">
           <img src="~@/assets/img/logo.svg" alt="" />
         </router-link>
       </h1>
       <nav class="navigation">
-        <router-link class="nav-item" to="/">
+        <router-link class="nav-item" to="/tweets">
           <div class="icon index">
             <img src="~@/assets/img/icon_index.svg" alt="" />
           </div>
           <div>首頁</div>
         </router-link>
-        <router-link class="nav-item" to="/users/:id">
+        <router-link 
+          class="nav-item" 
+          :to="{ name: 'user', params: { id: currentUser.id } }"
+        >
           <div class="icon user">
             <img src="~@/assets/img/icon_user.svg" alt="" />
           </div>
           <div>個人資料</div>
         </router-link>
-        <router-link class="nav-item" to="/users/:id/setting">
+        <router-link 
+          class="nav-item" 
+          :to="{ name: 'account-setting', params: { id: currentUser.id } }"
+        >
           <div class="icon cog">
             <img src="~@/assets/img/icon_cog.svg" alt="" />
           </div>
@@ -44,65 +50,146 @@
         aria-labelledby="newTweetModalLabel"
         aria-hidden="true"
       >
-      <!-- Modal -->
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <img src="~@/assets/img/icon_close-og.svg" alt="">
-            </button>
-          </div>
-          <div class="modal-body">
-            <form class="create-tweet" action="">
-              <div class="create-tweet-wrap">
-                <span class="avatar" href="">
-                  <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
-                </span>
-                <textarea v-model="newTweet" class="tweet-textarea" name="" id="" cols="30" rows="5" maxlength="140" placeholder="有什麼新鮮事？"></textarea>
-              </div>
-              <button class="btn tweet-button" @click="addTweet">推文</button>
-            </form>
+        <!-- Modal -->
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <img src="~@/assets/img/icon_close-og.svg" alt="" />
+              </button>
+            </div>
+            <div class="modal-body">
+              <form class="create-tweet" action="">
+                <div class="create-tweet-wrap">
+                  <span class="avatar" href="">
+                    <img
+                      :src="currentUser.avatar | emptyImage"
+                      alt=""
+                    />
+                  </span>
+                  <textarea
+                    v-model="newTweet"
+                    class="tweet-textarea"
+                    name=""
+                    id=""
+                    cols="30"
+                    rows="5"
+                    maxlength="140"
+                    placeholder="有什麼新鮮事？"
+                  ></textarea>
+                </div>
+                <button
+                  class="btn tweet-button"
+                  @click="addTweet"
+                  :disabled="isProcessing"
+                >
+                  {{ isProcessing ? '推文中...' : '推文' }}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-      </div>
     </div>
-    <div class="bottom">
+    <div class="bottom" @click="logout">
       <router-link class="logout" to="/login">
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="" />
         </div>
-        <div>登出</div>
+        <button
+          type="button"
+          class="btn-logout"
+          @click="logout"
+        >
+          登出</button>
       </router-link>
     </div>
   </section>
 </template>
 
 <script>
-import $ from 'jquery'
+import { emptyImageFilter } from "../utils/mixins"
+import { mapState } from "vuex"
+import tweetsAPI from "./../apis/tweets"
+import { Toast } from "./../utils/helpers"
+import $ from "jquery"
+
 export default {
+  mixins: [emptyImageFilter],
   data() {
     return {
       newTweet: '',
       isShowModal: false,
-    };
+      isProcessing: false
+    }
+  },
+  watch: {
+    newTweet(newValue) {
+      if (newValue.length === 140) {
+        Toast.fire({
+          icon: 'warning',
+          title: '字數限制140字',
+        })
+      }
+    },
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
   methods: {
-    addTweet() {
-      //使用API向後端發送post推文
+    logout () {
+      this.$store.commit('revokeAuthentication')
+      this.$router.push('/login')
+    },
+    async addTweet() {
+      try {
+        if (!this.newTweet) {
+          Toast.fire({
+            icon: "warning",
+            title: "您的推文未填寫任何內容",
+          })
+          return
+        }
+        this.isProcessing = true
+        const { data } = await tweetsAPI.createTweet({
+          description: this.newTweet,
+        })
+        if (data.status === "error") {
+          throw new Error(data.message)
+        }
 
-      this.$emit('after-submit-tweet',{description: this.newTweet})
-      $("#newTweetModal").modal('hide')
-      this.newTweet = ''
+        this.$emit("after-submit-tweet", { description: this.newTweet
+         })
+        $("#newTweetModal").modal("hide")
+        Toast.fire({
+          icon: "success",
+          title: "新增推文成功",
+        })
+        this.isProcessing = false
+
+        this.newTweet = ''
+
+      } catch (error) {
+        console.log(error.message)
+        Toast.fire({
+          icon: "warning",
+          title: "無法新增推文，請稍候在試",
+        })
+      }
     },
     showModal() {
       this.isShowModal = true
     },
     cancelModal() {
       this.isShowModal = false
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -131,6 +218,7 @@ export default {
 .logout:hover,
 .nav-item.active {
   color: #ff6600;
+  text-decoration: none;
 }
 .icon {
   margin-right: 20px;
@@ -159,10 +247,10 @@ export default {
 }
 .tweet-textarea {
   font-size: 18px;
-  color: #9197A3;
+  color: #9197a3;
   border: none;
   outline: none;
-  width: calc( 100% - 60px);
+  width: calc(100% - 60px);
   resize: none;
 }
 .avatar {
@@ -171,6 +259,17 @@ export default {
 .tweet-button {
   align-self: flex-end;
   color: #fff;
-  background-color: #FF6600;
+  background-color: #ff6600;
+}
+.nav-item.active .icon img,
+.nav-item:hover .icon {
+  filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
+}
+.icon {
+  width: 30px;
+  margin-right: 10px;
+}
+.btn-logout:hover {
+  color: #ff6600;
 }
 </style>

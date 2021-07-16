@@ -2,7 +2,7 @@
   <ul class="followships-list">
     <li v-for="user in users" :key="user.id" class="followships-item">
       <a class="followships-avatar avatar">
-        <img :src="user.avatar" alt="" />
+        <img :src="user.avatar | emptyImage" alt="" />
       </a>
       <div class="followships-content">
         <a class="followships-info" href="">
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
 const dummyUsersTop = {
   Users: [
     {
@@ -81,6 +82,7 @@ const dummyUsersTop = {
 };
 
 export default {
+  mixins: [emptyImageFilter],
   data() {
     return {
       users: [],

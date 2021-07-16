@@ -3,12 +3,13 @@
     <div class="wrap">
       <h2 class="title">跟隨誰</h2>
       <ul class="users">
-        <li v-for="user in users" :key="user.id" class="user">
+        <Spinner v-if="isLoading"/>
+        <li v-else v-for="user in users" :key="user.id" class="user">
           <router-link
             class="avatar"
             :to="{ name: 'user', params: { id: user.id } }"
           >
-            <img :src="user.avatar" alt="" />
+            <img :src="user.avatar | emptyImage" alt="" />
           </router-link>
           <router-link
             class="info"
@@ -39,64 +40,121 @@
 </template>
 
 <script>
-const dummyUsersTop = {
-  Users: [
-    {
-      id: 3,
-      account: "user2",
-      name: "User2",
-      avatar: "https://randomuser.me/api/portraits/men/88.jpg",
-      isFollowing: true,
-    },
-    {
-      id: 2,
-      account: "user1",
-      name: "User1",
-      avatar: "https://randomuser.me/api/portraits/men/78.jpg",
-      isFollowing: false,
-    },
-  ],
-};
+import { mapState } from 'vuex'
+import { emptyImageFilter } from "../utils/mixins"
+import Spinner from './../components/Spinner'
+import usersAPI from './../apis/users'
+import { Toast } from './../utils/helpers'
 
 export default {
+  mixins: [emptyImageFilter],
+  components: {
+    Spinner
+  },
   data() {
     return {
       users: [],
-    };
+      isLoading: true,
+      isProcessing: false
+    }
+  },
+  computed: {
+    ...mapState(['currentUser'])
   },
   created() {
-    this.fetchusers();
+    this.fetchTopUsers()
   },
   methods: {
-    fetchusers() {
-      this.users = [...dummyUsersTop.Users];
-    },
-    addFollowing(userId) {
-      this.users = this.users.map((user) => {
-        if (user.id !== userId) {
-          return user;
-        } else {
-          return {
-            ...user,
-            isFollowing: true,
-          };
+    async fetchTopUsers() {
+      try {
+        const { data } = await usersAPI.getTopUsers()
+
+        this.users = [...data]
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
         }
-      });
+        this.isLoading = false
+
+      } catch (error) {
+        
+        this.isLoading = false
+
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新個人資料，請稍後再試'
+        })
+      }
     },
-    deleteFollowing(userId) {
-      this.users = this.users.map((user) => {
-        if (user.id !== userId) {
-          return user;
-        } else {
-          return {
-            ...user,
-            isFollowing: false,
-          };
+    async addFollowing (userId) {
+      try {
+        const { data } = await usersAPI.addFollowing({ id: userId })
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
         }
-      });
+
+        this.users = this.users.map((user) => {
+          if (user.id !== userId) {
+            return user
+          } else {
+            return {
+              ...user,
+              isFollowing: true,
+            }
+          }
+        })
+
+        // 做傳送到User
+        this.$emit('after-add-follow')
+
+        Toast.fire({
+          icon: 'success',
+          title: '追隨成功'
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增追隨，請稍後再試',
+        })
+      }
     },
-  },
-};
+    async deleteFollowing (userId) {
+      console.log(userId)
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId })
+        
+        if(data.status === 'error') {
+          throw new Error(data.message)
+        }
+
+        this.users = this.users.map((user) => {
+          if (user.id !== userId) {
+            return user
+          } else {
+            return {
+              ...user,
+              isFollowing: false,
+            }
+          }
+        })
+        this.$emit('after-delete-follow')
+        Toast.fire({
+          icon: 'success',
+          title: '取消追隨'
+        })
+      } catch (error) {
+        console.error(error.message)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消跟隨，請稍後再試'
+        })
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -131,6 +189,12 @@ export default {
 .show-more-user {
   display: block;
   padding: 20px;
+  color: #ff6600;
+}
+.info:hover {
+  text-decoration: none;
+}
+.name:hover {
   color: #ff6600;
 }
 </style>

@@ -33,7 +33,7 @@
               <img src="~@/assets/img/icon_close-og.svg" alt="">
             </button>
             <p>編輯個人資料</p>
-            <button class="btn update-profile" type="submit">儲存</button>
+            <button class="btn update-profile" type="submit" :disabled="isProcessing">儲存</button>
           </div>
           <div class="modal-body">
             <div class="user-profile-edit">
@@ -44,11 +44,12 @@
                 <input 
                   id="upload-image-cover" 
                   type="file" 
-                  name="image" 
+                  name="cover" 
                   accept="image/*" 
+                  multiple
                   class="form-control-file"
                   @change="handleFileChange">
-                <img :src="profile.cover" alt="">
+                  <img :src="user.cover | emptyImage" alt="">
               </div>
               <div class="user-avatar avatar">
                 <label for="upload-image-avatar" class="upload-image">
@@ -57,32 +58,36 @@
                 <input 
                   id="upload-image-avatar" 
                   type="file" 
-                  name="image" 
+                  name="avatar" 
                   accept="image/*" 
+                  multiple
                   class="form-control-file"
                   @change="handleFileChange">
-                <img :src="profile.avatar" alt="">
+                  <img :src="user.avatar | emptyImage" alt="">
               </div>
               <div class="user-name">
                 <label for="">名稱</label>
+                
                 <input 
-                  v-model="profile.name"
+                  v-model="user.name"
                   type="text" 
+                  name="name"
+                  required
                   maxlength="50" 
                   class="user-name-input">
                 <span class="text-count">
-                  {{ profile.name ? profile.name.length : 0 }}/50</span>
+                  {{ user.name ? user.name.length : 0 }}/50</span>
               </div>
               <div class="user-intro">
                 <label for="">自我介紹</label>
                 <textarea 
-                  v-model="profile.introduction"
-                  name=""
+                  v-model="user.introduction"
+                  name="introduction"
                   cols="30"
                   rows="5"
                   maxlength="160"
                   class="user-intro-textarea"></textarea>
-                <span class="text-count">{{ profile.introduction ? profile.introduction.length : 0 }}/160</span>
+                <span class="text-count">{{ user.introduction ? user.introduction.length : 0 }}/160</span>
               </div>
             </div>
           </div>
@@ -93,64 +98,78 @@
 </template>
 
 <script>
+import { emptyImageFilter } from "../utils/mixins";
+
 export default {
+  mixins: [emptyImageFilter],
   props: {
-    user: {
+    initialUser: {
       type: Object,
-      required: true
+      default: () => {
+        return {
+          id: 0,
+          account: '',
+          cover: '',
+          avatar: '',
+          name: '',
+          introduction: '', 
+          editModalShow: false,
+          isProcessing: false
+        }
+      }
+    },
+    isProcessing: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
-      profile: {
-        cover: '',
-        avatar: '',
-        name: '',
-        introduction: ''  
-      },
-      editModalShow: false
+      user: {
+        ...this.initialUser
+      }
     }
   },
   created () {
-    const { id } = this.$route.params
-    this.fetchProfile(id)
+    this.fetchProfile()
   },
   methods: {
-    fetchProfile (profileId) {
-      console.log('Profile Id:', profileId)
-      this.profile = {...this.user}
+    fetchProfile () {
+        this.user = {...this.initialUser}
     },
     handleFileChange (e) {
       const files = e.target.files
 
       if ( e.target.matches('#upload-image-cover') ) {
         if (files.length === 0 ) {
-          this.profile.cover = this.user.cover
+          this.cover = this.user.cover
         } else {
           const imageURL = window.URL.createObjectURL(files[0])
-          this.profile.cover = imageURL
+          this.user.cover = imageURL
         }
       } else if ( e.target.matches('#upload-image-avatar') ) {
         if (files.length === 0 ) {
-          this.profile.avatar = this.user.avatar
+          this.avatar = this.user.avatar
         } else {
           const imageURL = window.URL.createObjectURL(files[0])
-          this.profile.avatar = imageURL
+          this.user.avatar = imageURL
         }
       }
     },
+    handleSubmit (e) {
+      const form = e.target
+      const formData = new FormData(form)
+      
+      this.$emit('after-submit', formData)
+    },
     handleEditModalShow (mode) {
+      this.user = {...this.initialUser}
       if (mode === 'open') {
         this.editModalShow = true
       } else if (mode === 'close') {
-        this.profile = {...this.user}
+        this.user = {...this.initialUser}
         this.editModalShow = false
       }
-    },
-    handleSubmit (e) {
-      const form = e.target  
-      const formData = new FormData(form)
-      this.$emit('after-submit', formData)
     }
   }
 }

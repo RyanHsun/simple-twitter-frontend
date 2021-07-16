@@ -1,15 +1,20 @@
 <template>
   <div class="container">
     <Sidebar :tweets-id="tweets.id" @after-submit-tweet="afterSubmitTweet"/>
-    <section class="user">
-      <div class="user-wrap">
+    <section class="user-page">
+      <Spinner v-if="isLoading"/>
+      <div
+        v-else
+        class="user-wrap">
         <Headbar
-          :user="user"
+          :initialUser="user"
         />
         <UserProfile 
-          :user="user"
-          @after-submit="handleAfterSubmit"
+          :initialUser="user"
+          :is-current-user="currentUser.id === user.id"
+          :initial-is-following="user.isFollowing" 
         />
+
         <div class="tweets-switch-tab">
           <button 
             v-for="tweetsSwitchTab in tweetsSwitchTabs"
@@ -22,201 +27,51 @@
           </button>
         </div>
 
-        <template v-if="currentTab === 'tweets'">
-          <TweetsList :tweets="tweets" />
-        </template>
-        <template v-if="currentTab === 'replied_tweets'">
-          <UserRepliedList :user="user" :replies="replies" />
-        </template>
-        <template v-if="currentTab === 'likes'">
-          <UserLikesList :likes="likes" />
-        </template>
+        <ul class="tweets-list" v-if="currentTab === 'tweets'">
+          <TweetsList 
+            v-for="tweet in tweets"
+            :key="tweet.id"
+            :initinalTweet="tweet" 
+          />
+        </ul>
+        <ul class="tweets-list" v-if="currentTab === 'replied_tweets'">
+          <UserRepliedList 
+            v-for="reply in replies"
+            :key="reply.id"
+            :user="user" 
+            :initialReply="reply" 
+          />
+        </ul>
+        <ul class="tweets-list" v-if="currentTab === 'likes'">
+          <UserLikesList 
+            v-for="like in likes"
+            :key="like.id"
+            :user="user" 
+            :initialLike="like" 
+          />
+        </ul>
       </div>
     </section>
-    <UsersTop />
+    <UsersTop @after-add-follow="afterAddFollow" @after-delete-follow="afterDeleteFollow"/>
   </div>
 </template>
 
 <script>
-import Headbar from "./../components/Headbar.vue";
-import Sidebar from "./../components/Sidebar.vue";
-import UsersTop from "./../components/UsersTop.vue";
-import UserProfile from "./../components/UserProfile.vue";
-import TweetsList from "./../components/TweetsList.vue";
-import UserRepliedList from "./../components/UserRepliedList.vue";
-import UserLikesList from "./../components/UserLikesList.vue";
-import { v4 as uuidv4 } from "uuid"
-
-const dummyDataUser = {
-  id: 1,
-  account: "user3",
-  name: "Glenna Kautzer DVM",
-  email: "user3@example.com",
-  introduction:
-    "Minima eum distinctio debitis reiciendis.\nConsequatur ad inventore.\nVoluptas exercitationem laudantium molestias.\nSed dolorem necessitatibus et totam maiores.",
-  avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  cover: "https://loremflickr.com/800/600/dog",
-  tweetNum: 10,
-  likeNum: 0,
-  followingNum: 37,
-  followerNum: 100,
-  lastLoginAt: "2021-07-08T04:20:22.000Z",
-  isFollowing: true,
-};
-
-const tweetsSwitchTabs = [
-  {
-    id: 1,
-    mode: "tweets",
-    title: "推文",
-  },
-  {
-    id: 2,
-    mode: "replied_tweets",
-    title: "推文與回覆",
-  },
-  {
-    id: 3,
-    mode: "likes",
-    title: "喜歡的內容",
-  },
-];
-
-const dummyDataUserTweets = [
-  {
-    id: 71,
-    description: "Libero mollitia commodi nesciunt non ad.",
-    likeNum: 50,
-    replyNum: 3,
-    createdAt: "2021-07-08T04:20:23.000Z",
-    Author: {
-      id: 1,
-      account: "user1",
-      name: "Kendall Schinner",
-      avatar: "https://loremflickr.com/g/320/320/girl/?lock=1",
-    },
-    isLike: false,
-  },
-  {
-    id: 40,
-    description: "Veniam asperiores id.",
-    likeNum: 23,
-    replyNum: 5,
-    createdAt: "2021-07-05T04:20:23.000Z",
-    Author: {
-      id: 1,
-      account: "user1",
-      name: "Kendall Schinner",
-      avatar: "https://loremflickr.com/g/320/320/girl/?lock=1",
-    },
-    isLike: false,
-  },
-  {
-    id: 21,
-    description: "Praesentium commodi eos eligendi sunt. Fugiat aliq",
-    likeNum: 10,
-    replyNum: 7,
-    createdAt: "2021-07-03T04:20:23.000Z",
-    Author: {
-      id: 1,
-      account: "user1",
-      name: "Kendall Schinner",
-      avatar: "https://loremflickr.com/g/320/320/girl/?lock=1",
-    },
-    isLike: false,
-  },
-];
-
-const dummyDataUserReplied = [
-  {
-    id: 4,
-    UserId: 1,
-    TweetId: 11,
-    comment:
-      "eligendi,Aut nisi sit laudantium. Debitis deserunt exceptur,Sed reprehenderit rerum animi ipsa repudiandae nem Sed reprehenderit rerum animi ipsa repudiandae nem,Sed reprehenderit rerum animi ipsa repudiandae nem.",
-    createdAt: "2021-07-09T12:03:58.000Z",
-    RepliedTweet: {
-      id: 11,
-      description: "Eos quas ea corporis quasi animi. Aut repellendus ",
-      likeNum: 65,
-      replyNum: 20,
-      createdAt: "2021-07-08T12:03:58.000Z",
-      Author: {
-        id: 30,
-        name: "Fredy Haag",
-        account: "user30",
-        avatar: "https://loremflickr.com/g/320/320/girl/?lock=30",
-      },
-      isLike: false,
-    },
-  },
-  {
-    id: 8,
-    UserId: 1,
-    TweetId: 21,
-    comment: "Sed reprehenderit rerum animi ipsa repudiandae nem",
-    createdAt: "2021-07-03T12:03:58.000Z",
-    RepliedTweet: {
-      id: 21,
-      description: "Illum laboriosam est aut non.\nDoloremque ducimus p",
-      likeNum: 10,
-      replyNum: 6,
-      createdAt: "2021-06-15T12:03:58.000Z",
-      Author: {
-        id: 10,
-        name: "Fredy Haag",
-        account: "user10",
-        avatar: "https://loremflickr.com/g/320/320/girl/?lock=10",
-      },
-      isLike: false,
-    },
-  },
-];
-
-const dummyDataUserlikes = [
-  {
-    id: 1,
-    UserId: 1,
-    TweetId: 3,
-    createdAt: "2021-07-09T12:13:19.000Z",
-    LikedTweet: {
-      id: 3,
-      description: "Aut nisi sit laudantium. Debitis deserunt exceptur",
-      likeNum: 50,
-      replyNum: 2,
-      createdAt: "2021-07-08T04:20:23.000Z",
-      Author: {
-        id: 5,
-        name: "Dr. Elouise Hessel",
-        account: "user5",
-        avatar: "https://loremflickr.com/g/320/320/girl/?lock=5",
-      },
-      isLike: true,
-    },
-  },
-  {
-    id: 2,
-    UserId: 1,
-    TweetId: 3,
-    createdAt: "2021-07-09T12:13:19.000Z",
-    LikedTweet: {
-      id: 3,
-      description: "Praesentium commodi eos eligendi sunt. Fugiat aliq,Praesentium commodi eos eligendi sunt. Fugiat aliq",
-      likeNum: 24,
-      replyNum: 31,
-      createdAt: "2021-07-01T04:20:23.000Z",
-      Author: {
-        id: 2,
-        name: "James Town",
-        account: "user2",
-        avatar: "https://loremflickr.com/g/320/320/girl/?lock=2",
-      },
-      isLike: false,
-    },
-  },
-];
+import { mapState } from 'vuex'
+import Headbar from './../components/Headbar.vue'
+import Sidebar from './../components/Sidebar.vue'
+import UsersTop from './../components/UsersTop.vue'
+import UserProfile from './../components/UserProfile.vue'
+import TweetsList from './../components/TweetsList.vue'
+import UserRepliedList from './../components/UserRepliedList.vue'
+import UserLikesList from './../components/UserLikesList.vue'
+import Spinner from './../components/Spinner'
+import usersAPI from './../apis/users'
+import { Toast } from './../utils/helpers'
+import tweetsAPI from './../apis/tweets'
 
 export default {
+  name: 'User',
   components: {
     Headbar,
     Sidebar,
@@ -225,88 +80,270 @@ export default {
     TweetsList,
     UserRepliedList,
     UserLikesList,
+    Spinner
   },
   data() {
     return {
-      user: {},
+      user: {
+        id: -1,
+        account: '',
+        name: '',
+        email: '',
+        introduction: '',
+        avatar: '',
+        cover: '',
+        tweetNum: -1,
+        likeNum: -1,
+        followingNum: -1,
+        followerNum: -1,
+        lastLoginAt: '',
+        isFollowing: false
+      },
       tweets: [],
       replies: [],
       likes: [],
+      tweetsSwitchTabs: [
+        {
+          id: 1,
+          mode: "tweets",
+          title: "推文",
+        },
+        {
+          id: 2,
+          mode: "replied_tweets",
+          title: "推文與回覆",
+        },
+        {
+          id: 3,
+          mode: "likes",
+          title: "喜歡的內容",
+        }
+      ],
       currentTab: "tweets",
-    };
+      isLoading: true
+    }
   },
-  created() {
-    this.fetchUser();
+  computed: {
+    ...mapState(['currentUser'])
+  },
+  watch: {
+    initialUser (newValue) {
+      this.user = {
+        ...this.user,
+        ...newValue
+      }
+    }
+  },
+  created () {
+    const { id } = this.$route.params
+    this.fetchUser(id)
+    this.fetchUserTweets(id)
+    this.fetchUserRepliedTweets(id)
+    this.fetchUserLikes(id)
+  },
+  beforeRouteUpdate (to, from, next) {
+    const { id } = to.params
+    this.fetchUser(id)
+    this.fetchUserTweets(id)
+    this.fetchUserRepliedTweets(id)
+    this.fetchUserLikes(id)
+    next()
   },
   methods: {
-    fetchUser() {
-      this.user = { ...dummyDataUser };
-      this.tweetsSwitchTabs = [...tweetsSwitchTabs];
-      this.tweets = [...dummyDataUserTweets];
-      // this.replies = [...dummyDataUserReplied]
-      // this.likes = [...dummyDataUserlikes]
-    },
-    switchTweetTab(currentTab) {
-      switch (currentTab) {
-        case "tweets":
-          this.currentTab = currentTab;
-          this.$router.push({
-            name: "user",
-            params: { id: this.user.id },
-          });
-          this.tweets = [...dummyDataUserTweets];
-          console.log("tweets");
-          break;
-        case "replied_tweets":
-          this.currentTab = currentTab;
-          this.$router.push({
-            name: "user-replied-tweets",
-            params: { id: this.user.id },
-          });
-          this.replies = [...dummyDataUserReplied];
-          console.log("replied");
-          break;
-        case "likes":
-          this.currentTab = currentTab;
-          this.$router.push({
-            name: "user-likes-tweets",
-            params: { id: this.user.id },
-          });
-          this.likes = [...dummyDataUserlikes];
-          console.log("likes");
-          break;
+    async fetchUser(userId) {
+      try {
+        const { data } = await usersAPI.getUser({ userId })
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+
+        const {
+          id,
+          account,
+          name,
+          email,
+          introduction,
+          avatar,
+          cover,
+          tweetNum,
+          likeNum,
+          followingNum,
+          followerNum,
+          lastLoginAt,
+          isFollowing
+        } = data
+        this.user = {
+          id,
+          account,
+          name,
+          email,
+          introduction,
+          avatar,
+          cover,
+          tweetNum,
+          likeNum,
+          followingNum,
+          followerNum,
+          lastLoginAt,
+          isFollowing
+        }
+
+        this.isLoading = false
+
+      } catch (error) {
+
+        this.isLoading = false
+
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得使用者資料，請稍後再試'
+        })
       }
     },
-    handleAfterSubmit (formData) {
-      // 透過 API 將表單資料送到伺服器
-      for (let [name, value] of formData.entries()) {
-        console.log(name + ': ' + value)
+    async fetchUserTweets (userId) {
+      try {
+        const { data } = await usersAPI.getUserTweets({ userId })
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+        this.tweets = { ...data }
+
+        // this.tweetsSwitchTabs = [...tweetsSwitchTabs]
+        // this.tweets = [...dummyDataUserTweets]
+      } catch (error) {
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得使用者資料，請稍後再試'
+        })
       }
-      
     },
-    afterSubmitTweet(payload) {
-      const { description } = payload;
-      console.log("description", description);
-      this.tweets.unshift({
-        // id: commentId,
-        id: uuidv4(),
-        description: description,
-        createdAt: new Date(),
-        likeNum: 0,
-        replyNum: 0,
-        Author: {
-          id: this.user.id,
-          account: this.user.account,
-          name: this.user.name,
-          avatar: this.user.avatar,
-        },
-      });
+    async fetchUserRepliedTweets (userId) {
+      try {
+        const { data } = await usersAPI.getUserRepliedTweets({ userId })
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+        this.replies = { ...data }
+
+      } catch (error) {
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得使用者資料，請稍後再試'
+        })
+      }
     },
+    async fetchUserLikes (userId) {
+      try {
+        const { data } = await usersAPI.getUserLikes({ userId })
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+        this.likes = { ...data }
+
+      } catch (error) {
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得使用者資料，請稍後再試'
+        })
+      }
+    },
+    async handleAfterSubmitReply () {
+      try {
+        if (!this.text) {
+          Toast.fire({
+            icon: 'warning',
+            title: '您尚未填寫任何評論'
+          })
+          return
+        }
+        this.isProcessing = true
+        const { data } = await tweetsAPI.createTweetReply({
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+        this.$emit('after-create-comment', {
+          commentId: data.commentId,
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+        this.isProcessing = false
+        this.text = ''
+
+      } catch (error) {
+        console.error(error.message)
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增評論，請稍後再試'
+        })
+      }
+    },
+    async switchTweetTab(currentTab) {
+      try {
+        switch (currentTab) {
+          case "tweets":
+            this.currentTab = currentTab
+            this.$router.push({
+              name: "user",
+              params: { id: this.user.id }
+            })
+            break
+          case "replied_tweets":
+            this.currentTab = currentTab
+            this.$router.push({
+              name: "user-replied-tweets",
+              params: { id: this.user.id }
+            })
+            break
+          case "likes":
+            this.currentTab = currentTab
+            this.$router.push({
+              name: "user-likes-tweets",
+              params: { id: this.user.id }
+            })
+            break
+        }
+      } catch (error) {
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新個人資料，請稍後再試'
+        })
+      }
+    },
+    afterSubmitTweet() {
+      const { id } = this.$route.params
+      this.fetchUserTweets(id)
+    },
+    afterAddFollow() {
+      const { id } = this.$route.params
+      this.fetchUser(id)
+    },
+    afterDeleteFollow() {
+      const { id } = this.$route.params
+      this.fetchUser(id)
+    }
   }
 }
 </script>
 
 <style scoped>
+
   .container {
     display: grid;
     grid-template-columns: 20% auto 30%;
@@ -314,9 +351,11 @@ export default {
     margin: 0 auto;
     padding: 0 20px;
   }
-  .user {
+  .user-page {
     position: relative;
     margin-top: 50px;
+    border-left: 1px solid #e6ecf0;
+    border-right: 1px solid #e6ecf0;
   }
   .user-wrap {
     overflow-y: scroll;

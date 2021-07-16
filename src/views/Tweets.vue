@@ -12,7 +12,7 @@
           <div class="create-tweet-wrap">
             <span class="avatar" href="">
               <img
-                src="https://randomuser.me/api/portraits/men/32.jpg"
+                :src="currentUser.avatar | emptyImage"
                 alt=""
               />
             </span>
@@ -20,7 +20,7 @@
               v-model="newTweet"
               class="tweet-textarea"
               name=""
-              id=""
+              id="index-tweet"
               cols="30"
               rows="2"
               maxlength="140"
@@ -32,11 +32,19 @@
             class="btn tweet-button"
             :disabled="isProcessing"
           >
-            推文
+            {{ isProcessing ? '推文中...' : '推文' }}
           </button>
         </form>
-
-        <TweetsList :tweets="tweets" />
+        <Spinner v-if="isLoading"/>
+        <ul
+          v-else 
+          class="tweets-list">
+          <TweetsList 
+            v-for="tweet in tweets"
+            :key="tweet.id"
+            :initinalTweet="tweet" 
+          />
+        </ul>
       </div>
     </section>
     <UsersTop />
@@ -44,48 +52,58 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { emptyImageFilter } from "../utils/mixins";
 import Sidebar from "./../components/Sidebar.vue"
 import UsersTop from "./../components/UsersTop.vue"
 import TweetsList from "./../components/TweetsList.vue"
+import Spinner from './../components/Spinner'
 import { v4 as uuidv4 } from "uuid"
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
+// import { component } from 'vue/types/umd'
+import { emptyImageFilter } from '../utils/mixins'
 
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: 'Melody Bins',
-    email: 'user1@example.com',
-    image: 'https://loremflickr.com/g/320/240/girl/all',
-    isAdmin: true
-  },
-  isAuthenticated: true
-}
 
 export default {
-  name: "tweets",
+  mixins: [emptyImageFilter],
+  name: "Tweets",
   components: {
     Sidebar,
     TweetsList,
     UsersTop,
+    Spinner
   },
   data() {
     return {
-      currentUser: dummyUser.currentUser,
+      user: {},
       tweets: [],
       newTweet: '',
-      user: {},
-      isProcessing: false
+      isProcessing: false,
+      isLoading: true
     }
+  }, 
+  computed: {
+    ...mapState(['currentUser'])
   },
   created() {
-    const { offset = '', limit = '' } = this.$route.query
+    const { offset = 0, limit = 100 } = this.$route.query
     this.fetchTweets({ queryOffset: offset, queryLimit: limit })
   },
   beforeRouteUpdate (to, from, next) {
     const { offset = '', limit = '' } = to.query
     this.fetchTweets({ queryOffset: offset, queryLimit: limit })
     next()
+  },
+  watch: {
+    newTweet(newValue) {
+      if (newValue.length === 140) {
+        Toast.fire({
+          icon: 'warning',
+          title: '字數限制140字',
+        })
+      }
+    },
   },
   methods: {
     async fetchTweets({ queryOffset, queryLimit }) {
@@ -97,9 +115,13 @@ export default {
         })
 
         this.tweets = [...response.data]
-        // this.user = { ...dummyDataUser }
+        
+        this.isLoading = false
 
       } catch (error) {
+
+        this.isLoading = false
+
         console.log('error', error)
         Toast.fire({
           icon: 'error',
@@ -136,7 +158,7 @@ export default {
         this.fetchTweets(0, 10)
 
       } catch (error) {
-        console.log(error.message)
+        console.log(error)
         Toast.fire({
           icon: 'warning',
           title: '無法新增推文，請稍候在試'
@@ -160,8 +182,9 @@ export default {
           avatar: this.user.avatar,
         },
       })
+      this.fetchTweets(0, 10)
     },
-  },
+  }
 }
 </script>
 

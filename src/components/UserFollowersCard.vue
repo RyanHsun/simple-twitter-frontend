@@ -1,147 +1,108 @@
 <template>
-  <ul class="followships-list">
-    <li v-for="user in users" :key="user.id" class="followships-item">
+  <div class="followships-list">
+    <li class="followships-item">
       <a class="followships-avatar avatar">
-        <img :src="user.follower.avatar" alt="" />
+        <img :src="followerUser.follower.avatar | emptyImage" alt="" />
       </a>
       <div class="followships-content">
-        <a class="followships-info" href="">
-          <span class="name">{{ user.follower.name }}</span>
-          <span class="account">@{{ user.follower.account }}</span>
-        </a>
+        <router-link
+          class="followships-info"
+          :to="{ name: 'user', params: { id: followerUser.followerId } }"
+        >
+          <span class="name">{{ followerUser.follower.name }}</span>
+          <span class="account">@{{ followerUser.follower.account }}</span>
+        </router-link>
         <button
-          v-if="user.follower.isFollowing"
-          @click.stop.prevent="toggleFollowing(user)"
+          v-if="followerUser.follower.isFollowing"
+          @click.stop.prevent="deleteFollowing(followerUser.followerId)"
           class="btn toggle-follow is-following"
+          :disabled="isProcessing"
         >
           正在跟隨
         </button>
-        <button
+          <button
           v-else
-          @click.stop.prevent="toggleFollowing(user)"
+          @click.stop.prevent="addFollowing"
           class="btn toggle-follow"
+          :disabled="isProcessing"
         >
           跟隨
         </button>
         <div class="followships-intro">
-          {{ user.follower.introduction }}
+          {{ followerUser.follower.introduction }}
         </div>
       </div>
     </li>
-  </ul>
+  </div>
 </template>
 
 <script>
-const dummyUsersTop = {
-  Users: [
-    {
-      id: 5,
-      followingId: 4,
-      followerId: 3,
-      follower: {
-        id: 4,
-        account: "user4",
-        name: "Jefferey Jacobi",
-        avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-        introduction:
-          "unde reiciendxxxxis asdfasdvacaszavadfvaedfv zdf zfvadfzavdzfv zsfv azdfv dz zsfdsint",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: false,
-      },
-    },
-    {
-      id: 1,
-      followingId: 2,
-      followerId: 1,
-      follower: {
-        id: 1,
-        account: "user1",
-        name: "Kendall Schinner",
-        avatar: "https://randomuser.me/api/portraits/women/9.jpg",
-        introduction: "Optio ea consectetur quisquam qui autem corporis e",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: true,
-      },
-    },
-    {
-      id: 2,
-      followingId: 2,
-      followerId: 3,
-      follower: {
-        id: 7,
-        account: "user2",
-        name: "Cesar Shanahan",
-        avatar: "https://randomuser.me/api/portraits/women/58.jpg",
-        introduction: "aut earum enim",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: false,
-      },
-    },
-    {
-      id: 7,
-      followingId: 2,
-      followerId: 3,
-      follower: {
-        id: 8,
-        account: "user2",
-        name: "Cesar Shanahan",
-        avatar: "https://randomuser.me/api/portraits/women/8.jpg",
-        introduction: "aut earum enim",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: false,
-      },
-    },
-    {
-      id: 9,
-      followingId: 2,
-      followerId: 3,
-      follower: {
-        id: 9,
-        account: "user2",
-        name: "Cesar Shanahan",
-        avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-        introduction: "aut earum enim",
-        likeNum: 0,
-        tweetNum: 10,
-        followingNum: 0,
-        followerNum: 0,
-        isFollowing: true,
-      },
-    },
-  ],
-};
+import { emptyImageFilter } from "../utils/mixins";
+import usersAPI from "../apis/users";
+import { Toast } from "./../utils/helpers";
 
 export default {
+  mixins: [emptyImageFilter],
+  props: {
+    initinalFollowerUser: {
+      type: Object,
+      require: true,
+    },
+  },
   data() {
     return {
-      users: [],
+      followerUser: this.initinalFollowerUser,
+      isProcessing: false
     };
-  },
-  created() {
-    this.fetchusers();
-  },
+  }, 
   methods: {
-    fetchusers() {
-      this.users = [...dummyUsersTop.Users];
+    async deleteFollowing(userId) {
+      try {
+        this.isProcessing = true
+        const { data } = await usersAPI.deleteFollowing({ userId });
+        console.log('data',data.response)
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        
+        this.followerUser.follower.isFollowing = false
+        console.log('data',data.response)
+        Toast.fire({
+          icon: "success",
+          title: "取消追蹤",
+        });
+        this.isProcessing = false
+      } catch (error) {
+        this.isProcessing = false
+        Toast.fire({
+          icon: "error",
+          title: "無法取消追隨，請稍後再試",
+        });
+        console.log("error", error);
+      }
     },
-    toggleFollowing(user) {
-      console.log("原本的user.follower.isFollowing", user.follower.isFollowing);
-      if (user.follower.isFollowing) {
-        user.follower.isFollowing = false;
-      } else {
-        user.follower.isFollowing = true;
+
+    async addFollowing() {
+      try {
+        this.isProcessing = true
+        const { data } = await usersAPI.addFollowing({ id: this.followerUser.followerId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.followerUser.follower.isFollowing = true
+        Toast.fire({
+          icon: "success",
+          title: "追隨成功",
+        });
+        this.isProcessing = false
+      } catch (error) {
+        this.isProcessing = false
+        Toast.fire({
+          icon: "error",
+          title: "無法追隨，請稍後再試",
+        });
       }
     },
   },
@@ -150,7 +111,7 @@ export default {
 
 <style scoped>
 .followships-list {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
@@ -173,9 +134,13 @@ export default {
 }
 .followships-info {
   flex-grow: 1;
+  text-decoration: none;
 }
 .followships-info span {
   display: block;
+}
+.name:hover {
+  color: #ff6600;
 }
 .followships-intro {
   width: 100%;

@@ -97,18 +97,35 @@ export default {
         }
 
         localStorage.setItem('token', data.token)
+
+        this.$store.commit('setCurrentUser', data.User)
         
         this.$router.push('/tweets')
 
       } catch (error) {
+        console.log('error',error.response.data.message)
         this.isProcessing = false
-        this.password = ''
-
-        Toast.fire({
+        if(error.response.data.message === "This user doesn't exist.") {
+          this.email = ''
+          this.password = ''
+          Toast.fire({
+          icon: 'warning',
+          title: '沒有這個帳戶'
+        })
+        } else if (error.response.data.message === "Password incorrect."){
+          this.password = ''
+          Toast.fire({
+          icon: 'warning',
+          title: '密碼有誤'
+        })
+        } else {
+          Toast.fire({
           icon: 'warning',
           title: '請確認您輸入了正確的帳號密碼'
         })
-        console.log('error', error)
+        }
+        
+        console.error(error.message)
       }
     }
   }

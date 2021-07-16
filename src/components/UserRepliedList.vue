@@ -1,71 +1,66 @@
 <template>
-<ul class="tweets-list">
-  <li 
-    v-for="replied in replies"
-    :key="replied.id"
-    class="tweet"
-  >
+  <li class="tweet">
     <div class="tweet-wrap">
       <div class="replied-tweet">
-        <router-link class="avatar" :to="{ name: 'user', params: { id: replied.RepliedTweet.Author.id } }">
-          <img :src="replied.RepliedTweet.Author.avatar" alt="">
+        <router-link class="avatar" :to="{ name: 'user', params: { id: reply.RepliedTweet.Author.id } }">
+          <img :src="reply.RepliedTweet.Author.avatar | emptyImage" alt="">
         </router-link>
         <div class="tweet-info">
           <div class="user-info">
-            <router-link class="name" :to="{ name: 'user', params: { id: replied.RepliedTweet.Author.id } }">
-              {{ replied.RepliedTweet.Author.name }}
+            <router-link class="name" :to="{ name: 'user', params: { id: reply.RepliedTweet.Author.id } }">
+              {{ reply.RepliedTweet.Author.name }}
             </router-link>
-            <span class="account">@{{ replied.RepliedTweet.Author.account }}</span>
-            <span class="tweet-update-at">・{{ replied.RepliedTweet.createdAt | fromNow }}</span>
+            <span class="account">@{{ reply.RepliedTweet.Author.account }}</span>
+            <span class="tweet-update-at">・{{ reply.RepliedTweet.createdAt | fromNow }}</span>
           </div>
           <div class="tweet-content">
-            {{ replied.RepliedTweet.description }} 
+            {{ reply.RepliedTweet.description }} 
           </div>
           <div class="tweet-panel">
             <button 
               type="button"
               class="tweet-reply-action" 
               data-toggle="modal" 
-              :data-target="`#replyTweetModal-${replied.id}`"
+              :data-target="`#replyTweetModal-${reply.id}`"
               @click="handleReplyTweetModal"
             >
               <img src="~@/assets/img/icon_comment.svg" alt="">
-              <span>{{ replied.RepliedTweet.replyNum }}</span>
+              <span>{{ reply.RepliedTweet.replyNum }}</span>
             </button>
             <button
-              v-if="replied.RepliedTweet.isLike"
+              v-if="reply.RepliedTweet.isLike"
             class="likes" 
-            :class="{ 'is-like': replied.RepliedTweet.isLike }"
+            :class="{ 'is-like': reply.RepliedTweet.isLike }"
             type="button" 
-            @click.stop.prevent="toggleLike(replied.RepliedTweet)"
+            @click.stop.prevent="deleteLike(reply.TweetId)"
             >
               <img src="~@/assets/img/icon_like-fill.svg" alt="">
-              <span>{{ replied.RepliedTweet.likeNum }}</span>
+              <span>{{ reply.RepliedTweet.likeNum }}</span>
             </button>
             <button
               v-else
             class="likes" 
             type="button" 
-            @click.stop.prevent="toggleLike(replied.RepliedTweet)"
+            @click.stop.prevent="addLike(reply.TweetId)"
             >
               <img src="~@/assets/img/icon_like.svg" alt="">
-              <span>{{ replied.RepliedTweet.likeNum }}</span>
+              <span>{{ reply.RepliedTweet.likeNum }}</span>
             </button>
           </div> 
         </div>
       </div>
       <div class="tweet-replied">
         <router-link class="avatar" :to="{ name: 'user', params: { id: user.id } }">
-          <img :src="user.avatar" alt="">
+          <img :src="user.avatar | emptyImage" alt="">
         </router-link>
         <div class="tweet-info">
           <div class="user-info">
             <a class="name" href="">{{ user.name }}</a>
             <span class="account">@{{ user.account }}</span>
-            <span class="tweet-update-at">・{{ replied.createdAt | fromNow }}</span>
+            <span class="tweet-update-at">・{{ reply.createdAt | fromNow }}</span>
           </div>
           <div class="tweet-content">
-            {{ replied.comment }} 
+            {{ reply.comment }} 
           </div>
         </div>
       </div>
@@ -74,172 +69,222 @@
     <div 
       v-if="isShowReplyModal"
       class="modal fade" 
-      :id="`replyTweetModal-${replied.id}`" 
+      :id="`replyTweetModal-${reply.id}`" 
       tabindex="-1" 
       aria-labelledby="replyTweetModalLabel" 
       aria-hidden="true"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <img src="~@/assets/img/icon_close-og.svg" alt="">
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="modal-tweet">
-              <a href="" class="avatar">
-                <img :src="replied.RepliedTweet.Author.avatar" alt="">
-              </a>
-              <div class="modal-tweet-info">
-                <div class="user-info">
-                  <a class="name" href="">{{ replied.RepliedTweet.Author.name }}</a>
-                  <span class="account">@{{ replied.RepliedTweet.Author.account }}</span>
-                  <span class="modal-tweet-update-at">・{{ replied.RepliedTweet.createdAt | fromNow }}</span>
-                </div>
-                <div class="modal-tweet-content">
-                  {{ replied.RepliedTweet.description}}
-                </div>
-                <div class="modal-tweet-reply-to">回覆給<span>@{{ replied.RepliedTweet.Author.account }}</span></div>
-              </div>
-            </div>
-            <form class="modal-reply-tweet" action="">
-              <div class="modal-reply-tweet-wrap">
-                <span class="avatar" href="">
-                  <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
-                </span>
-                <textarea class="modal-reply-textarea" name="" id="" cols="30" rows="5" maxlength="140" placeholder="推你的回覆"></textarea>
-              </div>
-              <button class="btn modal-reply-button">回覆</button>
-            </form>
-          </div>
-        </div>
-      </div>
+      <ReplyTweetModal2
+        :reply="reply"
+        @after-create-comment="afterCreateComment"
+      />
+    </div>
+    <div 
+        class="full-link"
+        @click.stop.prevent="linkToTweetDetail(reply.TweetId)"
+      >
     </div>
   </li>
-</ul>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from "./../utils/mixins"
+import ReplyTweetModal2 from './../components/ReplyTweetModal2.vue'
+import tweetsAPI from './../apis/tweets'
+import { Toast } from './../utils/helpers'
 
 export default {
-  mixins: [fromNowFilter],
+  mixins: [fromNowFilter,emptyImageFilter],
+  components: {
+    ReplyTweetModal2
+  },
   props: {
     user: {
       type: Object,
       required: true
     },
-    replies: {
-      type: Array,
+    initialReply: {
+      type: Object,
       required: true
     }
   },
   data () {
     return {
-      replied: this.replies,
-      isShowReplyModal: false
+      reply: this.initialReply,
+      isShowReplyModal: false,
+      isProcessing: false
+    }
+  },
+  computed: {
+    ...mapState(['currentUser'])
+  },
+  watch: {
+    initialReply (newValue) {
+      this.reply = {
+        ...this.reply,
+        ...newValue
+      }
     }
   },
   methods: {
-    toggleLike (tweet) {
-      if (tweet.isLike) {
-        tweet.isLike = false
-        tweet.likeNum -= 1
-        console.log('Un Like', tweet)
-        // 串接 API 更新推文資料
-      } else {
-        tweet.isLike = true
-        tweet.likeNum += 1
-        console.log('Is Like', tweet)
-        // 串接 API 更新推文資料
+    async addLike(tweetId) {
+      try {
+        this.isProcessing = true
+        const { data } = await tweetsAPI.addLike({ tweetId })
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.reply.RepliedTweet.isLike = true
+        this.reply.RepliedTweet.likeNum = this.tweet.likeNum + 1
+        this.isProcessing = false
+        Toast.fire({
+          icon: "success",
+          title: "加入喜歡！",
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法加入喜歡，請稍後再試',
+        })
+        this.isProcessing = false
       }
+    },
+    async deleteLike(tweetId) {
+      console.log(tweetId)
+      try {
+        this.isProcessing = true
+        const { data } = await tweetsAPI.deleteLike({ tweetId })
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.reply.RepliedTweet.isLike = false
+        this.reply.RepliedTweet.likeNum = this.tweet.likeNum - 1
+        
+        this.isProcessing = false
+        Toast.fire({
+          icon: "success",
+          title: "收回喜歡！",
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法收回喜歡，請稍後再試',
+        })
+        this.isProcessing = false
+      }
+    },
+    afterCreateComment (payload) {
+      const { tweetId, replyNum } = payload
+      console.log(tweetId, replyNum, payload)
+
+      this.reply.RepliedTweet.replyNum += 1
     },
     handleReplyTweetModal () {
       this.isShowReplyModal = true
+    },
+    linkToTweetDetail (tweetId) {
+      this.$router.push(`/tweets/${tweetId}`)
     }
   }
 }
 </script>
-<style scoped>
-  .tweets-list {
-    flex-direction: column;
-    display: flex;
-    width: 100%;
-  }
-  .tweet {
-    text-align: left;
-    padding: 15px;
-    border-bottom: 1px solid #e6ecf0;
-  }
-  .tweet-wrap {
-    display: flex;
-    flex-direction: column;
-  }
-  .replied-tweet {
-    position: relative;
-    display: flex;
-  }
-  .replied-tweet::before {
-    content: '';
-    border: 1px solid #CCD6DD;
-    position: absolute;
-    height: calc( 100% - 30px );
-    top: 55px;
-    bottom: 0;
-    left: 4%;
-    z-index: 0;
-  }
-  
-  .tweet-info {
-    width: calc(100% - 60px);
-  }
-  .tweet-reply-to {
-    font-size: 13px;
-    margin-top: 10px;
-  }
-  .tweet-reply-to span {
-    margin-left: 5px;
-    color: #FF6600;
-  }
-  .tweet-replied {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-top: 30px;
-  }
-  .tweet-replied-wrap {
-    display: flex;
-    width: 100%;
-    text-align: left;
-  }
-  .reply-textarea {
-    width: calc( 100% - 60px);
-    margin-top: 10px;
-    font-size: 18px;
-    color: #9197A3;
-    border: none;
-    outline: none;
-    resize: none;
-  }
-  .avatar {
-    position: relative;
-    display: inline-block;
-  }
-  .name {
-    margin-right: 10px;
-  }
-  .tweet-panel button {
-    padding-right: 40px;
-  }
-  .tweet-panel img{
-    margin-right: 20px;
-  } 
-  .is-like {
-    color: #E0245E;
-  }
 
-  .modal-content {
+<style scoped>
+.tweets-list {
+  flex-direction: column;
+  display: flex;
+  width: 100%;
+}
+.tweet {
+  position : relative;
+  text-align: left;
+  padding: 15px;
+  border-bottom: 1px solid #e6ecf0;
+}
+.tweet-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.replied-tweet {
+  position: relative;
+  display: flex;
+}
+.replied-tweet::before {
+  content: '';
+  border: 1px solid #CCD6DD;
+  position: absolute;
+  height: calc( 100% - 30px );
+  top: 55px;
+  bottom: 0;
+  left: 22px;
+  z-index: 1;
+}
+
+.tweet-info {
+position: relative;
+z-index: 1;
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+width: calc( 100% - 50px);
+text-align: left;
+pointer-events: none;
+}
+.tweet-reply-to {
+  font-size: 13px;
+  margin-top: 10px;
+}
+.tweet-reply-to span {
+  margin-left: 5px;
+  color: #FF6600;
+}
+.tweet-replied {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 30px;
+}
+.tweet-replied-wrap {
+  display: flex;
+  width: 100%;
+  text-align: left;
+}
+.reply-textarea {
+  width: calc( 100% - 60px);
+  margin-top: 10px;
+  font-size: 18px;
+  color: #9197A3;
+  border: none;
+  outline: none;
+  resize: none;
+}
+.avatar {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+}
+.name {
+  margin-right: 10px;
+  pointer-events: visiblefill;
+}
+.tweet-panel {
+  pointer-events: visiblefill;
+}
+.tweet-panel button {
+  padding-right: 40px;
+}
+.tweet-panel img{
+  margin-right: 20px;
+} 
+.is-like {
+  color: #E0245E;
+}
+
+.modal-content {
   border-radius: 14px;
 }
 .close {
@@ -304,5 +349,30 @@ export default {
   color: #fff;
   background-color: #FF6600;
 }
-
+.avatar:hover ~ .full-link,
+.tweet-info:hover + .full-link {
+  background-color: #f5f8fa;
+}
+.name {
+  margin-right: 10px;
+  font-weight: bold;
+  pointer-events: visiblefill;
+}
+.full-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.full-link:hover {
+  background-color: #f5f8fa;
+  cursor: pointer;
+  transition: .2s ease-in-out;
+}
+.name:hover {
+color: #ff6600;
+text-decoration: none;
+}
 </style>
