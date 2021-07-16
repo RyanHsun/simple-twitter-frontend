@@ -62,8 +62,6 @@ import { v4 as uuidv4 } from "uuid"
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
 // import { component } from 'vue/types/umd'
-import { emptyImageFilter } from '../utils/mixins'
-
 
 export default {
   mixins: [emptyImageFilter],
