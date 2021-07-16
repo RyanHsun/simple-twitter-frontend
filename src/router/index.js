@@ -3,18 +3,21 @@ import VueRouter from 'vue-router'
 import NotFound from '../views/NotFound.vue'
 import Login from '../views/Login.vue'
 import Tweets from '../views/Tweets.vue'
+import AdminLogin from '../views/AdminLogin.vue'
 import store from './../store'
 
 Vue.use(VueRouter)
 
-// const authorizeIsAdmin = (to, from, next) => {
-//   const currentUser = store.state.currentUser
-//   if (currentUser && currentUser.role !== 'Admin') {
-//     next('/404')
-//     return
-//   }
-//   next()
-// }
+const authorizeIsAdmin = (to, from, next) => {
+  const currentUser = store.state.currentUser
+  console.log('currentUser', currentUser)
+  console.log('currentUser:', currentUser)
+  if (currentUser && currentUser.role !== 'admin') {
+    next('/404')
+    return
+  }
+  next()
+}
 
 const routes = [
   {
@@ -31,6 +34,16 @@ const routes = [
     path: '/regist',
     name: 'regist',
     component: () => import('../views/Regist.vue')
+  },
+  {
+    path: '/admin',
+    name: 'admin-root',
+    redirect: '/admin/login'
+  },
+  {
+    path: '/admin/login',
+    name: 'admin-login',
+    component: AdminLogin
   },
   {
     path: '/users/:id',
@@ -78,21 +91,16 @@ const routes = [
     component: () => import('../views/Tweet.vue')
   },
   {
-    path: '/admin/login',
-    name: 'admin-login',
-    component: () => import('../views/AdminLogin.vue')
-  },
-  {
     path: '/admin/users',
     name: 'admin-users',
-    component: () => import('../views/AdminUsers.vue')
-    // beforeEnter: authorizeIsAdmin
+    component: () => import('../views/AdminUsers.vue'),
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: '/admin/tweets',
     name: 'admin-tweets',
-    component: () => import('../views/AdminTweets.vue')
-    // beforeEnter: authorizeIsAdmin
+    component: () => import('../views/AdminTweets.vue'),
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: '*',
@@ -113,19 +121,18 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   // get token from localStorage
-  const tokenInLocalStorage = localStorage.getItem('token')
+  const currentUser = store.state.currentUser
+  const token = localStorage.getItem('token')
   const tokenInStore = store.state.token
+  const pathsWithoutAuthentication = ['login', 'regist', 'admin-login']
+
+  console.log('currentUser:', currentUser)
 
   let isAuthenticated = store.state.isAuthenticated
 
-  if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
-    // check currentUser with server
-    console.log('[Token-check]: token no match!')
-    console.log('[Token-check]: check with server!')
+  if (token && token !== tokenInStore) {
     isAuthenticated = await store.dispatch('fetchCurrentUser')
   }
-
-  const pathsWithoutAuthentication = ['login', 'regist', 'admin-login']
 
   if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name)) {
     next('/login')
@@ -133,7 +140,11 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (isAuthenticated && pathsWithoutAuthentication.includes(to.name)) {
-    next('/tweets')
+    if (currentUser.role === 'user') {
+      next('/tweets')
+    } else if (currentUser.role === 'admin') {
+      next('/admin/tweets')
+    }
     return
   }
   next()
