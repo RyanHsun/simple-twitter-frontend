@@ -10,8 +10,7 @@ Vue.use(VueRouter)
 
 const authorizeIsAdmin = (to, from, next) => {
   const currentUser = store.state.currentUser
-  console.log('currentUser', currentUser)
-  console.log('currentUser:', currentUser)
+  // console.log('currentUser:', currentUser)
   if (currentUser && currentUser.role !== 'admin') {
     next('/404')
     return
@@ -126,7 +125,7 @@ router.beforeEach(async (to, from, next) => {
   const tokenInStore = store.state.token
   const pathsWithoutAuthentication = ['login', 'regist', 'admin-login']
 
-  console.log('currentUser:', currentUser)
+  // console.log('currentUser:', currentUser)
 
   let isAuthenticated = store.state.isAuthenticated
 
