@@ -7,6 +7,7 @@
         <li 
           v-for="m in message" 
           :key="m.index"
+          :class="{ 'self': this.isSelf }"
           >
           {{ m }}
         </li>
@@ -18,7 +19,7 @@
         <button 
           class="btn"
           type="button"
-          @click.stop.prevent="send"
+          @click.stop.prevent="sendMessage"
         >
           送出
         </button>
@@ -32,45 +33,44 @@ export default {
   data () {
     return {
       text: '',
-      message: [
-        'fweafbewi',
-        'qduqdi23',
-        'fweafbewi',
-        'qduqdi23',
-      ],
-      selfSend: false
+      message: [],
+      socket: null,
+      isSelf: false
     }
   },
   sockets: {
-    connect: function () {
-      // console.log('socket to notification channel connected')
-      console.log('connected')
+    // connect: function () {
+    //   // console.log('socket to notification channel connected')
+    //   console.log('connected')
+    // },
+    message(data) {
+      console.log('伺服器連接成功：', data)
     },
-    message: function (data) {
-      console.log("data", data)
+    getMessage(data) {
+      this.message.push( data )
+      this.isSelf = false
+      console.log('別人發的訊息：', data)
     }
   },
-  create () {
-    // this.sockets.on('connect', (socket) => {
-    //   console.log(`connected with ID: ${socket.id}`)
-    // })
-    this.getMessage ()
-
+  mounted () {
+    this.$socket.on('getMessage',  data => {
+      console.log('資料：', data)
+    })
+  },
+  watch: {
   },
   methods: {
-    getMessage () {
-      this.$socket.on('getMessage', {
-        text: ''
-      })
-    },
-    send () {
+    sendMessage () {
       const sendText = this.text
-      this.$socket.emit('sendMessage', { sendText })
+      this.$socket.emit('sendMessage', sendText, data => {
+        data = this.currentUser.id
+        console.log('當前使用者id：', data)
+        console.log('自己傳的訊息：', sendText)
+      })
+      this.isSelf = true
       this.message.push( this.text )
       this.text = ''
-      // console.log('OK')
-      
-    },
+    }
   }
 }
 </script>
@@ -80,15 +80,20 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  align-items: flex-start;
   width: 300px;
   height: 400px;
   margin: 0 auto;
   background-color: #cfc;
 }
 .message li {
-  background: #ff6600;
+  width: 30px;
   padding: 10px;
   margin-bottom: 10px;
+  background: #ff6600;
+}
+.message li.self {
+  align-self: flex-end;
 }
 .other {
   align-self: flex-start;
