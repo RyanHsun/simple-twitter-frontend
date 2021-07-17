@@ -7,7 +7,7 @@
         <li 
           v-for="m in message" 
           :key="m.index"
-          :class="{ 'self': this.isSelf }"
+          :class="{ 'self': isSelf }"
           >
           {{ m }}
         </li>
@@ -19,7 +19,7 @@
         <button 
           class="btn"
           type="button"
-          @click.stop.prevent="sendMessage"
+          @click.stop.prevent="post_public_msg"
         >
           送出
         </button>
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -38,6 +39,9 @@ export default {
       isSelf: false
     }
   },
+  computed: {
+    ...mapState(['currentUser'])
+  },
   sockets: {
     // connect: function () {
     //   // console.log('socket to notification channel connected')
@@ -46,32 +50,58 @@ export default {
     message(data) {
       console.log('伺服器連接成功：', data)
     },
-    getMessage(data) {
-      this.message.push( data )
+    get_public_msg(data) {
+      this.message.push( data.msg )
       this.isSelf = false
-      console.log('別人發的訊息：', data)
-    }
+      console.log('別人發的訊息：', data.msg)
+    },
+    // new_join(data) {
+    //   console.log(`${data.name} 加入聊天室`)
+    // }
   },
   mounted () {
-    this.$socket.on('getMessage',  data => {
-      console.log('資料：', data)
-    })
+    this.$socket.on('get_public_msg')
+    this.$socket.on('new_join')
   },
-  watch: {
+  created () {
+    const userId = this.currentUser.id
+    // this.join_public_room(userId)
+    this.$socket.emit('join_public_room', { userId })
+    // this.get_public_msg(data)
+    this.$socket.emit('get_public_history', {
+      offset: 0,
+      limit: 10
+    }, data => console.log(data))
+    // this.$socket.emit('join_public_room', { userId })
+    // this.$socket.emit('get_public_history', {
+    //   offset: 0,
+    //   limit: 10
+    // }, data => console.log(data))
   },
   methods: {
-    sendMessage () {
-      const sendText = this.text
-      this.$socket.emit('sendMessage', sendText, data => {
-        data = this.currentUser.id
-        console.log('當前使用者id：', data)
-        console.log('自己傳的訊息：', sendText)
-      })
+    post_public_msg () {
+      const msg = this.text
+      const userId = this.currentUser.id
+      this.$socket.emit('post_public_msg', { msg, userId })
+      console.log('當前使用者id：', userId)
+      console.log('自己傳的訊息：', msg)
+      console.log('當前使用者：', userId)
       this.isSelf = true
       this.message.push( this.text )
       this.text = ''
-    }
-  }
+    },
+    // join_public_room(userId) {
+    //   this.$socket.emit('join_public_room', { userId })
+    //   console.log('我要加入聊天室')
+    // },
+    // get_public_history(data) {
+    //   this.$socket.emit('get_public_history', {
+    //     offset: 0,
+    //     limit: 10
+    //   }, data => console.log(data))
+    //   console.log('歷史訊息：', data)
+    // }
+  } 
 }
 </script>
 
@@ -87,7 +117,7 @@ export default {
   background-color: #cfc;
 }
 .message li {
-  width: 30px;
+  width: auto;
   padding: 10px;
   margin-bottom: 10px;
   background: #ff6600;
