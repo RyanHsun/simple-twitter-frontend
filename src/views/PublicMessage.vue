@@ -30,7 +30,7 @@
         <ul
           v-else 
           class="publicChatroomCard">
-          <NotificationList 
+          <PublicChatroom 
           />
         </ul>
       </div>
@@ -43,6 +43,7 @@ import { mapState } from 'vuex'
 import { emptyImageFilter } from "../utils/mixins";
 import Sidebar from "./../components/Sidebar.vue"
 import NotificationList from "./../components/NotificationList.vue"
+import PublicChatroom from "./../components/PublicChatroom.vue"
 import Spinner from './../components/Spinner'
 // import tweetsAPI from './../apis/tweets'
 // import { Toast } from './../utils/helpers'
@@ -54,6 +55,7 @@ export default {
   components: {
     Sidebar,
     NotificationList,
+    PublicChatroom,
     Spinner
   },
   data() {
