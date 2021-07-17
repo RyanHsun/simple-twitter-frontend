@@ -63,7 +63,7 @@ export default {
       user: {},
       tweets: [],
       // isProcessing: false,
-      // isLoading: true
+      isLoading: false
     }
   }, 
   computed: {
