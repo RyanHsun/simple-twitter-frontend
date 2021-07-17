@@ -31,7 +31,8 @@ export default {
   deleteFollowing ({ userId }) {
     return apiHelper.delete(`/followships/${userId}`)
   },
-  getTopUsers () {
-    return apiHelper.get('/users')
+  getTopUsers ({ offset, limit }) {
+    const searchParams = new URLSearchParams({ offset, limit })
+    return apiHelper.get(`/users?${searchParams.toString()}`)
   }
 }

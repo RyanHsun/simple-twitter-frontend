@@ -34,7 +34,12 @@
           </button>
         </li>
       </ul>
-      <a class="show-more-user" href="#">顯示更多</a>
+      <button 
+        class="show-more-user"
+        @click="showMoreUser"
+      >
+        顯示更多
+      </button>
     </div>
   </section>
 </template>
@@ -62,17 +67,20 @@ export default {
     ...mapState(['currentUser'])
   },
   created() {
-    this.fetchTopUsers()
+    const { offset = 0, limit = 5 } = this.$route.query
+    this.fetchTopUsers({ queryOffset: offset, queryLimit: limit })
   },
   methods: {
-    async fetchTopUsers() {
+    async fetchTopUsers({ queryOffset, queryLimit }) {
       try {
-        const { data } = await usersAPI.getTopUsers()
+        const response = await usersAPI.getTopUsers({
+          offset: queryOffset,
+          limit: queryLimit
+        })
+        this.users = [...response.data]
 
-        this.users = [...data]
-
-        if (data.status === 'error') {
-          throw new Error(data.message)
+        if (response.data.status === 'error') {
+          throw new Error(response.data.message)
         }
         this.isLoading = false
 
@@ -152,6 +160,10 @@ export default {
           title: '無法取消跟隨，請稍後再試'
         })
       }
+    },
+    showMoreUser () {
+      console.log('MORE')
+      this.fetchTopUsers(0, 10)
     }
   }
 }
@@ -170,12 +182,18 @@ export default {
   width: 100%;
   border-radius: 14px;
   background-color: #f5f8fa;
+  overflow: hidden;
 }
 .title {
   padding: 20px;
   font-size: 20px;
   text-align: left;
   border-bottom: 1px solid #e6ecf0;
+  margin-bottom: 0;
+}
+.users {
+  max-height: 500px;
+  overflow-y: scroll;
 }
 .user {
   width: 100%;
@@ -188,8 +206,13 @@ export default {
 }
 .show-more-user {
   display: block;
+  width: 100%;
+  text-align: left;
   padding: 20px;
   color: #ff6600;
+}
+.show-more-user:hover {
+  background: #ecf0f3;
 }
 .info:hover {
   text-decoration: none;
