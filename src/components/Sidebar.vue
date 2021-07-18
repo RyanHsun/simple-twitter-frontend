@@ -15,6 +15,33 @@
         </router-link>
         <router-link 
           class="nav-item" 
+          to='/'
+        >
+          <div class="icon user">
+            <img src="~@/assets/img/icon_user.svg" alt="" />
+          </div>
+          <div>通知</div>
+        </router-link>
+        <router-link 
+          class="nav-item" 
+          to='/room'
+        >
+          <div class="icon user">
+            <img src="~@/assets/img/icon_mail.svg" alt="" />
+          </div>
+          <div>公開聊天室</div>
+        </router-link>
+        <router-link 
+          class="nav-item" 
+          to='/'
+        >
+          <div class="icon user">
+            <img src="~@/assets/img/icon_mail.svg" alt="" />
+          </div>
+          <div>私人訊息</div>
+        </router-link>
+        <router-link 
+          class="nav-item" 
           :to="{ name: 'user', params: { id: currentUser.id } }"
         >
           <div class="icon user">
