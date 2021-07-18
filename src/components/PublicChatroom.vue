@@ -94,7 +94,7 @@ export default {
       console.log(`${name} 加入聊天室`)
     },
     online_users(data) {
-      // console.log('上線使用者：', data)
+      console.log('上線使用者：', data)
     },
     get_public_msg(data) {
       // console.log(`發的訊息：`, data)
