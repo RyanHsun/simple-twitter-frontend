@@ -10,11 +10,11 @@
             <div class="main-title">上線使用者</div>
           </div>
         </h2>
-        <Spinner v-if="isLoading"/>
         <ul
-          v-else 
           class="publicUsers-list">
-          <NotificationList 
+          <OnlineUsers v-for="user in onlineUsers"
+          :key="user.id"
+          :user="user" 
           />
         </ul>
       </div>
@@ -26,9 +26,7 @@
             <div class="main-title">公開聊天室</div>
           </div>
         </h2>
-        <Spinner v-if="isLoading"/>
         <ul
-          v-else 
           class="publicChatroomCard">
           <PublicChatroom 
           />
@@ -37,76 +35,48 @@
     </section>
   </div>
 </template>
-
 <script>
 import { mapState } from 'vuex'
 import { emptyImageFilter } from "../utils/mixins";
 import Sidebar from "./../components/Sidebar.vue"
-import NotificationList from "./../components/NotificationList.vue"
+import OnlineUsers from "./../components/OnelineUsers.vue"
 import PublicChatroom from "./../components/PublicChatroom.vue"
-import Spinner from './../components/Spinner'
-// import tweetsAPI from './../apis/tweets'
-// import { Toast } from './../utils/helpers'
-// import { component } from 'vue/types/umd'
-
 export default {
   mixins: [emptyImageFilter],
-  name: "Notification",
   components: {
     Sidebar,
-    NotificationList,
-    PublicChatroom,
-    Spinner
+    OnlineUsers,
+    PublicChatroom
   },
-  data() {
+  data () {
     return {
-      user: {},
-      tweets: [],
-      // isProcessing: false,
-      isLoading: false
+      onlineUsers: [],
+      socket: null,
     }
   }, 
   computed: {
     ...mapState(['currentUser'])
   },
-  // created() {
-  //   const { offset = 0, limit = 100 } = this.$route.query
-  //   this.fetchTweets({ queryOffset: offset, queryLimit: limit })
-  // },
-  // beforeRouteUpdate (to, from, next) {
-  //   const { offset = '', limit = '' } = to.query
-  //   this.fetchTweets({ queryOffset: offset, queryLimit: limit })
-  //   next()
-  // },
+  sockets: {
+    online_users(data) {
+      console.log('上線使用者資料', data)
+      // this.fetchOnlineUsers(data.user);
+      this.fetchOnlineUsers(data.users);
+    }
+  },
+  mounted () {
+    this.$socket.on('online_users')
+  },
+  created() {
+    this.fetchOnlineUsers()
+    },
   methods: {
-    //之後串接通知
-    // async fetchTweets({ queryOffset, queryLimit }) {
-    //   try {
-        
-    //     const response = await tweetsAPI.getTweets({
-    //       offset: queryOffset,
-    //       limit: queryLimit
-    //     })
-
-    //     this.tweets = [...response.data]
-        
-    //     this.isLoading = false
-
-    //   } catch (error) {
-
-    //     this.isLoading = false
-
-    //     console.log('error', error)
-    //     Toast.fire({
-    //       icon: 'error',
-    //       title: '無法取得推文資料，請稍後再試'
-    //     })
-    //   }
-    // }
-  }
+    fetchOnlineUsers(data) {
+      this.onlineUsers = data;
+    },
+}
 }
 </script>
-
 <style scoped>
 .container {
   display: grid;
@@ -122,10 +92,11 @@ export default {
 .publicUsers {
   position: relative;
   margin-top: 50px;
+  border-left: 1px solid #e6ecf0;
 }
 .publicChatroom-wrap,
 .publicUsers-wrap {
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: calc(100vh - 50px);
 }
 .headbar {
@@ -160,7 +131,7 @@ export default {
   display: inline-block;
 }
 .publicUsers-list {
-  border-width: 0 1px;
+  border-width: 1px 0;
   border-style: solid;
   border-color: #e6ecf0;
 }

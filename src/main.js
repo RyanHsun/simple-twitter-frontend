@@ -4,6 +4,8 @@ import router from './router'
 import store from './store'
 import VueSocketIo from 'vue-socket.io'
 
+const token = localStorage.getItem('token')
+
 Vue.config.productionTip = false
 
 new Vue({
@@ -15,5 +17,10 @@ new Vue({
 Vue.use(new VueSocketIo({
   debug: true,
   connection: 'https://twitter-project-2021.herokuapp.com/',
+  options: {
+    query: {
+      auth: token
+    }
+  },
   vuex: {}
 }))

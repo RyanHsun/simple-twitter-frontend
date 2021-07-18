@@ -17,9 +17,9 @@
           <span class="account">@123</span>
           <span class="notice-update-at">・10分鐘前</span>
         </div>
-        <div class="notice-content">
+        <!-- <div class="notice-content">
           asn;kfn;kasnfvk;anfvlkeajnv;kejsnv;kesnv;kfjnvksv
-        </div>
+        </div> -->
       </div>
     </li>
 </template>

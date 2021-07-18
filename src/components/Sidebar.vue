@@ -15,7 +15,7 @@
         </router-link>
         <router-link 
           class="nav-item" 
-          to='/notification'
+          to='/'
         >
           <div class="icon user">
             <img src="~@/assets/img/icon_user.svg" alt="" />
@@ -33,7 +33,7 @@
         </router-link>
         <router-link 
           class="nav-item" 
-          to='/message'
+          to='/'
         >
           <div class="icon user">
             <img src="~@/assets/img/icon_mail.svg" alt="" />
