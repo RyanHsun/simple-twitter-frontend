@@ -53,6 +53,7 @@ export default {
   border-style: solid;
   border-color: #e6ecf0;
   background: #fff;
+  /* transform: scale(1.002); */
 }
 .back {
   margin-right: 40px;

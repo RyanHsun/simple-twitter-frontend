@@ -152,6 +152,9 @@ export default {
 .user-followships {
   position: relative;
   margin-top: 102px;
+  border-width: 0 1px 0 1px;
+  border-style: solid;
+  border-color: #e6ecf0;
 }
 .user-wrap {
   overflow-y: scroll;
@@ -168,6 +171,7 @@ export default {
   border-color: #e6ecf0;
   background: #fff;
   background-color: #fff;
+  transform: scale(1.002);
 }
 .headbar {
   position: relative;

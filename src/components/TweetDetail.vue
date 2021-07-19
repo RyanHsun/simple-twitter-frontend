@@ -175,13 +175,13 @@ export default {
         this.isProcessing = false
         Toast.fire({
           icon: "success",
-          title: "操作成功！",
+          title: "加入喜歡！",
         })
       } catch (error) {
         console.log(error)
         Toast.fire({
           icon: 'error',
-          title: '無法按讚，請稍後再試',
+          title: '無法加入喜歡，請稍後再試',
         })
         this.isProcessing = false
       }
@@ -198,13 +198,13 @@ export default {
         this.isProcessing = false
         Toast.fire({
           icon: "success",
-          title: "操作成功！",
+          title: "收回喜歡！",
         })
       } catch (error) {
         console.log(error)
         Toast.fire({
           icon: 'error',
-          title: '無法取消按讚，請稍後再試',
+          title: '無法收回喜歡，請稍後再試',
         })
         this.isProcessing = false
       }

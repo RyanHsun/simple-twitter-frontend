@@ -123,10 +123,11 @@ export default {
   padding: 5px 20px;
   font-size: 18px;
   text-align: left;
-  border-width: 0 1px 1px 1px;
+  border-width: 0 0 1px 1px;
   border-style: solid;
   border-color: #e6ecf0;
   background: #fff;
+  transform: translateX(-1px);
 }
 .title {
   display: inline-block;
