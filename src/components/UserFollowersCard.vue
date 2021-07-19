@@ -127,6 +127,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: flex-start;
   width: calc(100% - 60px);
 }
 .followships-info {
@@ -147,5 +148,16 @@ export default {
 .is-following {
   color: #fff;
   background-color: #ff6600;
+}
+
+@media (max-width: 576px) {
+  .toggle-follow {
+    font-size: 14px;
+    padding: 5px 0;
+    min-width: 80px;
+  }
+  .followships-info {
+    width: 60%;
+  }
 }
 </style>

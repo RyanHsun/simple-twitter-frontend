@@ -296,4 +296,11 @@ export default {
     color: #fff;
     background-color: #FF6600;
   }
+
+ @media (max-width: 576px) {
+   .user-edit {
+    font-size: 14px;
+    padding: 5px 15px;
+   }
+ }
 </style>

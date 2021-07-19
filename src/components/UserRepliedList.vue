@@ -202,7 +202,7 @@ export default {
 .tweet {
   position : relative;
   text-align: left;
-  padding: 15px;
+  padding: 10px 15px;
   border-bottom: 1px solid #e6ecf0;
 }
 .tweet-wrap {
