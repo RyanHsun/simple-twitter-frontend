@@ -39,7 +39,6 @@ export default {
 <style scoped>
 .notice {
   position: relative;
-  border-bottom: 1px solid #E6ECF0;
   display: flex;
   align-items: center;
   padding: 10px 15px;

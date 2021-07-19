@@ -40,7 +40,7 @@
         type="submit"
         :disabled="isProcessing"
       >
-        登入
+        {{ isProcessing ? '登入中...' : '登入' }}
       </button>
 
       <div class="text-right mb-3">

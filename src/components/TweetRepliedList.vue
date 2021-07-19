@@ -44,11 +44,6 @@ export default {
 </script>
 
 <style scoped>
-  .tweet-replied-list {
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
-  }
   .tweet-replied {
     border-bottom: 1px solid #e6ecf0;
     display: flex;

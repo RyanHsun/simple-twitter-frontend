@@ -208,9 +208,10 @@ export default {
   padding: 15px;
 }
 .other {
-    display: flex;
-    align-self: flex-start;
-    margin-bottom: 10px;
+  align-self: flex-start;
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 10px;
 }
 .self {
   text-align: right;
@@ -225,13 +226,16 @@ export default {
 .msg p {
   width: auto;
   max-width: 400px;
-  padding: 10px;
+  padding: 15px 20px;
   margin-bottom: 0;
   font-size: 20px;
 }
 .msg span {
   font-size: 13px;
   color: #6f767a;
+}
+.other a {
+  margin-bottom: 20px;
 }
 .other p {
   background: #e6edf1;

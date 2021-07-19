@@ -18,6 +18,14 @@ body {
   font-family: 'Noto Sans JP', sans-serif;
 }
 
+/* no scroll bar */
+.tweets-wrap::-webkit-scrollbar,
+.tweet-wrap::-webkit-scrollbar,
+.users::-webkit-scrollbar,
+.user-wrap::-webkit-scrollbar {
+  display: none;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -100,5 +108,8 @@ ul {
   }
   .account {
     color: #657786;
+  }
+  .modal-body .user-info {
+    margin-bottom: 10px;
   }
 </style>

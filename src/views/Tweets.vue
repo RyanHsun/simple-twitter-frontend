@@ -197,6 +197,9 @@ export default {
 .tweets {
   position: relative;
   margin-top: 50px;
+  border-width: 0 1px;
+  border-style: solid;
+  border-color: #e6ecf0;
 }
 .tweets-wrap {
   overflow-y: scroll;
@@ -238,9 +241,6 @@ export default {
   flex-direction: column;
   align-items: flex-start;
   padding: 20px;
-  border-width: 0 1px;
-  border-style: solid;
-  border-color: #e6ecf0;
   border-bottom: 10px solid #e6ecf0;
 }
 .create-tweet-wrap {
@@ -264,10 +264,5 @@ export default {
   align-self: flex-end;
   color: #fff;
   background-color: #ff6600;
-}
-.tweets-list {
-  border-width: 0 1px;
-  border-style: solid;
-  border-color: #e6ecf0;
 }
 </style>
