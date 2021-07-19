@@ -22,12 +22,12 @@
       </nav>
     </div>
     <div class="bottom">
-      <router-link class="logout" to="/admin/login">
+      <button class="logout" @click="logout">
         <div class="icon">
           <img src="~@/assets/img/icon_logout.svg" alt="">
         </div>
-        <div @click="logout">登出</div>
-      </router-link>
+        <div class="btn-logout">登出</div>
+      </button>
     </div>
   </section>
 </template>
@@ -49,44 +49,65 @@ export default {
 </script>
 
 <style scoped>
-  .sidebar {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-  .sidebar > div {
-    width: 100%;
-    text-align: left;
-  }
-  .logo {
-    margin-bottom: 40px;
-  }
-  .nav-item,
-  .logout {
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
-  }
-  .nav-item:hover,
-  .logout:hover,
-  .nav-item.active {
-    color: #FF6600;
-  }
-  .nav-item.active .icon img,
-  .nav-item:hover .icon {
-    filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
-  }
-  .icon {
-    width: 30px;
-    margin-right: 10px;
+.sidebar {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.sidebar > div {
+  width: 100%;
+  text-align: left;
+}
+.logo {
+  margin-bottom: 40px;
+}
+.nav-item,
+.logout {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.nav-item:hover,
+.logout:hover,
+.nav-item.active {
+  color: #FF6600;
+}
+.nav-item.active .icon img,
+.nav-item:hover .icon {
+  filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
+}
+.icon {
+  width: 30px;
+  margin-right: 10px;
+}
+.new-tweet {
+  width: 80%;
+  color: #fff;
+  background: #FF6600;
+}
+
+@media (max-width: 576px) {
+  .nav-item div:last-child,
+  .btn-logout {
+    display: none;
   }
   .new-tweet {
-    width: 80%;
-    color: #fff;
-    background: #FF6600;
+    position: fixed;
+    bottom: 3%;
+    right: 3%;
+    z-index: 10;
+    width: auto;
+    min-width: auto;
   }
+  .private-chat {
+    display: none;
+  }
+  .PublicMessage .new-tweet {
+    display: none;
+  }
+}
 </style>

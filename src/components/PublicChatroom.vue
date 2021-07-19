@@ -93,7 +93,7 @@ export default {
     },
     online_users(data) {
       this.memberNum = data.users.length
-      console.log('上線使用者：', this.memberNum)
+      // console.log('上線使用者：', this.memberNum)
     },
     get_public_msg(data) {
       // console.log(`發的訊息：`, data)
@@ -172,7 +172,7 @@ export default {
     // 4. 離開聊天室
     leave_public_room(userId) {
       this.$socket.emit('leave_public_room', { userId })
-      console.log(`使用者${userId} 離開聊天室`)
+      // console.log(`使用者${userId} 離開聊天室`)
     },
     // 自動置頂
     updateScroll() {
@@ -191,9 +191,6 @@ export default {
   height: calc( 100vh - 110px);
   overflow-y: scroll;
   box-sizing: border-box;
-}
-.chat {
-  margin-bottom: 50px;
 }
 .chat::-webkit-scrollbar {
   display: none;
@@ -236,7 +233,7 @@ export default {
   color: #6f767a;
 }
 .other a {
-  margin-bottom: 20px;
+  margin-bottom: 23px;
 }
 .other p {
   background: #e6edf1;
@@ -263,7 +260,7 @@ export default {
   max-height: 60px;
   padding: 10px;
   box-sizing: border-box;
-  border-width: 1px 1px 1px 0;
+  border-width: 1px 0;
   border-style: solid;
   border-color: #e6ecf0;
   background: #fff;
@@ -289,5 +286,14 @@ input {
 .send-btn:hover img {
   transform: scale(1.2);
   transition: .3s ease-in-out;
+}
+@media (max-width: 576px) {
+  .chat {
+    margin-bottom: 10vh;
+  }
+  .msg p {
+    max-width: 180px;
+    font-size: 14px;
+  }
 }
 </style>

@@ -266,4 +266,17 @@ export default {
   color: #fff;
   background-color: #ff6600;
 }
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 25% auto;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    grid-template-columns: 13% auto;
+  }
+}
 </style>

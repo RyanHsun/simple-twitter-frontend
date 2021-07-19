@@ -344,41 +344,56 @@ export default {
 
 <style scoped>
 
+.container {
+  display: grid;
+  grid-template-columns: 20% auto 30%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.user-page {
+  position: relative;
+  margin-top: 50px;
+  border-left: 1px solid #e6ecf0;
+  border-right: 1px solid #e6ecf0;
+}
+.user-wrap {
+  overflow-y: scroll;
+  max-height: calc( 100vh - 50px );
+}
+
+.tweets-switch-tab {
+  display: flex;
+  border-bottom: 1px solid #E6ECF0;
+}
+.tweets-switch-tab .tab-item {
+  width: 130px;
+  padding: 15px 0;
+  font-size: 15px;
+  text-align: center;
+  cursor: pointer;
+}
+.tweets-switch-tab .tab-item.active {
+  border-bottom: 2px solid #FF6600;
+}
+.nav-item:hover,
+.nav-item.active {
+  color: #ff6600;
+}
+  
+@media (max-width: 768px) {
   .container {
-    display: grid;
-    grid-template-columns: 20% auto 30%;
-    max-width: 1500px;
-    margin: 0 auto;
-    padding: 0 20px;
+    grid-template-columns: 25% auto;
+    padding-right: 0;
   }
-  .user-page {
-    position: relative;
-    margin-top: 50px;
-    border-left: 1px solid #e6ecf0;
-    border-right: 1px solid #e6ecf0;
-  }
-  .user-wrap {
-    overflow-y: scroll;
-    max-height: calc( 100vh - 50px );
-  }
- 
-  .tweets-switch-tab {
-    display: flex;
-    border-bottom: 1px solid #E6ECF0;
+}
+
+@media (max-width: 576px) {
+  .container {
+    grid-template-columns: 13% auto;
   }
   .tweets-switch-tab .tab-item {
-    width: 130px;
-    padding: 15px 0;
-    font-size: 15px;
-    text-align: center;
-    cursor: pointer;
+    width: 33%;
   }
-  .tweets-switch-tab .tab-item.active {
-    border-bottom: 2px solid #FF6600;
-  }
-  .nav-item:hover,
-  .nav-item.active {
-    color: #ff6600;
-  }
-  
+}
 </style>

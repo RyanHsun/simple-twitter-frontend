@@ -7,53 +7,53 @@
         </router-link>
       </h1>
       <nav class="navigation">
-        <router-link class="nav-item" to="/tweets">
+        <router-link class="nav-item index" to="/tweets">
           <div class="icon index">
             <img src="~@/assets/img/icon_index.svg" alt="" />
           </div>
           <div>首頁</div>
         </router-link>
         <router-link 
-          class="nav-item" 
+          class="nav-item notification" 
           to='/'
         >
-          <div class="icon user">
+          <div class="icon">
             <img src="~@/assets/img/icon_ring.svg" width="25px" alt="" />
           </div>
           <div>通知</div>
         </router-link>
         <router-link 
-          class="nav-item" 
+          class="nav-item public-chat" 
           to='/room'
         >
-          <div class="icon user">
+          <div class="icon">
             <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
           </div>
           <div>公開聊天室</div>
         </router-link>
         <router-link 
-          class="nav-item" 
+          class="nav-item private-chat" 
           to='/'
         >
-          <div class="icon user">
+          <div class="icon">
             <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
           </div>
           <div>私人訊息</div>
         </router-link>
         <router-link 
-          class="nav-item" 
+          class="nav-item user-profile" 
           :to="{ name: 'user', params: { id: currentUser.id } }"
         >
-          <div class="icon user">
+          <div class="icon">
             <img src="~@/assets/img/icon_user.svg" alt="" />
           </div>
           <div>個人資料</div>
         </router-link>
         <router-link 
-          class="nav-item" 
+          class="nav-item account-setting" 
           :to="{ name: 'account-setting', params: { id: currentUser.id } }"
         >
-          <div class="icon cog">
+          <div class="icon">
             <img src="~@/assets/img/icon_cog.svg" alt="" />
           </div>
           <div>設定</div>
@@ -123,18 +123,13 @@
         </div>
       </div>
     </div>
-    <div class="bottom" @click="logout">
-      <router-link class="logout" to="/login">
+    <div class="bottom">
+      <button class="logout" @click="logout">
         <div class="icon">
-          <img src="~@/assets/img/icon_logout.svg" alt="" />
+          <img src="~@/assets/img/icon_logout.svg" alt="">
         </div>
-        <button
-          type="button"
-          class="btn-logout"
-          @click="logout"
-        >
-          登出</button>
-      </router-link>
+        <div class="btn-logout">登出</div>
+      </button>
     </div>
   </section>
 </template>
@@ -289,14 +284,36 @@ export default {
   background-color: #ff6600;
 }
 .nav-item.active .icon img,
-.nav-item:hover .icon {
+.nav-item:hover .icon,
+.logout:hover img {
   filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
 }
 .icon {
   width: 30px;
   margin-right: 10px;
 }
-.btn-logout:hover {
+.logout:hover .btn-logout{
   color: #ff6600;
+}
+
+@media (max-width: 576px) {
+  .nav-item div:last-child,
+  .btn-logout {
+    display: none;
+  }
+  .new-tweet {
+    position: fixed;
+    bottom: 3%;
+    right: 3%;
+    z-index: 10;
+    width: auto;
+    min-width: auto;
+  }
+  .private-chat {
+    display: none;
+  }
+  .PublicMessage .new-tweet {
+    display: none;
+  }
 }
 </style>

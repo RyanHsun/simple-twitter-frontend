@@ -1,39 +1,41 @@
 <template>
-  <div class="container">
+  <div class="container PublicMessage">
     <Sidebar />
-    <section class="publicUsers">
-      <div class="publicUsers-wrap">
-        <h2 class="headbar">
-          <div class="title">
-            <div class="main-title">上線使用者 ({{ onlineUsersNum }})</div>
+    <div class="publicMessage-wrap">
+      <section class="publicUsers">
+        <div class="publicUsers-wrap">
+          <h2 class="headbar">
+            <div class="title">
+              <div class="main-title">上線使用者 ({{ onlineUsersNum }})</div>
+            </div>
+          </h2>
+          <div
+            class="publicUsers-list">
+            <Spinner v-if="isLoading"/>
+            <OnlineUsers 
+              v-else
+              v-for="user in onlineUsers"
+              :key="user.id"
+              :user="user" 
+            />
           </div>
-        </h2>
-        <ul
-          class="publicUsers-list">
-          <Spinner v-if="isLoading"/>
-          <OnlineUsers 
-            v-else
-            v-for="user in onlineUsers"
-            :key="user.id"
-            :user="user" 
-          />
-        </ul>
-      </div>
-    </section>
-    <section class="publicChatroom">
-      <div class="publicChatroom-wrap">
-        <h2 class="headbar">
-          <div class="title">
-            <div class="main-title">公開聊天室</div>
+        </div>
+      </section>
+      <section class="publicChatroom">
+        <div class="publicChatroom-wrap">
+          <h2 class="headbar">
+            <div class="title">
+              <div class="main-title">公開聊天室</div>
+            </div>
+          </h2>
+          <div
+            class="publicChatroomCard">
+            <PublicChatroom 
+            />
           </div>
-        </h2>
-        <ul
-          class="publicChatroomCard">
-          <PublicChatroom 
-          />
-        </ul>
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   </div>
 </template>
 <script>
@@ -65,7 +67,7 @@ export default {
   },
   sockets: {
     online_users(data) {
-      console.log('上線使用者資料', data)
+      // console.log('上線使用者資料', data)
       // this.fetchOnlineUsers(data.user);
       this.fetchOnlineUsers(data.users);
       this.onlineUsersNum = data.users.length
@@ -88,19 +90,29 @@ export default {
 <style scoped>
 .container {
   display: grid;
-  grid-template-columns: 20% 25% auto;
+  grid-template-columns: 20% auto;
   max-width: 1500px;
   margin: 0 auto;
-  padding: 0 0px;
-}
-.sidebar {
   padding: 0 20px;
+}
+.publicMessage-wrap {
+  display: flex;
+}
+.publicUsers {
+  width: 30%;
+}
+.publicChatroom {
+  width: 70%;
 }
 .publicChatroom,
 .publicUsers {
   position: relative;
   margin-top: 50px;
   border-left: 1px solid #e6ecf0;
+}
+.publicChatroom,
+.publicChatroom .headbar {
+  border-right: 1px solid #e6ecf0;
 }
 .publicChatroom-wrap,
 .publicUsers-wrap {
@@ -129,6 +141,9 @@ export default {
   background: #fff;
   transform: translateX(-1px);
 }
+.publicChatroom .headbar {
+  transform: scale(1, 1.004);
+}
 .title {
   display: inline-block;
 }
@@ -141,5 +156,34 @@ export default {
 }
 .avatar {
   display: inline-block;
+}
+
+@media (max-width: 992px) {
+  .container {
+    padding-right: 0;
+  }
+  .publicMessage-wrap {
+    flex-direction: column;
+  }
+  .publicMessage-wrap section {
+    width: 100%;
+  }
+  .publicUsers-wrap {
+    height: 20vh;
+  }
+  .chat-wrap {
+    height: 65vh;
+  }
+  .publicChatroom .headbar{
+    border-top: 1px solid #e6ecf0;
+  }
+  .new-tweet {
+    display: none;
+  }
+}
+@media (max-width: 576px) {
+  .container {
+    grid-template-columns: 13% auto;
+  }
 }
 </style>
