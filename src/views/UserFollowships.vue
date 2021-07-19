@@ -120,4 +120,5 @@ export default {
 .user-followships-tab > div.active {
   border-bottom: 2px solid #ff6600;
 }
+
 </style>

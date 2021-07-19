@@ -88,4 +88,16 @@ export default {
   color: #FF6600;
   text-decoration: none;
 }
+@media (max-width: 768px) {
+  .PublicMessage .avatar {
+    width: 40px;
+    height: 40px;
+  }
+}
+@media (max-width: 576px) {
+  .PublicMessage .avatar {
+    width: 30px;
+    height: 30px;
+  }
+}
 </style>

@@ -28,6 +28,16 @@ body {
 .chat-wrap::-webkit-scrollbar {
   display: none;
 }
+.tweets-wrap,
+.tweet-wrap,
+.users,
+.user-wrap,
+.admin-users-wrap,
+.admin-tweets-wrap,
+.chat-wrap {
+  scrollbar-width: none; /* Newer Firefox and not confirmed */
+  overflow: -moz-scrollbars-none; /* Older Firefox*/
+}
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -73,8 +83,6 @@ ul {
   color: #ff6600;
   background: #faece3;
 }
-
-
 .avatar {
   display: block;
   width: 50px;
@@ -88,31 +96,49 @@ ul {
   object-position: 50% 50%;
   border-radius: 50%;
 }
-  .users {
-    width: 100%;
-    margin-bottom: 0;
-  }
-  .user {
-    display: flex;
-    align-items: center;
-  }
+.users {
+  width: 100%;
+  margin-bottom: 0;
+}
+.user {
+  display: flex;
+  align-items: center;
+}
 
-  .info {
-    flex-grow: 1;
-    text-align: left;
+.info {
+  flex-grow: 1;
+  text-align: left;
+}
+.info span{
+  font-size: 15px;
+  display: block;
+}
+.name {
+  font-weight: bold;
+  color: #1C1C1C;
+}
+.account {
+  color: #657786;
+}
+.modal-body .user-info {
+  margin-bottom: 10px;
+}
+.modal-content {
+  border-radius: 14px;
+}
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 25% auto;
+    padding-right: 0;
   }
-  .info span{
-    font-size: 15px;
-    display: block;
+}
+
+@media (max-width: 576px) {
+  .container {
+    grid-template-columns: 15% auto;
   }
-  .name {
-    font-weight: bold;
-    color: #1C1C1C;
+  .logo {
+    margin-left: -3px;
   }
-  .account {
-    color: #657786;
-  }
-  .modal-body .user-info {
-    margin-bottom: 10px;
-  }
+}
 </style>

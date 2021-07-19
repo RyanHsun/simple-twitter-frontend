@@ -200,4 +200,11 @@ export default {
   color: #ff6600;
   text-decoration: none;
 }
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 25% auto;
+    padding-right: 0;
+  }
+}
 </style>

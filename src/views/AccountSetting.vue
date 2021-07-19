@@ -310,4 +310,10 @@ form {
   color: #fff;
   background: #ff6600;
 }
+
+@media (max-width: 576px) {
+  .container {
+    grid-template-columns: 13% auto;
+  }
+}
 </style>

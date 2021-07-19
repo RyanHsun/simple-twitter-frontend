@@ -149,54 +149,66 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  display: grid;
+  grid-template-columns: 20% auto 30%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.tweet {
+  position: relative;
+  margin-top: 50px;
+  border-width: 0 1px;
+  border-style: solid;
+  border-color: #e6ecf0;
+}
+.tweet-wrap {
+  overflow-y: scroll;
+  max-height: calc( 100vh - 50px );
+}
+.headbar {
+  position: absolute;
+  top: -50px;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  margin: 0;
+  padding: 5px 20px;
+  font-size: 18px;
+  text-align: left;
+  border-width: 0 1px 1px 1px;
+  border-style: solid;
+  border-color: #E6ECF0;
+  background: #fff;
+  transform: scale(1.002);
+}
+.back {
+  margin-right: 40px;
+}
+.title {
+  display: inline-block;
+}
+.main-title {
+  font-weight: 900;
+}
+.sub-title {
+  font-size: 13px;
+  color: #657786;
+}
+@media (max-width: 768px) {
   .container {
-    display: grid;
-    grid-template-columns: 20% auto 30%;
-    max-width: 1500px;
-    margin: 0 auto;
-    padding: 0 20px;
+    grid-template-columns: 25% auto;
+    padding-right: 0;
   }
-  .tweet {
-    position: relative;
-    margin-top: 50px;
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #e6ecf0;
+}
+
+@media (max-width: 576px) {
+  .container {
+    grid-template-columns: 13% auto;
   }
-  .tweet-wrap {
-    overflow-y: scroll;
-    max-height: calc( 100vh - 50px );
-  }
-  .headbar {
-    position: absolute;
-    top: -50px;
-    left: 0;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 50px;
-    margin: 0;
-    padding: 5px 20px;
-    font-size: 18px;
-    text-align: left;
-    border-width: 0 1px 1px 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
-    background: #fff;
-    transform: scale(1.002);
-  }
-  .back {
-    margin-right: 40px;
-  }
-  .title {
-    display: inline-block;
-  }
-  .main-title {
-    font-weight: 900;
-  }
-  .sub-title {
-    font-size: 13px;
-    color: #657786;
-  }
+}
 </style>

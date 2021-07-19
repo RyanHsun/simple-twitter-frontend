@@ -229,4 +229,9 @@ h1 {
   max-height: 26px;
   margin: 20px auto;
 }
+@media (max-width: 576px) {
+  .container {
+    padding: 30px;
+  }
+}
 </style>

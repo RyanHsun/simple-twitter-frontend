@@ -126,4 +126,11 @@ export default {
   border: none;
   background: none;
 }
+@media (max-width: 576px) {
+  .user-info {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
 </style>

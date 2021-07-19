@@ -346,153 +346,167 @@ export default {
 </style>
 
 <style scoped>
-  .container {
-    display: grid;
-    grid-template-columns: 20% auto 30%;
-    max-width: 1500px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-  .user-info {
-    display: inline-block;
-    padding: 0 20px;
-  }
-  .user-info span{
-    display: block;
-  }
-  .user-followships {
-    padding: 10px 20px;
-  }
-  .modal-header {
-    position: relative;
-    justify-content: flex-start;
-    align-items: center;
-  }
-  .modal-header p {
-    margin: 0 0 0 40px;
-    font-weight: 700;
-  }
-  .modal-header .update-profile {
-    position: absolute;
-    right: 20px;
-    padding: 0 10px;
-    color: #fff;
-    background-color: #FF6600;
-  }
-  .modal-body {
-    padding: 0;
-  }
-  .close {
-    margin: 0;
-    padding: 0;
-    opacity: 1;
-  }
-  
-  .user-profile-edit {
-    margin-bottom: 30px;
-  }
-  .tweet-textarea {
-    font-size: 18px;
-    color: #9197A3;
-    border: none;
-    outline: none;
-    width: calc( 100% - 60px);
-    resize: none;
-  }
-  .user-cover {
-    position: relative;
-  }
+.container {
+  display: grid;
+  grid-template-columns: 20% auto 30%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.user-info {
+  display: inline-block;
+  padding: 0 20px;
+}
+.user-info span{
+  display: block;
+}
+.user-followships {
+  padding: 10px 20px;
+}
+.modal-header {
+  position: relative;
+  justify-content: flex-start;
+  align-items: center;
+}
+.modal-header p {
+  margin: 0 0 0 40px;
+  font-weight: 700;
+}
+.modal-header .update-profile {
+  position: absolute;
+  right: 20px;
+  padding: 0 10px;
+  color: #fff;
+  background-color: #FF6600;
+}
+.modal-body {
+  padding: 0;
+}
+.close {
+  margin: 0;
+  padding: 0;
+  opacity: 1;
+}
+
+.user-profile-edit {
+  margin-bottom: 30px;
+}
+.tweet-textarea {
+  font-size: 18px;
+  color: #9197A3;
+  border: none;
+  outline: none;
+  width: calc( 100% - 60px);
+  resize: none;
+}
+.user-cover {
+  position: relative;
+}
+.user-avatar {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+.upload-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 20%);
+}
+.upload-image:hover img{
+  transform: scale(1.2);
+  transition: .3s ease;
+}
+.user-avatar label[for="upload-image-avatar"] {
+  border-radius: 50%;
+}
+label[for="upload-image-cover"] img,
+label[for="upload-image-avatar"] img {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 0;
+}
+#upload-image-cover,
+#upload-image-avatar {
+  position: absolute;
+  visibility: hidden;
+}
+
+.user-name,
+.user-intro {
+  position: relative;
+  margin: 0 10px;
+}
+.user-name {
+  margin-bottom: 20px;
+}
+.user-name label,
+.user-intro label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 15px;
+  text-align: left;
+}
+.user-name-input,
+.user-intro-textarea {
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid #657786;
+  background: #F5F8FA;
+  outline: none;
+}
+.user-name-input {
+  height: 70px;
+  padding: 30px 10px 0 10px;
+}
+.user-intro-textarea {
+  display: inherit;
+  padding: 40px 10px 0 10px;
+  resize: none;
+}
+.user-name span,
+.user-intro span {
+  display: block;
+  font-size: 12px;
+  text-align: right;
+}
+
+.tweet-button {
+  align-self: flex-end;
+  color: #fff;
+  background-color: #FF6600;
+}
+.nav-item:hover,
+.nav-item.active {
+  color: #ff6600;
+  text-decoration: none;
+}
+.is-following {
+  color: #fff;
+  background-color: #ff6600;
+}
+.btn-follow {
+  margin-right: 20px;
+}
+@media (max-width: 576px) {
   .user-avatar {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    margin-bottom: 20px;
+    width: 80px;
+    height: 80px;
+    margin-top: -35px;
   }
-  .upload-image {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 20%);
+  .user-edit {
+    font-size: 14px;
+    padding: 5px 15px;
   }
-  .upload-image:hover img{
-    transform: scale(1.2);
-    transition: .3s ease;
+  .user-profile-head {
+    margin-bottom: 0;
   }
-  .user-avatar label[for="upload-image-avatar"] {
-    border-radius: 50%;
-  }
-  label[for="upload-image-cover"] img,
-  label[for="upload-image-avatar"] img {
-    width: 20px;
-    height: 20px;
-    border: none;
-    border-radius: 0;
-  }
-  #upload-image-cover,
-  #upload-image-avatar {
-    position: absolute;
-    visibility: hidden;
-  }
-
-  .user-name,
-  .user-intro {
-    position: relative;
-    margin: 0 10px;
-  }
-  .user-name {
-    margin-bottom: 20px;
-  }
-  .user-name label,
-  .user-intro label {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 15px;
-    text-align: left;
-  }
-  .user-name-input,
-  .user-intro-textarea {
-    width: 100%;
-    border: 0;
-    border-bottom: 2px solid #657786;
-    background: #F5F8FA;
-    outline: none;
-  }
-  .user-name-input {
-    height: 70px;
-    padding: 30px 10px 0 10px;
-  }
-  .user-intro-textarea {
-    display: inherit;
-    padding: 40px 10px 0 10px;
-    resize: none;
-  }
-  .user-name span,
-  .user-intro span {
-    display: block;
-    font-size: 12px;
-    text-align: right;
-  }
-
-  .tweet-button {
-    align-self: flex-end;
-    color: #fff;
-    background-color: #FF6600;
-  }
-  .nav-item:hover,
-  .nav-item.active {
-    color: #ff6600;
-    text-decoration: none;
-  }
-  .is-following {
-    color: #fff;
-    background-color: #ff6600;
-  }
-  .btn-follow {
-    margin-right: 20px;
-  }
+}
 </style>

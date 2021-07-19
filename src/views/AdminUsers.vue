@@ -61,4 +61,9 @@ export default {
   background: #fff;
   transform: scale(1.002);
 }
+@media (max-width: 576px) {
+  .container {
+    grid-template-columns: 13% auto;
+  }
+}
 </style>
