@@ -501,7 +501,8 @@ label[for="upload-image-avatar"] img {
     height: 80px;
     margin-top: -35px;
   }
-  .user-edit {
+  .user-edit,
+  .btn-follow {
     font-size: 14px;
     padding: 5px 15px;
   }

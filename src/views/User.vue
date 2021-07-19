@@ -397,3 +397,21 @@ export default {
   }
 }
 </style>
+
+<style>
+.user-info {
+  margin-bottom: 10px;
+}
+.tweet-content {
+  margin-bottom: 20px;
+}
+.user-info .name {
+  display: block;
+  width: 100%;
+}
+.user-info .tweet-update-at,
+.user-info .account {
+  font-size: 13px;
+}
+
+</style>

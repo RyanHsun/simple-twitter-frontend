@@ -197,9 +197,6 @@ export default {
   font-weight: bold;
   pointer-events: visiblefill;
 }
-.tweet-content {
-  margin: 10px 0;
-}
 .tweet-panel {
   pointer-events: visiblefill;
 }

@@ -99,5 +99,12 @@ export default {
     width: 30px;
     height: 30px;
   }
+  .name,
+  .account {
+    font-size: 14px;
+  }
+  .notice-info .user-info {
+    margin-bottom: 0;
+  }
 }
 </style>
