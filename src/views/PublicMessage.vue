@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-    <div class="sidebar">
-      <Sidebar />
-    </div>
+    <Sidebar />
     <section class="publicUsers">
       <div class="publicUsers-wrap">
         <h2 class="headbar">
@@ -142,10 +140,5 @@ export default {
 }
 .avatar {
   display: inline-block;
-}
-.publicUsers-list {
-  border-width: 1px 0;
-  border-style: solid;
-  border-color: #e6ecf0;
 }
 </style>

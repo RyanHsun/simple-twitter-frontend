@@ -267,9 +267,6 @@ export default {
   .tweet-detail,
   .tweet-replied-list {
     text-align: left;
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
   }
   .user {
     padding: 10px 20px;
@@ -314,8 +311,14 @@ export default {
     color: #FF6600;
   }
 
-    .modal-content {
+  .modal-content {
     border-radius: 14px;
+  }
+  .modal-body .tweet-content {
+    padding: 10px 0;
+  }
+  .modal-body .account {
+    margin-left: 5px;
   }
   .close {
     margin: 0;

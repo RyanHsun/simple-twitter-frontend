@@ -361,11 +361,9 @@ export default {
     overflow-y: scroll;
     max-height: calc( 100vh - 50px );
   }
+ 
   .tweets-switch-tab {
     display: flex;
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
     border-bottom: 1px solid #E6ECF0;
   }
   .tweets-switch-tab .tab-item {
@@ -381,11 +379,6 @@ export default {
   .nav-item:hover,
   .nav-item.active {
     color: #ff6600;
-  }
-  .tweets-list {
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
   }
   
 </style>

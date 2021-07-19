@@ -2,7 +2,7 @@
   <section class="users-top">
     <div class="wrap">
       <h2 class="title">跟隨誰</h2>
-      <ul class="users">
+      <ul class="users" :class="{ 'nomore': !showMore }">
         <Spinner v-if="isLoading"/>
         <li v-else v-for="user in users" :key="user.id" class="user">
           <router-link
@@ -37,6 +37,8 @@
       <button 
         class="show-more-user"
         @click="showMoreUser"
+        :disabled="!showMore"
+        :class="{ 'nomore': !showMore }"
       >
         顯示更多
       </button>
@@ -60,7 +62,8 @@ export default {
     return {
       users: [],
       isLoading: true,
-      isProcessing: false
+      isProcessing: false,
+      showMore: true
     }
   },
   computed: {
@@ -119,13 +122,13 @@ export default {
 
         Toast.fire({
           icon: 'success',
-          title: '追隨成功'
+          title: '跟隨成功'
         })
       } catch (error) {
         console.log(error)
         Toast.fire({
           icon: 'error',
-          title: '無法新增追隨，請稍後再試',
+          title: '無法新增跟隨，請稍後再試',
         })
       }
     },
@@ -151,7 +154,7 @@ export default {
         this.$emit('after-delete-follow')
         Toast.fire({
           icon: 'success',
-          title: '取消追隨'
+          title: '取消跟隨'
         })
       } catch (error) {
         console.error(error.message)
@@ -164,6 +167,7 @@ export default {
     showMoreUser () {
       console.log('MORE')
       this.fetchTopUsers(0, 10)
+      this.showMore = false
     }
   }
 }
@@ -192,8 +196,11 @@ export default {
   margin-bottom: 0;
 }
 .users {
-  max-height: 500px;
+  max-height: 520px;
   overflow-y: scroll;
+}
+.users.nomore {
+  box-shadow: 0px -18px 36px -43px #333 inset;
 }
 .user {
   width: 100%;
@@ -219,5 +226,13 @@ export default {
 }
 .name:hover {
   color: #ff6600;
+}
+.nomore {
+  color: #ccc;
+  cursor: auto;
+  background: #f5f8fa;
+}
+.nomore:hover {
+  background: #f5f8fa;
 }
 </style>

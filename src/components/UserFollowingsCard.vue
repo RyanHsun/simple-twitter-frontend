@@ -69,14 +69,14 @@ export default {
         
         Toast.fire({
           icon: "success",
-          title: "取消追隨",
+          title: "取消跟隨",
         });
         this.isProcessing = false
       } catch (error) {
         this.isProcessing = false
         Toast.fire({
           icon: "error",
-          title: "無法取消追隨，請稍後再試",
+          title: "無法取消跟隨，請稍後再試",
         });
         console.log("error", error);
       }
@@ -93,7 +93,7 @@ export default {
         this.followingUser.following.isFollowing = true
         Toast.fire({
         icon: "success",
-        title: "追隨成功",
+        title: "跟隨成功",
         });
         this.isProcessing = false
 
@@ -101,7 +101,7 @@ export default {
         this.isProcessing = false
         Toast.fire({
           icon: "error",
-          title: "無法追隨，請稍後再試",
+          title: "無法跟隨，請稍後再試",
         });
       }
     },

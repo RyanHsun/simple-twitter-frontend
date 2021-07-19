@@ -200,7 +200,7 @@ export default {
         console.log(error)
         Toast.fire({
           icon: 'error',
-          title: '無法讀取追隨狀態，請稍後再試',
+          title: '無法讀取跟隨狀態，請稍後再試',
         })
       }
     },
@@ -216,13 +216,13 @@ export default {
         
         Toast.fire({
           icon: 'success',
-          title: '追隨成功'
+          title: '跟隨成功'
         })
       } catch (error) {
         console.log(error)
         Toast.fire({
           icon: 'error',
-          title: '無法新增追隨，請稍後再試',
+          title: '無法新增跟隨，請稍後再試',
         })
       }
     },
@@ -238,7 +238,7 @@ export default {
 
         Toast.fire({
           icon: 'success',
-          title: '取消追隨'
+          title: '取消跟隨'
         })
       } catch (error) {
         console.error(error.message)
@@ -297,9 +297,6 @@ export default {
 
 .user-profile {
   text-align: left;
-  border-width: 0 1px;
-  border-style: solid;
-  border-color: #e6ecf0;
 }
 .user-profile > div {
   display: flex;

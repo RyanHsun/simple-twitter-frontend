@@ -159,6 +159,9 @@ export default {
   .tweet {
     position: relative;
     margin-top: 50px;
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #e6ecf0;
   }
   .tweet-wrap {
     overflow-y: scroll;
