@@ -18,7 +18,7 @@
           to='/'
         >
           <div class="icon user">
-            <img src="~@/assets/img/icon_user.svg" alt="" />
+            <img src="~@/assets/img/icon_ring.svg" width="25px" alt="" />
           </div>
           <div>通知</div>
         </router-link>
@@ -27,7 +27,7 @@
           to='/room'
         >
           <div class="icon user">
-            <img src="~@/assets/img/icon_mail.svg" alt="" />
+            <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
           </div>
           <div>公開聊天室</div>
         </router-link>
@@ -36,7 +36,7 @@
           to='/'
         >
           <div class="icon user">
-            <img src="~@/assets/img/icon_mail.svg" alt="" />
+            <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
           </div>
           <div>私人訊息</div>
         </router-link>
