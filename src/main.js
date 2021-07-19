@@ -15,7 +15,7 @@ new Vue({
 }).$mount('#app')
 
 Vue.use(new VueSocketIo({
-  debug: true,
+  // debug: true,
   connection: 'https://twitter-project-2021.herokuapp.com/',
   options: {
     query: {

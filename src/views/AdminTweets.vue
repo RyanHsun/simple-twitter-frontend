@@ -35,13 +35,13 @@ export default {
   .admin-tweets {
     position: relative;
     margin-top: 50px;
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #E6ECF0;
   }
   .admin-tweets-wrap {
     overflow-y: scroll;
     max-height: calc( 100vh - 50px );
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #E6ECF0;
   }
   .headbar {
   position: absolute;
@@ -59,5 +59,6 @@ export default {
   border-style: solid;
   border-color: #E6ECF0;
   background: #fff;
+  transform: scale(1.002);
 }
 </style>

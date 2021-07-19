@@ -52,7 +52,7 @@
         </div>
 
         <div class="form-label-group mb-3">
-          <label class="input-label" for="password">密碼</label>
+          <label class="input-label" for="password">舊密碼</label>
           <input
             v-model="password"
             id="password"
@@ -262,6 +262,7 @@ export default {
   border-style: solid;
   border-color: #E6ECF0;
   background: #fff;
+  transform: scale(1.002);
 }
 .account-setting {
   position: relative;

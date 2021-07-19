@@ -43,6 +43,7 @@ export default {
   align-items: center;
   padding: 10px 15px;
   width: 100%;
+  border-bottom: 1px solid #e6ecf0;
 }
 .avatar {
   position: relative;

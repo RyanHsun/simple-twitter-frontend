@@ -1,6 +1,6 @@
 <template>
   <ul class="admin-users-list">
-    <li v-for="adminUser in adminUsers" :key="adminUser.id" :to="{ name:'user', params: { id: adminUser.id } }" 
+    <li v-for="adminUser in adminUsers" :key="adminUser.id"
     class="admin-user">
       <div class="user-profile-head">
         <div class="user-cover">
@@ -10,10 +10,10 @@
           <img :src="adminUser.avatar | emptyImage" alt="" />
         </a>
       </div>
-      <a href="" class="user-info">
+      <p href="" class="user-info">
         <span class="name">{{ adminUser.name }}</span>
         <span class="account">@{{ adminUser.account }}</span>
-      </a>
+      </p>
       <div class="user-panel">
         <span class="comment">
           <img src="~@/assets/img/icon_comment.svg" alt="" />{{
@@ -81,7 +81,8 @@ export default {
   padding: 10px;
 }
 .admin-user {
-  max-width: 235px;
+  min-width: 235px;
+  width: 280px;
   margin: 0 10px 10px 0;
   padding-bottom: 10px;
   text-align: center;

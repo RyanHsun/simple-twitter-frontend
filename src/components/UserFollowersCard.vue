@@ -116,9 +116,6 @@ export default {
   justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
-  border-width: 0 1px;
-  border-style: solid;
-  border-color: #e6ecf0;
 }
 .followships-item {
   display: flex;

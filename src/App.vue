@@ -22,7 +22,10 @@ body {
 .tweets-wrap::-webkit-scrollbar,
 .tweet-wrap::-webkit-scrollbar,
 .users::-webkit-scrollbar,
-.user-wrap::-webkit-scrollbar {
+.user-wrap::-webkit-scrollbar,
+.admin-users-wrap::-webkit-scrollbar,
+.admin-tweets-wrap::-webkit-scrollbar,
+.chat-wrap::-webkit-scrollbar {
   display: none;
 }
 
