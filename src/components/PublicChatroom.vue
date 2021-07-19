@@ -1,28 +1,27 @@
 <template>
-  <div class="chat-wrap">
-    <!-- <h1>{{ memberNum }}</h1> -->
-    <div class="chat" id="chat">
+  <div class="chat-wrap" ref="messages">
+    <Spinner v-if="isLoading"/>
+    <div v-else class="chat messages" id="messages">
       <div v-for="msg in messages" :key="msg.id" class="" >
-        <!-- <div class="other msg" v-if="m.role === 'other'"> -->
         <div 
           v-if="msg.isSelf"
           class="self msg" >
           <p>
             {{ msg.content }}
           </p>
-          <span>{{ msg.createdAt | exactDate }}</span>
+          <span>{{ msg.createdAt | fromNow }}</span>
         </div>
         <div 
           v-else
           class="other msg">
           <router-link :to="`/users/${msg.UserId}`" class="avatar">
-            <img :src="msg.avatar" alt="">
+            <img :src="msg.avatar | emptyImage" alt="">
           </router-link>
           <div class="">
             <p>
               {{ msg.content }}
             </p>
-            <span>{{ msg.createdAt | exactDate }}</span>
+            <span>{{ msg.createdAt | fromNow }}</span>
           </div>
         </div>
         <!-- <div class="use-join" v-if="msg.role === 'join'">
@@ -33,48 +32,46 @@
     <div class="d-flex justify-content-center divgn-items-center send-wrap">
       <input 
         v-model="text"
-        type="text">
+        placeholder="請輸入訊息 ..."
+        type="text"
+      >
+      <!-- @keydown.stop.prevent.enter="post_public_msg" -->
       <button 
         class="send-btn"
         type="button"
         @click.stop.prevent="post_public_msg"
       >
         <!-- 送出 -->
-        <img src="https://image.flaticon.com/icons/png/512/876/876777.png" alt="">
+        <img src="~@/assets/img/icon_send.svg" alt="">
       </button>
     </div>
   </div>
 </template>
 
-<!--script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.min.js"></script>
-
-<script>
-  const socket = io('https://twitter-project-2021.herokuapp.com/api')
-</script-->
-
 <script>
 import { mapState } from 'vuex'
 import { Toast } from './../utils/helpers'
 import { emptyImageFilter } from "../utils/mixins"
-import { exactDateFilter } from "./../utils/mixins"
+import { fromNowFilter } from './../utils/mixins'
+import Spinner from './../components/Spinner'
 
 export default {
-  mixins: [exactDateFilter,emptyImageFilter],
+  mixins: [fromNowFilter,emptyImageFilter],
+  components: {
+    Spinner
+  },
   data () {
     return {
-      id: 0,
-      name: '',
       text: '',
-      chat: [],
       memberNum: 0, 
       messages: {
         avatar: '',
         content: '',
         createdAt: ''
       },
-      lastMessages: [],
       socket: null,
-      isSelf: false
+      isSelf: false,
+      isLoading: true
     }
   },
   computed: {
@@ -94,22 +91,23 @@ export default {
       console.log(`${name} 加入聊天室`)
     },
     online_users(data) {
-      console.log('上線使用者：', data)
+      this.memberNum = data.users.length
+      console.log('上線使用者：', this.memberNum)
     },
     get_public_msg(data) {
       // console.log(`發的訊息：`, data)
       this.messages.push(data)
     },
   },
-  mounted () {
-    this.$socket.on('user_join')
-  },
   created () {
     const userId = this.currentUser.id
     // const name = this.currentUser.name
     this.join_public_room(userId)
     this.get_public_history() 
-    
+  },
+  updated () {
+    this.updateScroll()
+    this.$socket.on('user_join')
   },
   methods: {
     // 1. 通知伺服器加入聊天室
@@ -121,7 +119,7 @@ export default {
     get_public_history() { 
       this.$socket.emit('get_public_history', {
         offset: 0,
-        limit: 20
+        limit: 50
       }, data => {
         this.messages = [
           ...data.reverse()
@@ -131,6 +129,7 @@ export default {
           const isSelf = UserId === this.currentUser.id ? true : false
           return { UserId, avatar, content, createdAt, isSelf }
         })
+        this.isLoading = false
         // console.log('歷史訊息：', this.messages)  
         // this.messages.push( data )
       })
@@ -153,7 +152,6 @@ export default {
       const content = this.text
       const createdAt = new Date()
 
-
       const data = {
         avatar,
         content,
@@ -161,20 +159,24 @@ export default {
         isSelf: true
       }
       this.messages.push( data )
-      console.log(data)
-
-      this.$nextTick(() => {
-        let msg = document.getElementById('chat') 
-        msg.scrollTop = msg.scrollHeight 
-      })
       
       this.text = ''
+      
+      Toast.fire({
+        icon: 'success',
+        title: '訊息發送成功'
+      })
+      // console.log(data)
     },
     // 4. 離開聊天室
     leave_public_room(userId) {
       this.$socket.emit('leave_public_room', { userId })
       console.log(`使用者${userId} 離開聊天室`)
-    },  
+    },
+    // 自動置頂
+    updateScroll() {
+      this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
+    },
   },
   beforeDestroy () {
     const userId = this.currentUser.id
@@ -185,11 +187,15 @@ export default {
 
 <style scoped>
 .chat-wrap {
-/* height: calc( 100vh - 110px); */
+  height: calc( 100vh - 110px);
+  overflow-y: scroll;
   box-sizing: border-box;
 }
 .chat {
   margin-bottom: 50px;
+}
+.chat::-webkit-scrollbar {
+  display: none;
 }
 .chat > div{
   display: flex;
@@ -200,8 +206,6 @@ export default {
   height: 100%;
   margin: 0 auto;
   padding: 15px;
-  font-size: 16px;
-  /* overflow-y: scroll; */
 }
 .other {
     display: flex;
@@ -223,9 +227,14 @@ export default {
   max-width: 400px;
   padding: 10px;
   margin-bottom: 0;
+  font-size: 20px;
+}
+.msg span {
+  font-size: 13px;
+  color: #6f767a;
 }
 .other p {
-  background: #ddd;
+  background: #e6edf1;
   border-radius: 20px 20px 20px 0;
 }
 .self p {
@@ -255,12 +264,12 @@ export default {
   background: #fff;
 }
 input {
-    background: #dde3e6;
     width: 100%;
     height: 35px;
     padding-left: 20px;
     border: 1px solid #dde3e6;
     border-radius: 30px;
+    background: #d5dee3;
     outline: none;
 }
 .send-btn {
@@ -269,5 +278,11 @@ input {
 }
 .send-btn img {
   width: 20px;
+  filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
+  transition: .3s ease-in-out;
+}
+.send-btn:hover img {
+  transform: scale(1.2);
+  transition: .3s ease-in-out;
 }
 </style>

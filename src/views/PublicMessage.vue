@@ -7,14 +7,17 @@
       <div class="publicUsers-wrap">
         <h2 class="headbar">
           <div class="title">
-            <div class="main-title">上線使用者</div>
+            <div class="main-title">上線使用者 ({{ onlineUsersNum }})</div>
           </div>
         </h2>
         <ul
           class="publicUsers-list">
-          <OnlineUsers v-for="user in onlineUsers"
-          :key="user.id"
-          :user="user" 
+          <Spinner v-if="isLoading"/>
+          <OnlineUsers 
+            v-else
+            v-for="user in onlineUsers"
+            :key="user.id"
+            :user="user" 
           />
         </ul>
       </div>
@@ -41,17 +44,22 @@ import { emptyImageFilter } from "../utils/mixins";
 import Sidebar from "./../components/Sidebar.vue"
 import OnlineUsers from "./../components/OnelineUsers.vue"
 import PublicChatroom from "./../components/PublicChatroom.vue"
+import Spinner from './../components/Spinner'
+
 export default {
   mixins: [emptyImageFilter],
   components: {
     Sidebar,
     OnlineUsers,
-    PublicChatroom
+    PublicChatroom,
+    Spinner
   },
   data () {
     return {
       onlineUsers: [],
       socket: null,
+      onlineUsersNum: 0,
+      isLoading: true
     }
   }, 
   computed: {
@@ -62,6 +70,8 @@ export default {
       console.log('上線使用者資料', data)
       // this.fetchOnlineUsers(data.user);
       this.fetchOnlineUsers(data.users);
+      this.onlineUsersNum = data.users.length
+      this.isLoading = false
     }
   },
   mounted () {
@@ -74,7 +84,7 @@ export default {
     fetchOnlineUsers(data) {
       this.onlineUsers = data;
     },
-}
+  }
 }
 </script>
 <style scoped>
@@ -96,15 +106,18 @@ export default {
 }
 .publicChatroom-wrap,
 .publicUsers-wrap {
-  overflow-y: auto;
+  /* overflow-y: auto; */
   max-height: calc(100vh - 50px);
+}
+.publicUsers-wrap {
+  overflow-y: auto;
 }
 .headbar {
   position: absolute;
   top: -50px;
   left: 0;
   z-index: 10;
-  display: flex;
+  display: flex;  
   align-items: center;
   width: 100%;
   height: 50px;
