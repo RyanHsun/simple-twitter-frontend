@@ -267,7 +267,7 @@ export default {
   background-color: #ff6600;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .container {
     grid-template-columns: 25% auto;
     padding-right: 0;

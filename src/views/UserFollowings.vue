@@ -173,10 +173,11 @@ export default {
   background-color: #fff;
   transform: scale(1.002);
 }
-.headbar {
+.user-followships .headbar {
   position: relative;
   top: 0;
   border: none;
+  transform: none;
 }
 .user-followships-tab {
   display: flex;
@@ -201,7 +202,7 @@ export default {
   text-decoration: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .container {
     grid-template-columns: 25% auto;
     padding-right: 0;

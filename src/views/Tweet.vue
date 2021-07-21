@@ -199,7 +199,7 @@ export default {
   font-size: 13px;
   color: #657786;
 }
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .container {
     grid-template-columns: 25% auto;
     padding-right: 0;

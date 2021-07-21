@@ -235,7 +235,7 @@ export default {
 .nomore:hover {
   background: #f5f8fa;
 }
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .users-top {
     display: none;
   }

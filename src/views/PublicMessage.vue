@@ -172,10 +172,11 @@ export default {
     height: 20vh;
   }
   .chat-wrap {
-    height: 65vh;
+    height: calc( 100vh - 20vh - 99px );
   }
   .publicChatroom .headbar{
     border-top: 1px solid #e6ecf0;
+    transform: translateX(-1px);
   }
   .new-tweet {
     display: none;
