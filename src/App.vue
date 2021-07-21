@@ -14,6 +14,7 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
 body {
   font-family: 'Noto Sans JP', sans-serif;
 }
@@ -126,7 +127,7 @@ ul {
 .modal-content {
   border-radius: 14px;
 }
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .container {
     grid-template-columns: 25% auto;
     padding-right: 0;

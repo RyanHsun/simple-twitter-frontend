@@ -3,10 +3,14 @@
     <button class="back" @click="$router.back()">
       <img src="~@/assets/img/icon_back.svg" alt="" />
     </button>
-    <div class="title">
+    <router-link 
+      v-show="user.name"
+      class="title" 
+      :to="{ name: 'user', params: { id: user.id } }"
+      >
       <div class="main-title">{{ user.name }}</div>
       <div class="sub-title">{{ user.tweetNum }} 推文</div>
-    </div>
+    </router-link>
   </h2>
 </template>
 
@@ -45,6 +49,7 @@ export default {
   display: flex;
   align-items: center;
   width: 100%;
+  height: 50px;
   margin: 0;
   padding: 5px 20px;
   font-size: 18px;
@@ -60,6 +65,10 @@ export default {
 }
 .title {
   display: inline-block;
+  text-decoration: none;
+}
+.title:hover {
+  color: #ff6600;
 }
 .main-title {
   font-weight: 900;

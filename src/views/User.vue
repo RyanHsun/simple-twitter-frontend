@@ -2,14 +2,14 @@
   <div class="container">
     <Sidebar :tweets-id="tweets.id" @after-submit-tweet="afterSubmitTweet"/>
     <section class="user-page">
-      <Spinner v-if="isLoading"/>
       <div
-        v-else
         class="user-wrap">
         <Headbar
           :initialUser="user"
         />
+        <Spinner v-if="isLoading"/>
         <UserProfile 
+          v-else
           :initialUser="user"
           :is-current-user="currentUser.id === user.id"
           :initial-is-following="user.isFollowing" 
@@ -381,7 +381,7 @@ export default {
   color: #ff6600;
 }
   
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .container {
     grid-template-columns: 25% auto;
     padding-right: 0;

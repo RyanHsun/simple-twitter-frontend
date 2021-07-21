@@ -45,7 +45,7 @@
 
       <div class="text-right mb-3">
         <p>
-          <router-link to="/login">前台登入</router-link>
+          <router-link class="login-text" to="/login">前台登入</router-link>
         </p>
       </div>
     </form>
@@ -139,7 +139,6 @@ h1 {
   line-height: 33px;
 }
 .form-label-group {
-  border-bottom: 1px solid black;
   position: relative;
   max-width: 540px;
   max-height: 212px;
@@ -149,10 +148,11 @@ h1 {
 
 .form-control {
   background: #f5f8fa;
-  height: 50px;
+  height: 60px;
   border: 0;
   margin-top: 20px;
   padding-top: 30px;
+  border: 1px solid #a0bed2;
 }
 
 .input-label {
@@ -177,6 +177,10 @@ h1 {
   max-width: 540px;
   max-height: 26px;
   margin: 41px auto;
+}
+.login-text:hover {
+  text-decoration: none;
+  color: #ff6600;
 }
 @media (max-width: 576px) {
   .container {

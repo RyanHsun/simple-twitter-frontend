@@ -1,9 +1,12 @@
 <template>
   <div class="followships-list">
     <li class="followships-item">
-      <a class="followships-avatar avatar">
+      <router-link 
+        class="followships-avatar avatar"
+        :to="{ name: 'user', params: { id: followingUser.followingId } }"
+      >
         <img :src="followingUser.following.avatar | emptyImage" alt="" />
-      </a>
+      </router-link>
       <div class="followships-content">
         <router-link
           class="followships-info"
@@ -31,6 +34,11 @@
         <div class="followships-intro">
           {{ followingUser.following.introduction }}
         </div>
+      </div>
+      <div 
+        class="full-link"
+        @click.stop.prevent="linkToUserProfile(followingUser.followingId)"
+      >
       </div>
     </li>
   </div>
@@ -105,6 +113,9 @@ export default {
         });
       }
     },
+    linkToUserProfile (userId) {
+      this.$router.push(`/users/${userId}`)
+    },
   },
 };
 </script>
@@ -118,17 +129,27 @@ export default {
   text-align: left;
 }
 .followships-item {
+  position: relative;
+  display: flex;
   display: flex;
   flex-wrap: wrap;
   padding: 10px 20px;
   border-bottom: 1px solid #e6ecf0;
 }
+.followships-avatar {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
 .followships-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   width: calc(100% - 60px);
+  pointer-events: none;
 }
 .followships-info {
   text-decoration: none;
@@ -144,11 +165,27 @@ export default {
 .name:hover {
   color: #ff6600;
 }
+.toggle-follow {
+  pointer-events: visiblefill;
+}
 .is-following {
   color: #fff;
   background-color: #ff6600;
 }
 
+.full-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.full-link:hover {
+  background-color: #f5f8fa;
+  cursor: pointer;
+  transition: .2s ease-in-out;
+}
 @media (max-width: 576px) {
   .toggle-follow {
     font-size: 14px;
