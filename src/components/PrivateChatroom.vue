@@ -73,9 +73,18 @@ export default {
       },
       socket: null,
       isSelf: false,
-      isLoading: true
+      isLoading: true,
+      privateRoom: [],
+      currentRoom: 3
+
     }
   },
+  // props: {
+  //   user: {
+  //   type: Object,
+  //   required: true
+  //   }
+  // },
   computed: {
     ...mapState(['currentUser'])
   },
@@ -103,7 +112,7 @@ export default {
   created () {
     const User1Id = this.currentUser.id
     // const name = this.currentUser.name
-    const User2Id = 3
+    const User2Id = this.currentRoom
     this.join_private_room({User1Id,User2Id}) //後面的參數要改
     this.get_private_history()
   },
@@ -116,15 +125,22 @@ export default {
   methods: {
     // 1. 通知伺服器加入聊天室
     join_private_room({User1Id,User2Id}) { 
-      this.$socket.emit('join_private_room', { User1Id,User2Id })
-      // console.log('加入私訊頁面：', userId)
+      this.$socket.emit('join_private_room', { User1Id,User2Id }, (data) => {
+        console.log('data',data)
+        this.privateRoom.push(data)
+      })
+      
+      console.log('使用者加入私訊頁面：', User1Id)
+      console.log('進入與誰的私訊：', User2Id)
+      console.log('私人房號',this.privateRoom)
     },
     // 2. 抓取歷史訊息
     //缺RoomId
     get_private_history() { 
       this.$socket.emit('get_private_history', {
         offset: 0,
-        limit: 50
+        limit: 50,
+        RoomId: this.privateRoom[0].roomId,
       }, data => {
         this.messages = [
           ...data.reverse()
@@ -158,8 +174,9 @@ export default {
       }
       this.$socket.emit('post_private_msg', { 
         SenderId: this.currentUser.id,
-        ReceiverId: 2,
-        RoomId: 5,
+        ReceiverId: 3,
+        
+        RoomId: this.privateRoom[0].roomId,
         content: this.text,
       })
       const avatar = this.currentUser.avatar
