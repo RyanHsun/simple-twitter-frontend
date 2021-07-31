@@ -1,138 +1,159 @@
 <template>
-  <div class="container">
-    <div class="sidebar">
-      <Sidebar />
+  <div class="container private-message">
+    <Sidebar />
+    <div class="private-message-wrap">
+      <section class="private-users">
+        <div class="private-users-wrap">
+          <h2 class="headbar">
+            <div class="title">
+              <div class="main-title">訊息</div>
+              <div 
+                class="add-msg-user"
+                @click="addMsgUser()">
+                <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
+              </div>
+            </div>
+          </h2>
+          <div
+            class="private-users-list">
+            <!-- <Spinner v-if="isLoading"/> -->
+            <OnlineUsers 
+              v-for="user in onlineUsers"
+              :key="user.id"
+              :user="user" 
+            />
+          </div>
+        </div>
+      </section>
+      <section class="private-chatroom">
+        <div class="private-chatroom-wrap">
+          <h2 class="headbar">
+            <div class="title">
+              <div class="main-title">Apple</div>
+              <div class="sub-title">@apple</div>
+            </div>
+          </h2>
+          <div
+            class="private-chatroomCard">
+            <PrivateChatroom 
+            />
+          </div>
+        </div>
+      </section>
     </div>
-    <section class="messages">
-      <div class="messages-wrap">
-        <h2 class="headbar">
-          <div class="title">
-            <div class="main-title">訊息</div>
-          </div>
-        </h2>
-        <Spinner v-if="isLoading"/>
-        <ul
-          v-else 
-          class="messages-list">
-          <NotificationList 
-          />
-        </ul>
-      </div>
-    </section>
-    <section class="PrivateChatroom">
-      <div class="PrivateChatroom-wrap">
-        <h2 class="headbar">
-          <div class="title">
-            <div class="main-title">Apple</div>
-            <div class="sub-title">@apple</div>
-          </div>
-        </h2>
-        <Spinner v-if="isLoading"/>
-        <ul
-          v-else 
-          class="PrivateChatroomCard">
-          <NotificationList 
-          />
-        </ul>
-      </div>
-    </section>
   </div>
 </template>
-
 <script>
 import { mapState } from 'vuex'
 import { emptyImageFilter } from "../utils/mixins";
 import Sidebar from "./../components/Sidebar.vue"
-import NotificationList from "./../components/NotificationList.vue"
-import Spinner from './../components/Spinner'
-// import tweetsAPI from './../apis/tweets'
-// import { Toast } from './../utils/helpers'
-// import { component } from 'vue/types/umd'
+import OnlineUsers from "./../components/OnelineUsers.vue"
+import PrivateChatroom from "./../components/PrivateChatroom.vue"
+// import Spinner from './../components/Spinner'
 
 export default {
+  name: 'PrivateMessage',
   mixins: [emptyImageFilter],
-  name: "Notification",
   components: {
     Sidebar,
-    NotificationList,
-    Spinner
+    OnlineUsers,
+    PrivateChatroom,
+    // Spinner
   },
-  data() {
+  data () {
     return {
-      user: {},
-      tweets: [],
-      // isProcessing: false,
-      // isLoading: true
+      onlineUsers: [
+        {
+          id: 101,
+          account: 'apple',
+          name: 'Apple',
+          avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
+          msg: 'Whatever is worth doing is worth doing well.',
+          createdAt: '2021-07-28T22:03:46.000Z'
+        },
+        {
+          id: 202,
+          account: 'banna',
+          name: 'Banna',
+          avatar: 'https://loremflickr.com/cache/resized/65535_50888036831_e6cde803e7_320_240_g.jpg',
+          msg: 'Dinner Time ~~~',
+          createdAt: '2021-07-18T22:03:46.000Z'
+        }
+      ],
+      socket: null,
+      onlineUsersNum: 1,
+      isLoading: true
     }
   }, 
   computed: {
     ...mapState(['currentUser'])
   },
-  // created() {
-  //   const { offset = 0, limit = 100 } = this.$route.query
-  //   this.fetchTweets({ queryOffset: offset, queryLimit: limit })
-  // },
-  // beforeRouteUpdate (to, from, next) {
-  //   const { offset = '', limit = '' } = to.query
-  //   this.fetchTweets({ queryOffset: offset, queryLimit: limit })
-  //   next()
-  // },
-  methods: {
-    //之後串接通知
-    // async fetchTweets({ queryOffset, queryLimit }) {
-    //   try {
-        
-    //     const response = await tweetsAPI.getTweets({
-    //       offset: queryOffset,
-    //       limit: queryLimit
-    //     })
-
-    //     this.tweets = [...response.data]
-        
-    //     this.isLoading = false
-
-    //   } catch (error) {
-
-    //     this.isLoading = false
-
-    //     console.log('error', error)
-    //     Toast.fire({
-    //       icon: 'error',
-    //       title: '無法取得推文資料，請稍後再試'
-    //     })
-    //   }
+  sockets: {
+    // online_users(data) {
+    //   console.log('上線使用者資料', data)
+    //   // this.fetchOnlineUsers(data.user);
+    //   this.fetchOnlineUsers(data.users);
+    //   this.onlineUsersNum = data.users.length
+    //   this.isLoading = false
     // }
+  },
+  mounted () {
+    // this.$socket.on('online_users')
+  },
+  created() {
+    // this.fetchOnlineUsers()
+    },
+  methods: {
+    // fetchOnlineUsers(data) {
+    //   this.onlineUsers = data;
+    // },
+    addMsgUser () {
+      console.log('跳窗顯示所有使用者')
+    }
   }
 }
 </script>
-
 <style scoped>
 .container {
   display: grid;
-  grid-template-columns: 20% 25% auto;
+  grid-template-columns: 20% auto;
   max-width: 1500px;
   margin: 0 auto;
-  padding: 0 0px;
-}
-.sidebar {
   padding: 0 20px;
 }
-.PrivateChatroom,
-.messages {
+.private-message-wrap {
+  display: flex;
+}
+.private-users {
+  width: 45%;
+}
+.private-chatroom {
+  width: 55%;
+}
+.private-chatroom,
+.private-users {
   position: relative;
   margin-top: 50px;
+  border-left: 1px solid #e6ecf0;
 }
-.PrivateChatroom-wrap,
-.messages-wrap {
-  overflow-y: scroll;
+.private-chatroom,
+.private-chatroom .headbar {
+  border-right: 1px solid #e6ecf0;
+}
+.private-chatroom-wrap,
+.private-users-wrap {
+  /* overflow-y: auto; */
   max-height: calc(100vh - 50px);
+}
+.private-users-wrap {
+  overflow-y: auto;
 }
 .headbar {
   position: absolute;
   top: -50px;
   left: 0;
   z-index: 10;
-  display: flex;
+  display: flex;  
   align-items: center;
   width: 100%;
   height: 50px;
@@ -140,14 +161,20 @@ export default {
   padding: 5px 20px;
   font-size: 18px;
   text-align: left;
-  border-width: 0 1px 1px 1px;
+  border-width: 0 0 1px 1px;
   border-style: solid;
   border-color: #e6ecf0;
   background: #fff;
-  /* transform: scale(1.002); */
+  transform: translateX(-1px);
 }
-.title {
-  display: inline-block;
+.private-chatroom .headbar {
+  transform: scale(1, 1.004);
+}
+.private-users .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 .main-title {
   font-weight: 900;
@@ -159,9 +186,40 @@ export default {
 .avatar {
   display: inline-block;
 }
-.messages-list {
-  border-width: 0 1px;
-  border-style: solid;
-  border-color: #e6ecf0;
+.add-msg-user {
+  cursor: pointer;
+}
+.add-msg-user:hover img {
+  filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
+  /* transition: .2s ease; */
+}
+@media (max-width: 992px) {
+  .container {
+    padding-right: 0;
+  }
+  .private-message-wrap {
+    flex-direction: column;
+  }
+  .private-message-wrap section {
+    width: 100%;
+  }
+  .private-users-wrap {
+    height: 20vh;
+  }
+  .chat-wrap {
+    height: calc( 100vh - 20vh - 99px );
+  }
+  .private-chatroom .headbar{
+    border-top: 1px solid #e6ecf0;
+    transform: translateX(-1px);
+  }
+  .new-tweet {
+    display: none;
+  }
+}
+@media (max-width: 576px) {
+  .container {
+    grid-template-columns: 13% auto;
+  }
 }
 </style>
