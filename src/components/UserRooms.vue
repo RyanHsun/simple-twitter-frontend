@@ -1,0 +1,183 @@
+<template>
+    <li class="notice">
+      <router-link
+        class="avatar"
+        :to="`/users/${user.id}`"
+      >
+        <img :src="user.avatar | emptyImage" alt="">
+      </router-link>
+      <div class="notice-info">
+        <div class="user-info">
+          <router-link
+            class="name"
+            :to="`/users/${user.id}`"
+          >
+            {{ user.name }}
+          </router-link>
+          <span class="account">@{{ user.account }}</span>
+        </div>
+        <div class="user-msg">
+          <span class="last-msg">{{ user.lastMsg }}</span>
+          <span class="last-time">{{ user.createdAt | fromNow }}</span>
+        </div>
+      </div>
+      <div class="full-link"
+        @click="join_private_room(currentUser.id, user.id)"
+      >
+      </div>
+    </li>
+</template>
+<script>
+import { emptyImageFilter } from "../utils/mixins";
+import { fromNowFilter } from '../utils/mixins'
+import { mapState } from 'vuex'
+
+// const dummyPrivateHistory = [
+//   {
+//     UserId: 101,
+//     avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
+//     content: 'Whatever is worth doing is worth doing well.',
+//     createdAt: '2021-07-28T22:03:46.000Z',
+//     isSelf: false
+//   }
+// ]`
+
+export default {
+  name: 'UserRooms',
+  mixins: [fromNowFilter,emptyImageFilter],
+  props: {
+    user: {
+      type: Object,
+      required: true
+    }
+  },
+  data () {
+    return {
+      currentRoom: ''
+    }
+  },
+  computed: {
+    ...mapState(['currentUser'])
+  },
+  methods: {
+    userActive (user) {
+      console.log(`切換到使用者：${user.name} 的訊息聊天室`)
+    },
+    join_private_room(user1Id, user2Id) {
+      this.$socket.emit('join_private_room', {
+        user1Id, 
+        user2Id,
+      }, 
+      // data => {
+      //   this.currentRoom = [
+      //     ...data
+      //   ]
+      //   console.log('Room Id:', this.currentRoom)
+      // }
+      )
+      console.log(`當前的聊天室房間：${this.currentRoom}`)
+      console.log(`使用者：${user1Id} 切換到到使用者：${user2Id} 的訊息聊天室`)
+    },
+  }
+}
+</script>
+<style scoped>
+.notice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  width: 100%;
+  border-bottom: 1px solid #e6ecf0;
+}
+.avatar {
+  position: relative;
+  z-index: 1;
+}
+.notice-info {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: calc( 100% - 50px);
+  text-align: left;
+  pointer-events: none;
+}
+.avatar:hover ~ .full-link,
+.notice-info:hover + .full-link {
+  background-color: #F5F8FA;
+}
+.name {
+  font-weight: bold;
+  pointer-events: visiblefill;
+}
+.notice-content {
+  margin: 10px 0;
+}
+.full-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.full-link:hover {
+  background-color: #F5F8FA;
+  cursor: pointer;
+  transition: .2s ease-in-out;
+}
+.name:hover {
+  color: #FF6600;
+  text-decoration: none;
+}
+.account {
+  font-size: 14px;
+}
+.last-msg {
+  display: inline-block;
+  max-width: 250px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space : nowrap;
+}
+.last-time {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 14px;
+}
+.full-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.full-link:hover {
+  background-color: #f5f8fa;
+  cursor: pointer;
+  transition: .2s ease-in-out;
+}
+@media (max-width: 768px) {
+  .PublicMessage .avatar {
+    width: 40px;
+    height: 40px;
+  }
+}
+@media (max-width: 576px) {
+  .PublicMessage .avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .name,
+  .account {
+    font-size: 14px;
+  }
+  .notice-info .user-info {
+    margin-bottom: 0;
+  }
+}
+</style>

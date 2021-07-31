@@ -17,8 +17,8 @@
           <div
             class="private-users-list">
             <!-- <Spinner v-if="isLoading"/> -->
-            <OnlineUsers 
-              v-for="user in onlineUsers"
+            <UserRooms
+              v-for="user in userRooms"
               :key="user.id"
               :user="user" 
             />
@@ -47,41 +47,43 @@
 import { mapState } from 'vuex'
 import { emptyImageFilter } from "../utils/mixins";
 import Sidebar from "./../components/Sidebar.vue"
-import OnlineUsers from "./../components/OnelineUsers.vue"
+import UserRooms from "./../components/UserRooms.vue"
 import PrivateChatroom from "./../components/PrivateChatroom.vue"
 // import Spinner from './../components/Spinner'
+
+const dummyRooms = [
+  {
+    id: 101,
+    account: 'apple',
+    name: 'Apple',
+    avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
+    lastMsg: 'Whatever is worth doing is worth doing well.',
+    createdAt: '2021-07-28T22:03:46.000Z'
+  },
+  {
+    id: 202,
+    account: 'banna',
+    name: 'Banna',
+    avatar: 'https://loremflickr.com/cache/resized/65535_50888036831_e6cde803e7_320_240_g.jpg',
+    lastMsg: 'Dinner Time ~~~',
+    createdAt: '2021-07-18T22:03:46.000Z'
+  }
+]
 
 export default {
   name: 'PrivateMessage',
   mixins: [emptyImageFilter],
   components: {
     Sidebar,
-    OnlineUsers,
+    UserRooms,
     PrivateChatroom,
     // Spinner
   },
   data () {
     return {
-      onlineUsers: [
-        {
-          id: 101,
-          account: 'apple',
-          name: 'Apple',
-          avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
-          msg: 'Whatever is worth doing is worth doing well.',
-          createdAt: '2021-07-28T22:03:46.000Z'
-        },
-        {
-          id: 202,
-          account: 'banna',
-          name: 'Banna',
-          avatar: 'https://loremflickr.com/cache/resized/65535_50888036831_e6cde803e7_320_240_g.jpg',
-          msg: 'Dinner Time ~~~',
-          createdAt: '2021-07-18T22:03:46.000Z'
-        }
-      ],
+      userRooms: [],
       socket: null,
-      onlineUsersNum: 1,
+      userRoomsNum: 2,
       isLoading: true
     }
   }, 
@@ -89,26 +91,31 @@ export default {
     ...mapState(['currentUser'])
   },
   sockets: {
-    // online_users(data) {
-    //   console.log('上線使用者資料', data)
-    //   // this.fetchOnlineUsers(data.user);
-    //   this.fetchOnlineUsers(data.users);
-    //   this.onlineUsersNum = data.users.length
-    //   this.isLoading = false
-    // }
+    get_private_rooms(data) {
+      console.log('取得當前使用者所有私訊聊天室', data.users)
+      this.fetchUserRooms(data.users)
+      this.userRoomsNum = data.users.length
+      this.isLoading = false
+    }
   },
   mounted () {
-    // this.$socket.on('online_users')
+    this.$socket.on('get_private_rooms')
   },
   created() {
-    // this.fetchOnlineUsers()
-    },
+    this.join_private_page(this.currentUser.id)
+    this.fetchUserRooms()
+  },
   methods: {
-    // fetchOnlineUsers(data) {
-    //   this.onlineUsers = data;
-    // },
+    join_private_page(userId) { 
+      this.$socket.emit('join_private_page', { userId })
+      console.log(`使用者：${userId} 進入到私人訊息頁面了`)
+    },
     addMsgUser () {
       console.log('跳窗顯示所有使用者')
+    },
+    fetchUserRooms() {
+      this.userRooms = dummyRooms
+      console.log('取得當前使用者所有私訊聊天室', this.userRooms)
     }
   }
 }
