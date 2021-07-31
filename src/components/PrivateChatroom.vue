@@ -101,9 +101,10 @@ export default {
   },
   //這裡放:進入私訊後，要emit
   created () {
-    const userId = this.currentUser.id
+    const User1Id = this.currentUser.id
     // const name = this.currentUser.name
-    this.join_private_room(userId) //後面的參數要改
+    const User2Id = 3
+    this.join_private_room({User1Id,User2Id}) //後面的參數要改
     this.get_private_history()
   },
   updated () {
@@ -114,9 +115,9 @@ export default {
   },
   methods: {
     // 1. 通知伺服器加入聊天室
-    join_private_room(userId) { 
-      this.$socket.emit('join_private_room', { userId })
-      console.log('加入私訊頁面：', userId)
+    join_private_room({User1Id,User2Id}) { 
+      this.$socket.emit('join_private_room', { User1Id,User2Id })
+      // console.log('加入私訊頁面：', userId)
     },
     // 2. 抓取歷史訊息
     //缺RoomId
@@ -157,8 +158,8 @@ export default {
       }
       this.$socket.emit('post_private_msg', { 
         SenderId: this.currentUser.id,
-        // ReceiverId:
-        // RoomId:
+        ReceiverId: 2,
+        RoomId: 5,
         content: this.text,
       })
       const avatar = this.currentUser.avatar
