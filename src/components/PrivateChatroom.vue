@@ -89,26 +89,22 @@ export default {
     reconnect(){
       console.log("重新連線");
     },
-    user_join(name) {
-      console.log(`${name} 加入聊天室`)
-    },
-    user_leave(data) {
-      console.log(`${data.name} 離開聊天室`)
-    },
-    online_users(data) {
-      this.memberNum = data.users.length
-      // console.log('上線使用者：', this.memberNum)
+
+    //私人訊息：這裡都放on
+    get_private_rooms(room) {
+      console.log(`加入room${room}號私訊 `)
     },
     get_private_msg(data) {
-      // console.log(`發的訊息：`, data)
       this.messages.push(data)
     },
+
   },
+  //這裡放:進入私訊後，要emit
   created () {
     const userId = this.currentUser.id
     // const name = this.currentUser.name
-    this.join_private_room(userId)
-    this.get_private_history() 
+    this.join_private_room(userId) //後面的參數要改
+    this.get_private_history()
   },
   updated () {
     this.updateScroll()
@@ -120,23 +116,24 @@ export default {
     // 1. 通知伺服器加入聊天室
     join_private_room(userId) { 
       this.$socket.emit('join_private_room', { userId })
-      console.log('加入聊天室：', userId)
+      console.log('加入私訊頁面：', userId)
     },
     // 2. 抓取歷史訊息
+    //缺RoomId
     get_private_history() { 
       this.$socket.emit('get_private_history', {
         offset: 0,
         limit: 50
       }, data => {
         this.messages = [
-          // ...data.reverse()
-          {
-            UserId: 101,
-            avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
-            content: 'Whatever is worth doing is worth doing well.',
-            createdAt: '2021-07-28T22:03:46.000Z',
-            isSelf: false
-          }
+          ...data.reverse()
+          // {
+          //   UserId: 101,
+          //   avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
+          //   content: 'Whatever is worth doing is worth doing well.',
+          //   createdAt: '2021-07-28T22:03:46.000Z',
+          //   isSelf: false
+          // }
         ]
         this.messages = this.messages.map( msg => {
           const { UserId, avatar, content, createdAt } = msg
@@ -158,10 +155,11 @@ export default {
         })
         return
       }
-
       this.$socket.emit('post_private_msg', { 
+        SenderId: this.currentUser.id,
+        // ReceiverId:
+        // RoomId:
         content: this.text,
-        userId: this.currentUser.id
       })
       const avatar = this.currentUser.avatar
       const content = this.text
@@ -177,15 +175,15 @@ export default {
       
       this.text = ''
       
-      Toast.fire({
-        icon: 'success',
-        title: '訊息發送成功'
-      })
-      // console.log(data)
+      // Toast.fire({
+      //   icon: 'success',
+      //   title: '訊息發送成功'
+      // })
+      console.log(data)
     },
     // 4. 離開聊天室
-    leave_private_room(userId) {
-      this.$socket.emit('leave_private_room', { userId })
+    leave_private_page(userId) {
+      this.$socket.emit('leave_private_page', { userId })
       // console.log(`使用者${userId} 離開聊天室`)
     },
     // 自動置頂
@@ -195,8 +193,7 @@ export default {
   },
   beforeDestroy () {
     const userId = this.currentUser.id
-    this.leave_private_room(userId)
-    this.$socket.on('user_leave')
+    this.leave_private_page(userId)
   }
 }
 </script>
@@ -219,7 +216,7 @@ export default {
   justify-content: flex-end;
   align-items: center;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   margin: 0 auto;
   padding: 15px;
 }
