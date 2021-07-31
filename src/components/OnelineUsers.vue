@@ -1,5 +1,5 @@
 <template>
-      <li class="notice">
+    <li class="notice">
       <router-link
         class="avatar"
         :to="`/users/${user.id}`"
@@ -16,6 +16,18 @@
           </router-link>
           <span class="account">@{{ user.account }}</span>
         </div>
+        <div 
+          v-if="user.msg"
+          class="user-msg">
+          <span class="last-msg">{{ user.msg }}</span>
+          <span class="last-time">{{ user.createdAt | fromNow }}</span>
+        </div>
+      </div>
+      <div 
+        v-if="user.msg"
+        class="full-link"
+        @click="userActive(user)"
+      >
       </div>
     </li>
 </template>
@@ -24,6 +36,7 @@ import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from '../utils/mixins'
 import { mapState } from 'vuex'
 export default {
+  name: 'OnelineUsers',
   mixins: [fromNowFilter,emptyImageFilter],
   props: {
   user: {
@@ -34,6 +47,11 @@ export default {
   computed: {
     ...mapState(['currentUser'])
   },
+  methods: {
+    userActive (user) {
+      console.log(`切換到使用者：${user.name} 的訊息聊天室`)
+    }
+  }
 }
 </script>
 <style scoped>
@@ -64,7 +82,6 @@ export default {
   background-color: #F5F8FA;
 }
 .name {
-  margin-right: 10px;
   font-weight: bold;
   pointer-events: visiblefill;
 }
@@ -87,6 +104,35 @@ export default {
 .name:hover {
   color: #FF6600;
   text-decoration: none;
+}
+.account {
+  font-size: 14px;
+}
+.last-msg {
+  display: inline-block;
+  max-width: 250px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space : nowrap;
+}
+.last-time {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 14px;
+}
+.full-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.full-link:hover {
+  background-color: #f5f8fa;
+  cursor: pointer;
+  transition: .2s ease-in-out;
 }
 @media (max-width: 768px) {
   .PublicMessage .avatar {

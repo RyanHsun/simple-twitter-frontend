@@ -13,7 +13,7 @@
           </div>
           <div>首頁</div>
         </router-link>
-        <!-- <router-link 
+        <router-link 
           class="nav-item notification" 
           to='/'
         >
@@ -21,7 +21,7 @@
             <img src="~@/assets/img/icon_ring.svg" width="25px" alt="" />
           </div>
           <div>通知</div>
-        </router-link> -->
+        </router-link>
         <router-link 
           class="nav-item public-chat" 
           to='/room'
@@ -31,15 +31,15 @@
           </div>
           <div>公開聊天室</div>
         </router-link>
-        <!-- <router-link 
+        <router-link 
           class="nav-item private-chat" 
-          to='/'
+          to='/message'
         >
           <div class="icon">
             <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
           </div>
           <div>私人訊息</div>
-        </router-link> -->
+        </router-link>
         <router-link 
           class="nav-item user-profile" 
           :to="{ name: 'user', params: { id: currentUser.id } }"
