@@ -21,8 +21,10 @@
           <span class="last-time">{{ user.createdAt | fromNow }}</span>
         </div>
       </div>
-      <div class="full-link"
-        @click="join_private_room(currentUser.id, user.id)"
+      <div 
+        class="full-link"
+        :class="{ linked: user.isLinked }"
+        @click="handleClick"
       >
       </div>
     </li>
@@ -46,38 +48,53 @@ export default {
   name: 'UserRooms',
   mixins: [fromNowFilter,emptyImageFilter],
   props: {
-    user: {
+    initialUser: {
       type: Object,
       required: true
     }
   },
   data () {
     return {
-      currentRoom: ''
+      user: {}
     }
+  },
+  watch: {
+    initialUser(newValue) {
+      this.user = {
+        ...this.user,
+        ...newValue,
+      }
+    },
   },
   computed: {
     ...mapState(['currentUser'])
   },
+  created () {
+    this.fetchUser()
+  },
   methods: {
-    userActive (user) {
-      console.log(`切換到使用者：${user.name} 的訊息聊天室`)
+    handleClick() {
+      this.$emit('after-click', this.user)
     },
-    join_private_room(user1Id, user2Id) {
-      this.$socket.emit('join_private_room', {
-        user1Id, 
-        user2Id,
-      }, 
-      // data => {
-      //   this.currentRoom = [
-      //     ...data
-      //   ]
-      //   console.log('Room Id:', this.currentRoom)
-      // }
-      )
-      console.log(`當前的聊天室房間：${this.currentRoom}`)
-      console.log(`使用者：${user1Id} 切換到到使用者：${user2Id} 的訊息聊天室`)
+    fetchUser() {
+      this.user = this.initialUser
     },
+    // join_private_room(user1Id, user2Id) {
+    //   this.$socket.emit('join_private_room', {
+    //     user1Id, 
+    //     user2Id,
+    //   }, 
+    //   // data => {
+    //   //   this.currentRoom = [
+    //   //     ...data
+    //   //   ]
+    //   //   console.log('Room Id:', this.currentRoom)
+    //   // }
+    //   )
+    //   console.log(`當前的聊天室房間：${this.currentRoom}`)
+    //   console.log(`使用者：${user1Id} 切換到到使用者：${user2Id} 的訊息聊天室`)
+    //   this.$emit('after-join-private-room', user2Id)
+    // },
   }
 }
 </script>
@@ -156,7 +173,8 @@ export default {
   height: 100%;
   z-index: 0;
 }
-.full-link:hover {
+.full-link:hover,
+.full-link.linked {
   background-color: #f5f8fa;
   cursor: pointer;
   transition: .2s ease-in-out;

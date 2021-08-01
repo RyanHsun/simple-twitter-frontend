@@ -48,7 +48,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapState } from 'vuex'
 import { Toast } from './../utils/helpers'
@@ -75,8 +74,8 @@ export default {
       isSelf: false,
       isLoading: true,
       privateRoom: [],
-      currentRoom: 3
-
+      // currentRoom: 3
+      //需要用roomId來切換，需要接收roomId，在呈現出那個roomId的對話
     }
   },
   // props: {
@@ -98,41 +97,47 @@ export default {
     reconnect(){
       console.log("重新連線");
     },
-
     //私人訊息：這裡都放on
-    get_private_rooms(room) {
-      console.log(`加入room${room}號私訊 `)
+    get_private_rooms(Rooms) {
+      console.log(`Rooms${Rooms}號私訊 `)
+      console.log('Rooms',Rooms)
     },
     get_private_msg(data) {
       this.messages.push(data)
     },
-
+    join_private_room(data) {
+      console.log('加入room的data',data)
+      this.privateRoom.push(data)
+    }
   },
   //這裡放:進入私訊後，要emit
   created () {
     const User1Id = this.currentUser.id
     // const name = this.currentUser.name
-    const User2Id = this.currentRoom
+    const User2Id = 2
     this.join_private_room({User1Id,User2Id}) //後面的參數要改
     this.get_private_history()
   },
   updated () {
     this.updateScroll()
-    this.$socket.on('user_join')
+    this.$socket.on('get_private_rooms')
+    this.$socket.on('join_private_room')
   },
   mounted () {
   },
   methods: {
     // 1. 通知伺服器加入聊天室
-    join_private_room({User1Id,User2Id}) { 
-      this.$socket.emit('join_private_room', { User1Id,User2Id }, (data) => {
-        console.log('data',data)
-        this.privateRoom.push(data)
-      })
-      
-      console.log('使用者加入私訊頁面：', User1Id)
-      console.log('進入與誰的私訊：', User2Id)
-      console.log('私人房號',this.privateRoom)
+    async join_private_room({User1Id,User2Id}) { 
+      // this.$socket.emit('join_private_room', { User1Id,User2Id }, (data) => {
+      //   console.log('加入room的data',data)
+      //   this.privateRoom.push(data)
+      // })
+
+      this.$socket.emit('join_private_room', { User1Id,User2Id })
+
+      console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
+      // console.log('進入與誰的私訊：', User2Id)
+      // console.log('私人房號',this.privateRoom)
     },
     // 2. 抓取歷史訊息
     //缺RoomId
@@ -140,7 +145,7 @@ export default {
       this.$socket.emit('get_private_history', {
         offset: 0,
         limit: 50,
-        RoomId: this.privateRoom[0].roomId,
+        // RoomId: this.privateRoom[0].roomId,
       }, data => {
         this.messages = [
           ...data.reverse()
@@ -174,15 +179,14 @@ export default {
       }
       this.$socket.emit('post_private_msg', { 
         SenderId: this.currentUser.id,
-        ReceiverId: 3,
-        
-        RoomId: this.privateRoom[0].roomId,
+        ReceiverId: 2,
+        RoomId: this.privateRoom[0].RoomId,
         content: this.text,
       })
+      
       const avatar = this.currentUser.avatar
       const content = this.text
       const createdAt = new Date()
-
       const data = {
         avatar,
         content,
@@ -190,32 +194,27 @@ export default {
         isSelf: true
       }
       this.messages.push( data )
-      
       this.text = ''
-      
       // Toast.fire({
       //   icon: 'success',
       //   title: '訊息發送成功'
       // })
       console.log(data)
     },
-    // 4. 離開聊天室
-    leave_private_page(userId) {
-      this.$socket.emit('leave_private_page', { userId })
-      // console.log(`使用者${userId} 離開聊天室`)
-    },
     // 自動置頂
     updateScroll() {
       this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
     },
+    // 4. 離開聊天室
+    leave_private_page() {
+      this.$socket.emit('leave_private_page')
+    },
   },
   beforeDestroy () {
-    const userId = this.currentUser.id
-    this.leave_private_page(userId)
+    this.leave_private_page()
   }
 }
 </script>
-
 <style scoped>
 .chat-wrap {
   height: calc( 100vh - 110px);
@@ -249,11 +248,9 @@ export default {
   align-self: flex-end;
   margin-bottom: 10px;
 }
-
 .other > div {
   text-align: left;
 }
-
 .msg p {
   width: auto;
   max-width: 400px;
@@ -277,7 +274,6 @@ export default {
   background: #ff6600;
   border-radius: 20px 20px 0 20px;
 }
-
 .user_join {
   background: #ccc;
   padding: 5px 15px;

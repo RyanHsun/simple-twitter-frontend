@@ -20,7 +20,8 @@
             <UserRooms
               v-for="user in userRooms"
               :key="user.id"
-              :user="user" 
+              :initialUser="user" 
+              @after-click="afterClick"
             />
           </div>
         </div>
@@ -29,8 +30,8 @@
         <div class="private-chatroom-wrap">
           <h2 class="headbar">
             <div class="title">
-              <div class="main-title">Apple</div>
-              <div class="sub-title">@apple</div>
+              <div class="main-title">{{ currentRoom.name }}</div>
+              <div class="sub-title">@{{ currentRoom.account }}</div>
             </div>
           </h2>
           <div
@@ -51,9 +52,9 @@ import UserRooms from "./../components/UserRooms.vue"
 import PrivateChatroom from "./../components/PrivateChatroom.vue"
 // import Spinner from './../components/Spinner'
 
-const dummyRooms = [
+const dummyData = [
   {
-    id: 101,
+    id: 2,
     account: 'apple',
     name: 'Apple',
     avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
@@ -61,7 +62,7 @@ const dummyRooms = [
     createdAt: '2021-07-28T22:03:46.000Z'
   },
   {
-    id: 202,
+    id: 5,
     account: 'banna',
     name: 'Banna',
     avatar: 'https://loremflickr.com/cache/resized/65535_50888036831_e6cde803e7_320_240_g.jpg',
@@ -81,9 +82,9 @@ export default {
   },
   data () {
     return {
-      userRooms: [],
       socket: null,
-      userRoomsNum: 2,
+      userRooms: [],
+      currentRoom: {},
       isLoading: true
     }
   }, 
@@ -94,7 +95,7 @@ export default {
     get_private_rooms(data) {
       console.log('取得當前使用者所有私訊聊天室', data.users)
       this.fetchUserRooms(data.users)
-      this.userRoomsNum = data.users.length
+      // this.userRoomsNum = data.users.length
       this.isLoading = false
     }
   },
@@ -114,8 +115,29 @@ export default {
       console.log('跳窗顯示所有使用者')
     },
     fetchUserRooms() {
-      this.userRooms = dummyRooms
+      this.userRooms = dummyData.map( user => {
+        const { id, account, name, avatar, lastMsg, createdAt } = user
+        const isLinked = id === this.currentRoom.id ? true : false
+        return { id, account, name, isLinked, avatar, lastMsg, createdAt }
+      })
       console.log('取得當前使用者所有私訊聊天室', this.userRooms)
+    },
+    afterClick (user) {
+      // console.log(user)
+      this.currentRoom = {
+        id: user.id,
+        name: user.name,
+        account: user.account
+      }
+      this.userRooms = this.userRooms.map((user) => {
+        if(user.id === this.currentRoom.id) {
+          user.isLinked = true
+        } else {
+          user.isLinked = false
+        }
+        return user
+      })
+      // console.log(`父層接收聊天室房號：${this.currentRoom}`)
     }
   }
 }
