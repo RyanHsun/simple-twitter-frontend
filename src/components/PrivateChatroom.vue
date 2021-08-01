@@ -114,7 +114,7 @@ export default {
   created () {
     const User1Id = this.currentUser.id
     // const name = this.currentUser.name
-    const User2Id = 2
+    const User2Id = 1
     this.join_private_room({User1Id,User2Id}) //後面的參數要改
     this.get_private_history()
   },
@@ -179,8 +179,8 @@ export default {
       }
       this.$socket.emit('post_private_msg', { 
         SenderId: this.currentUser.id,
-        ReceiverId: 2,
-        RoomId: this.privateRoom[0].RoomId,
+        ReceiverId: 1,
+        RoomId: this.privateRoom[0],
         content: this.text,
       })
       
