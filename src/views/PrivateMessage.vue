@@ -17,10 +17,11 @@
           <div
             class="private-users-list">
             <!-- <Spinner v-if="isLoading"/> -->
-            <OnlineUsers 
-              v-for="user in onlineUsers"
+            <UserRooms
+              v-for="user in userRooms"
               :key="user.id"
-              :user="user" 
+              :initialUser="user" 
+              @after-click="afterClick"
             />
           </div>
         </div>
@@ -28,14 +29,17 @@
       <section class="private-chatroom">
         <div class="private-chatroom-wrap">
           <h2 class="headbar">
-            <div class="title">
-              <div class="main-title">Apple</div>
-              <div class="sub-title">@apple</div>
+            <div
+              v-show="currentRoom.id" 
+              class="title">
+              <div class="main-title">{{ currentRoom.name }}</div>
+              <div class="sub-title">@{{ currentRoom.account }}</div>
             </div>
           </h2>
-          <div
-            class="private-chatroomCard">
+          <div class="private-chatroomCard">
             <PrivateChatroom 
+              :initialCurrentRoom="currentRoom"
+              :initialMessages="messages"
             />
           </div>
         </div>
@@ -47,41 +51,44 @@
 import { mapState } from 'vuex'
 import { emptyImageFilter } from "../utils/mixins";
 import Sidebar from "./../components/Sidebar.vue"
-import OnlineUsers from "./../components/OnelineUsers.vue"
+import UserRooms from "./../components/UserRooms.vue"
 import PrivateChatroom from "./../components/PrivateChatroom.vue"
 // import Spinner from './../components/Spinner'
+
+const dummyData = [
+  {
+    id: 2,
+    account: 'apple',
+    name: 'Apple',
+    avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
+    lastMsg: 'Whatever is worth doing is worth doing well.',
+    createdAt: '2021-07-28T22:03:46.000Z'
+  },
+  {
+    id: 5,
+    account: 'banna',
+    name: 'Banna',
+    avatar: 'https://loremflickr.com/cache/resized/65535_50888036831_e6cde803e7_320_240_g.jpg',
+    lastMsg: 'Dinner Time ~~~',
+    createdAt: '2021-07-18T22:03:46.000Z'
+  }
+]
 
 export default {
   name: 'PrivateMessage',
   mixins: [emptyImageFilter],
   components: {
     Sidebar,
-    OnlineUsers,
+    UserRooms,
     PrivateChatroom,
     // Spinner
   },
   data () {
     return {
-      onlineUsers: [
-        {
-          id: 101,
-          account: 'apple',
-          name: 'Apple',
-          avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
-          msg: 'Whatever is worth doing is worth doing well.',
-          createdAt: '2021-07-28T22:03:46.000Z'
-        },
-        {
-          id: 202,
-          account: 'banna',
-          name: 'Banna',
-          avatar: 'https://loremflickr.com/cache/resized/65535_50888036831_e6cde803e7_320_240_g.jpg',
-          msg: 'Dinner Time ~~~',
-          createdAt: '2021-07-18T22:03:46.000Z'
-        }
-      ],
       socket: null,
-      onlineUsersNum: 1,
+      userRooms: [],
+      currentRoom: {},
+      messages: [],
       isLoading: true
     }
   }, 
@@ -89,27 +96,115 @@ export default {
     ...mapState(['currentUser'])
   },
   sockets: {
-    // online_users(data) {
-    //   console.log('上線使用者資料', data)
-    //   // this.fetchOnlineUsers(data.user);
-    //   this.fetchOnlineUsers(data.users);
-    //   this.onlineUsersNum = data.users.length
-    //   this.isLoading = false
+    get_private_rooms(Rooms) {
+      // this.userRooms = Rooms
+      console.log('取得當前使用者所有私訊聊天室', Rooms)
+
+      this.userRooms = Rooms.map( user => {
+        const { id, lastMsg, roomMember } = user
+        const isLinked = id === this.currentRoom.id ? true : false
+        return { id, lastMsg, roomMember, isLinked }
+      })
+      console.log('取得當前使用者所有私訊聊天室', this.userRooms)
+
+      this.isLoading = false
+    },
+    join_private_room(data) {
+      console.log('加入room的data',data)
+      this.privateRoom.push(data)
+    }
+  },
+  watch: {
+    // userRooms () {
+    //   this.afterClick()
     // }
   },
-  mounted () {
-    // this.$socket.on('online_users')
-  },
   created() {
-    // this.fetchOnlineUsers()
-    },
+    this.join_private_page(this.currentUser.id)
+    // this.fetchUserRooms()
+    this.$socket.on('get_private_rooms')
+  },
+  updated() {
+    
+    this.$socket.on('join_private_room')
+  },
   methods: {
-    // fetchOnlineUsers(data) {
-    //   this.onlineUsers = data;
-    // },
+    join_private_page(userId) { 
+      this.$socket.emit('join_private_page', { userId })
+      console.log(`使用者：${userId} 進入到私人訊息頁面了`)
+    },
+    join_private_room({User1Id,User2Id}) { 
+
+      this.$socket.emit('join_private_room', { User1Id,User2Id })
+
+      console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
+      // console.log('進入與誰的私訊：', User2Id)
+      // console.log('私人房號',this.privateRoom)
+    },
     addMsgUser () {
       console.log('跳窗顯示所有使用者')
-    }
+    },
+    fetchUserRooms() {
+      this.userRooms = dummyData.map( user => {
+        const { id, account, name, avatar, lastMsg, createdAt } = user
+        const isLinked = id === this.currentRoom.id ? true : false
+        return { id, account, name, isLinked, avatar, lastMsg, createdAt }
+      })
+      console.log('取得當前使用者所有私訊聊天室', this.userRooms)
+    },
+    afterClick (user) {
+      // console.log(user)
+      this.currentRoom = {
+        id: user.id,
+        userId: user.roomMember.id,
+        name: user.roomMember.name,
+        account: user.roomMember.account
+      }
+      // this.currentRoom = user.id
+      this.userRooms = this.userRooms.map((user) => {
+        if(user.id === this.currentRoom) {
+          user.isLinked = true
+        } else {
+          user.isLinked = false
+        }
+        return user
+      })
+      console.log(`父層接收聊天室房號：${this.currentRoom.id}`)
+      console.log(`父層接收聊天室對方使用者ID：${this.currentRoom.userId}`)
+      this.get_private_history(this.currentRoom.id)
+
+      const User1Id = this.currentUser.id
+      const User2Id = this.currentRoom.userId
+      this.join_private_room({User1Id,User2Id})
+    },
+    get_private_history(roomId) { 
+      // console.log(roomId)
+      this.$socket.emit('get_private_history', {
+        offset: 0,
+        limit: 5,
+        RoomId: roomId,
+      }, data => {
+        this.messages = [
+          ...data.reverse()
+          // {
+          //   UserId: 101,
+          //   avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
+          //   content: 'Whatever is worth doing is worth doing well.',
+          //   createdAt: '2021-07-28T22:03:46.000Z',
+          //   isSelf: false
+          // }
+        ]
+        this.messages = this.messages.map( msg => {
+          const { UserId, avatar, content, createdAt } = msg
+          const isSelf = UserId === this.currentUser.id ? true : false
+          return { UserId, avatar, content, createdAt, isSelf }
+        })
+        this.isLoading = false
+        // console.log('歷史訊息：', this.messages)  
+        console.log('歷史訊息：', data)  
+        // this.messages.push( data )
+      })
+    },
   }
 }
 </script>

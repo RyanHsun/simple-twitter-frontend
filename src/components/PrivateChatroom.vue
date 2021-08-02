@@ -23,7 +23,7 @@
             </p>
             <span>{{ msg.createdAt | fromNow }}</span>
           </div>
-        </div>
+        </div> 
         <!-- <div class="use-join" v-if="msg.role === 'join'">
           某某某 上線了
         </div> -->
@@ -48,7 +48,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapState } from 'vuex'
 import { Toast } from './../utils/helpers'
@@ -57,25 +56,33 @@ import { fromNowFilter } from './../utils/mixins'
 // import Spinner from './../components/Spinner'
 
 export default {
-  name: 'PublicChatroom',
+  name: 'PrivateChatroom',
   mixins: [fromNowFilter,emptyImageFilter],
   components: {
     // Spinner
+  },
+  props: {
+    initialCurrentRoom: {
+      type: Object,
+      required: true
+    },
+    initialMessages: {
+      type: Array,
+      required: true
+    }
   },
   data () {
     return {
       text: '',
       memberNum: 0, 
-      messages: {
-        avatar: '',
-        content: '',
-        createdAt: ''
-      },
+      messages: [],
       socket: null,
       isSelf: false,
-      isLoading: true
+      isLoading: true,
+      privateRoom: {}
     }
   },
+
   computed: {
     ...mapState(['currentUser'])
   },
@@ -89,67 +96,30 @@ export default {
     reconnect(){
       console.log("重新連線");
     },
-    user_join(name) {
-      console.log(`${name} 加入聊天室`)
-    },
-    user_leave(data) {
-      console.log(`${data.name} 離開聊天室`)
-    },
-    online_users(data) {
-      this.memberNum = data.users.length
-      // console.log('上線使用者：', this.memberNum)
-    },
+    //私人訊息：這裡都放on
     get_private_msg(data) {
-      // console.log(`發的訊息：`, data)
       this.messages.push(data)
-    },
+    }
   },
+  //這裡放:進入私訊後，要emit
   created () {
-    const userId = this.currentUser.id
-    // const name = this.currentUser.name
-    this.join_private_room(userId)
-    this.get_private_history() 
+
   },
   updated () {
     this.updateScroll()
-    this.$socket.on('user_join')
   },
   mounted () {
   },
+  watch: {
+    initialCurrentRoom () {
+      this.privateRoom = this.initialCurrentRoom
+    },
+    initialMessages () {
+      this.messages = this.initialMessages
+    }
+  },
   methods: {
-    // 1. 通知伺服器加入聊天室
-    join_private_room(userId) { 
-      this.$socket.emit('join_private_room', { userId })
-      console.log('加入聊天室：', userId)
-    },
-    // 2. 抓取歷史訊息
-    get_private_history() { 
-      this.$socket.emit('get_private_history', {
-        offset: 0,
-        limit: 50
-      }, data => {
-        this.messages = [
-          // ...data.reverse()
-          {
-            UserId: 101,
-            avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
-            content: 'Whatever is worth doing is worth doing well.',
-            createdAt: '2021-07-28T22:03:46.000Z',
-            isSelf: false
-          }
-        ]
-        this.messages = this.messages.map( msg => {
-          const { UserId, avatar, content, createdAt } = msg
-          const isSelf = UserId === this.currentUser.id ? true : false
-          return { UserId, avatar, content, createdAt, isSelf }
-        })
-        this.isLoading = false
-        // console.log('歷史訊息：', this.messages)  
-        console.log('歷史訊息：', data)  
-        // this.messages.push( data )
-      })
-    },
-    // 3. 點擊按鈕送出自己的訊息
+    // 點擊按鈕送出自己的訊息
     post_private_msg () { 
       if (!this.text.length) {
         Toast.fire({
@@ -158,15 +128,16 @@ export default {
         })
         return
       }
-
       this.$socket.emit('post_private_msg', { 
+        SenderId: this.currentUser.id,
+        ReceiverId: this.privateRoom.userId,
+        RoomId: this.privateRoom.id,
         content: this.text,
-        userId: this.currentUser.id
       })
+      
       const avatar = this.currentUser.avatar
       const content = this.text
       const createdAt = new Date()
-
       const data = {
         avatar,
         content,
@@ -174,33 +145,27 @@ export default {
         isSelf: true
       }
       this.messages.push( data )
-      
       this.text = ''
-      
-      Toast.fire({
-        icon: 'success',
-        title: '訊息發送成功'
-      })
+      // Toast.fire({
+      //   icon: 'success',
+      //   title: '訊息發送成功'
+      // })
       // console.log(data)
-    },
-    // 4. 離開聊天室
-    leave_private_room(userId) {
-      this.$socket.emit('leave_private_room', { userId })
-      // console.log(`使用者${userId} 離開聊天室`)
     },
     // 自動置頂
     updateScroll() {
       this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
     },
+    // 離開聊天室
+    leave_private_page() {
+      this.$socket.emit('leave_private_page')
+    },
   },
   beforeDestroy () {
-    const userId = this.currentUser.id
-    this.leave_private_room(userId)
-    this.$socket.on('user_leave')
+    this.leave_private_page()
   }
 }
 </script>
-
 <style scoped>
 .chat-wrap {
   height: calc( 100vh - 110px);
@@ -219,7 +184,7 @@ export default {
   justify-content: flex-end;
   align-items: center;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   margin: 0 auto;
   padding: 15px;
 }
@@ -234,11 +199,9 @@ export default {
   align-self: flex-end;
   margin-bottom: 10px;
 }
-
 .other > div {
   text-align: left;
 }
-
 .msg p {
   width: auto;
   max-width: 400px;
@@ -262,7 +225,6 @@ export default {
   background: #ff6600;
   border-radius: 20px 20px 0 20px;
 }
-
 .user_join {
   background: #ccc;
   padding: 5px 15px;

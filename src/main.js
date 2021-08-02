@@ -16,7 +16,8 @@ new Vue({
 
 Vue.use(new VueSocketIo({
   // debug: true,
-  connection: 'https://twitter-project-2021.herokuapp.com/',
+  // connection: 'https://twitter-project-2021.herokuapp.com/',
+  connection: 'http://e346691ff3ae.ngrok.io',
   options: {
     query: {
       auth: token
