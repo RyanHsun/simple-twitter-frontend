@@ -2,23 +2,23 @@
     <li class="notice">
       <router-link
         class="avatar"
-        :to="`/users/${user.id}`"
+        :to="`/users/${user.roomMember.id}`"
       >
-        <img :src="user.avatar | emptyImage" alt="">
+        <img :src="user.roomMember.avatar | emptyImage" alt="">
       </router-link>
       <div class="notice-info">
         <div class="user-info">
           <router-link
             class="name"
-            :to="`/users/${user.id}`"
+            :to="`/users/${user.roomMember.id}`"
           >
-            {{ user.name }}
+            {{ user.roomMember.name }}
           </router-link>
-          <span class="account">@{{ user.account }}</span>
+          <span class="account">@{{ user.roomMember.account }}</span>
         </div>
         <div class="user-msg">
-          <span class="last-msg">{{ user.lastMsg }}</span>
-          <span class="last-time">{{ user.createdAt | fromNow }}</span>
+          <span class="last-msg"><small v-if="!user.lastMsg.fromRoomMember">你：</small>{{ user.lastMsg.content }}</span>
+          <span class="last-time">{{ user.lastMsg.createdAt | fromNow }}</span>
         </div>
       </div>
       <div 
@@ -78,23 +78,7 @@ export default {
     },
     fetchUser() {
       this.user = this.initialUser
-    },
-    // join_private_room(user1Id, user2Id) {
-    //   this.$socket.emit('join_private_room', {
-    //     user1Id, 
-    //     user2Id,
-    //   }, 
-    //   // data => {
-    //   //   this.currentRoom = [
-    //   //     ...data
-    //   //   ]
-    //   //   console.log('Room Id:', this.currentRoom)
-    //   // }
-    //   )
-    //   console.log(`當前的聊天室房間：${this.currentRoom}`)
-    //   console.log(`使用者：${user1Id} 切換到到使用者：${user2Id} 的訊息聊天室`)
-    //   this.$emit('after-join-private-room', user2Id)
-    // },
+    }
   }
 }
 </script>

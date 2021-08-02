@@ -23,7 +23,7 @@
             </p>
             <span>{{ msg.createdAt | fromNow }}</span>
           </div>
-        </div>
+        </div> 
         <!-- <div class="use-join" v-if="msg.role === 'join'">
           某某某 上線了
         </div> -->
@@ -56,34 +56,33 @@ import { fromNowFilter } from './../utils/mixins'
 // import Spinner from './../components/Spinner'
 
 export default {
-  name: 'PublicChatroom',
+  name: 'PrivateChatroom',
   mixins: [fromNowFilter,emptyImageFilter],
   components: {
     // Spinner
+  },
+  props: {
+    initialCurrentRoom: {
+      type: Object,
+      required: true
+    },
+    initialMessages: {
+      type: Array,
+      required: true
+    }
   },
   data () {
     return {
       text: '',
       memberNum: 0, 
-      messages: {
-        avatar: '',
-        content: '',
-        createdAt: ''
-      },
+      messages: [],
       socket: null,
       isSelf: false,
       isLoading: true,
-      privateRoom: [],
-      // currentRoom: 3
-      //需要用roomId來切換，需要接收roomId，在呈現出那個roomId的對話
+      privateRoom: {}
     }
   },
-  // props: {
-  //   user: {
-  //   type: Object,
-  //   required: true
-  //   }
-  // },
+
   computed: {
     ...mapState(['currentUser'])
   },
@@ -98,77 +97,29 @@ export default {
       console.log("重新連線");
     },
     //私人訊息：這裡都放on
-    get_private_rooms(Rooms) {
-      console.log(`Rooms${Rooms}號私訊 `)
-      console.log('Rooms',Rooms)
-    },
     get_private_msg(data) {
       this.messages.push(data)
-    },
-    join_private_room(data) {
-      console.log('加入room的data',data)
-      this.privateRoom.push(data)
     }
   },
   //這裡放:進入私訊後，要emit
   created () {
-    const User1Id = this.currentUser.id
-    // const name = this.currentUser.name
-    const User2Id = 1
-    this.join_private_room({User1Id,User2Id}) //後面的參數要改
-    this.get_private_history()
+
   },
   updated () {
     this.updateScroll()
-    this.$socket.on('get_private_rooms')
-    this.$socket.on('join_private_room')
   },
   mounted () {
   },
+  watch: {
+    initialCurrentRoom () {
+      this.privateRoom = this.initialCurrentRoom
+    },
+    initialMessages () {
+      this.messages = this.initialMessages
+    }
+  },
   methods: {
-    // 1. 通知伺服器加入聊天室
-    async join_private_room({User1Id,User2Id}) { 
-      // this.$socket.emit('join_private_room', { User1Id,User2Id }, (data) => {
-      //   console.log('加入room的data',data)
-      //   this.privateRoom.push(data)
-      // })
-
-      this.$socket.emit('join_private_room', { User1Id,User2Id })
-
-      console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
-      // console.log('進入與誰的私訊：', User2Id)
-      // console.log('私人房號',this.privateRoom)
-    },
-    // 2. 抓取歷史訊息
-    //缺RoomId
-    get_private_history() { 
-      this.$socket.emit('get_private_history', {
-        offset: 0,
-        limit: 50,
-        // RoomId: this.privateRoom[0].roomId,
-      }, data => {
-        this.messages = [
-          ...data.reverse()
-          // {
-          //   UserId: 101,
-          //   avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
-          //   content: 'Whatever is worth doing is worth doing well.',
-          //   createdAt: '2021-07-28T22:03:46.000Z',
-          //   isSelf: false
-          // }
-        ]
-        this.messages = this.messages.map( msg => {
-          const { UserId, avatar, content, createdAt } = msg
-          const isSelf = UserId === this.currentUser.id ? true : false
-          return { UserId, avatar, content, createdAt, isSelf }
-        })
-        this.isLoading = false
-        // console.log('歷史訊息：', this.messages)  
-        console.log('歷史訊息：', data)  
-        // this.messages.push( data )
-      })
-    },
-    // 3. 點擊按鈕送出自己的訊息
+    // 點擊按鈕送出自己的訊息
     post_private_msg () { 
       if (!this.text.length) {
         Toast.fire({
@@ -179,8 +130,8 @@ export default {
       }
       this.$socket.emit('post_private_msg', { 
         SenderId: this.currentUser.id,
-        ReceiverId: 1,
-        RoomId: this.privateRoom[0],
+        ReceiverId: this.privateRoom.userId,
+        RoomId: this.privateRoom.id,
         content: this.text,
       })
       
@@ -199,13 +150,13 @@ export default {
       //   icon: 'success',
       //   title: '訊息發送成功'
       // })
-      console.log(data)
+      // console.log(data)
     },
     // 自動置頂
     updateScroll() {
       this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
     },
-    // 4. 離開聊天室
+    // 離開聊天室
     leave_private_page() {
       this.$socket.emit('leave_private_page')
     },
