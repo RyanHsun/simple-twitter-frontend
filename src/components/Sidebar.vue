@@ -15,7 +15,7 @@
         </router-link>
         <router-link 
           class="nav-item notification" 
-          to='/'
+          to='/notification'
         >
           <div class="icon">
             <img src="~@/assets/img/icon_ring.svg" width="25px" alt="" />

@@ -101,6 +101,7 @@ export default {
 .notification {
   position: relative;
   margin-top: 50px;
+  border: 1px solid #e6ecf0;
 }
 .notification-wrap {
   overflow-y: scroll;
