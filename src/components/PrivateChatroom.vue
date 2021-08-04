@@ -1,7 +1,16 @@
 <template>
   <div class="chat-wrap" ref="messages">
     <!-- <Spinner v-if="isLoading"/> -->
-    <div class="chat messages" id="messages">
+    <div
+      v-if="!initialCurrentRoom.name"
+      class="privateroom-await">
+      <p>你未選取訊息</p>
+      <span>從你現有的訊息中選擇一則，或開始一則新訊息。</span>
+      <button class="btn">新訊息</button>
+    </div>
+    <div 
+      v-if="initialCurrentRoom.name"
+      class="chat messages" id="messages">
       <div v-for="msg in messages" :key="msg.id" class="" >
         <div 
           v-if="msg.isSelf"
@@ -29,22 +38,24 @@
         </div> -->
       </div>
     </div>
-    <div class="d-flex justify-content-center divgn-items-center send-wrap">
-      <input 
-        v-model="text"
-        placeholder="請輸入訊息 ..."
-        type="text"
-        maxlength="160"
-      >
-      <!-- @keydown.stop.prevent.enter="post_private_msg" -->
-      <button 
-        class="send-btn"
-        type="button"
-        @click.stop.prevent="post_private_msg"
-      >
-        <!-- 送出 -->
-        <img src="~@/assets/img/icon_send.svg" alt="">
-      </button>
+    <div class="d-flex justify-content-center align-items-center send-wrap">
+      <template v-if="initialCurrentRoom.name">
+        <input 
+          v-model="text"
+          placeholder="請輸入訊息 ..."
+          type="text"
+          maxlength="160"
+        >
+        <!-- @keydown.stop.prevent.enter="post_private_msg" -->
+        <button 
+          class="send-btn"
+          type="button"
+          @click.stop.prevent="post_private_msg"
+        >
+          <!-- 送出 -->
+          <img src="~@/assets/img/icon_send.svg" alt="">
+        </button>
+      </template>
     </div>
   </div>
 </template>
@@ -82,7 +93,6 @@ export default {
       privateRoom: {}
     }
   },
-
   computed: {
     ...mapState(['currentUser'])
   },
@@ -168,6 +178,9 @@ export default {
 </script>
 <style scoped>
 .chat-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: calc( 100vh - 110px);
   overflow-y: scroll;
   box-sizing: border-box;
@@ -176,6 +189,7 @@ export default {
   display: none;
 }
 .messages {
+  width: 100%;
   height: 100%;
 }
 .chat > div{
@@ -266,6 +280,19 @@ input {
 .send-btn:hover img {
   transform: scale(1.2);
   transition: .3s ease-in-out;
+}
+.privateroom-await p {
+  margin-bottom: 5px;
+  font-size: 24px;
+  font-weight: bold;
+}
+.privateroom-await span {
+  display: block;
+  margin-bottom: 10px;
+}
+.privateroom-await .btn {
+  color: #fff;
+  background-color: #ff6600;
 }
 @media (max-width: 576px) {
   .chat {

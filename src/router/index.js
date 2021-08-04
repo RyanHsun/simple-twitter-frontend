@@ -107,6 +107,11 @@ const routes = [
     component: () => import('../views/PublicMessage.vue')
   },
   {
+    path: '/message/:id',
+    name: 'message-await',
+    component: () => import('../views/PrivateMessage.vue')
+  },
+  {
     path: '/message',
     name: 'message',
     component: () => import('../views/PrivateMessage.vue')

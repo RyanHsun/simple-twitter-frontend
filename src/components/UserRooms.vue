@@ -21,6 +21,7 @@
           <span class="last-time">{{ user.lastMsg.createdAt | fromNow }}</span>
         </div>
       </div>
+      <!-- :to="{ name: 'message-await', params: { id: user.id } }" -->
       <div 
         class="full-link"
         :class="{ linked: user.isLinked }"
@@ -156,12 +157,19 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 0;
+  border-right: 2px solid #fff;
 }
 .full-link:hover,
 .full-link.linked {
   background-color: #f5f8fa;
   cursor: pointer;
+}
+.full-link:hover {
+  border-right: 2px solid #f5f8fa;
   transition: .2s ease-in-out;
+}
+.full-link.linked {
+  border-right: 2px solid #ff6600;
 }
 @media (max-width: 768px) {
   .PublicMessage .avatar {

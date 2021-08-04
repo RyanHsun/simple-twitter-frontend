@@ -19,7 +19,14 @@
           @after-submit="handleAfterSubmit"
         />
       </template>
-      <template v-else>
+      <div v-else>
+          <!-- :to="{ name: 'message-await', params: { id: user.id } }" -->
+        <button  
+          @click="join_private_room"
+          class="private-message"
+        >
+          <img src="~@/assets/img/icon_message.svg">
+        </button >
         <button
           v-if="this.user.isFollowing"
           type="submit" 
@@ -37,7 +44,7 @@
         > 
           跟隨
         </button>
-      </template>
+      </div>
     </div>
     <p class="user-info">
       <span class="name">{{ user.name }}</span>
@@ -103,7 +110,10 @@ export default {
         isFollowing: false
       },
       isProcessing: false,
-      isSelf: false
+      isSelf: false,
+      socket: null,
+      privateRoomId: 0,
+      privateRoomAwait: {}
     }
   },
   computed: {
@@ -115,6 +125,17 @@ export default {
         ...this.user,
         ...newValue
       }
+    },
+    privateRoomId () {
+      this.privateRoomAwait = {
+        id: this.privateRoomId,
+        userId: this.user.id,
+        name: this.user.name,
+        account: this.user.account,
+        avatar: this.user.avatar
+      }
+      localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
+      this.linkToPrivateMessage()
     }
   },
   created () {
@@ -123,12 +144,31 @@ export default {
     this.checkFollow(id)
     this.checkIsSelf()
   },
+  updated() {
+    this.$socket.on('join_private_room')
+  },
   beforeRouteUpdate (to, from, next) {
+    // this.$socket.on('join_private_room')
     const { id } = to.params
     this.fetchUser(id)
     this.checkFollow(id)
     this.checkIsSelf()
     next()
+  },
+  sockets: {
+    connect: function() {
+      console.log("連線成功")
+    },
+    disconnect(){
+      console.log("斷開連線");
+    },
+    reconnect(){
+      console.log("重新連線");
+    },
+    join_private_room(data) {
+      console.log('加入room的data',data)
+      this.privateRoomId = data
+    }
   },
   methods: {
     async fetchUser(userId) {
@@ -287,6 +327,20 @@ export default {
           title: '無法更新個人資料，請稍後再試'
         })
       }
+    },
+    join_private_room() { 
+
+      const User1Id = this.currentUser.id
+      const User2Id = this.user.id
+
+      this.$socket.emit('join_private_room', { User1Id,User2Id })
+
+      console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
+      // console.log('進入與誰的私訊：', User2Id)
+      // console.log('私人房號',this.privateRoom)
+    },
+    linkToPrivateMessage () {
+      this.$router.push({ name: 'message-await', params: { id: this.privateRoomId } })
     }
   }
 }
@@ -494,6 +548,9 @@ label[for="upload-image-avatar"] img {
 }
 .btn-follow {
   margin-right: 20px;
+}
+.private-message {
+  margin-right: 10px;
 }
 @media (max-width: 576px) {
   .user-avatar {
