@@ -238,7 +238,7 @@ export default {
 }
 .nav-item:hover,
 .logout:hover,
-.nav-item.active {
+.nav-item.router-link-active {
   color: #ff6600;
   text-decoration: none;
 }
@@ -283,7 +283,7 @@ export default {
   color: #fff;
   background-color: #ff6600;
 }
-.nav-item.active .icon img,
+.nav-item.router-link-active .icon img,
 .nav-item:hover .icon,
 .logout:hover img {
   filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);

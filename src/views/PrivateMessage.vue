@@ -30,13 +30,14 @@
         <div class="private-chatroom-wrap">
           <h2 class="headbar">
             <div
-              v-show="currentRoom.id" 
+              v-show="currentRoom.name" 
               class="title">
               <div class="main-title">{{ currentRoom.name }}</div>
               <div class="sub-title">@{{ currentRoom.account }}</div>
             </div>
           </h2>
-          <div class="private-chatroomCard">
+          <div
+            class="private-chatroomCard">
             <PrivateChatroom 
               :initialCurrentRoom="currentRoom"
               :initialMessages="messages"
@@ -88,6 +89,7 @@ export default {
       socket: null,
       userRooms: [],
       currentRoom: {},
+      privateRoomAwait: {},
       messages: [],
       isLoading: true
     }
@@ -98,7 +100,7 @@ export default {
   sockets: {
     get_private_rooms(Rooms) {
       // this.userRooms = Rooms
-      console.log('取得當前使用者所有私訊聊天室', Rooms)
+      // console.log('取得當前使用者所有私訊聊天室', Rooms)
 
       this.userRooms = Rooms.map( user => {
         const { id, lastMsg, roomMember } = user
@@ -111,21 +113,28 @@ export default {
     },
     join_private_room(data) {
       console.log('加入room的data',data)
-      this.privateRoom.push(data)
+      // this.privateRoom.push(data)
     }
   },
   watch: {
     // userRooms () {
     //   this.afterClick()
     // }
+    privateRoomAwait () {
+      this.currentRoom = this.privateRoomAwait
+      this.get_private_history(this.currentRoom.id)
+    },
+    currentRoom () {
+      // this.afterClick(this.currentRoom)
+    }
   },
   created() {
+    this.catchRoomUserId()
     this.join_private_page(this.currentUser.id)
     // this.fetchUserRooms()
     this.$socket.on('get_private_rooms')
   },
   updated() {
-    
     this.$socket.on('join_private_room')
   },
   methods: {
@@ -153,29 +162,29 @@ export default {
       console.log('取得當前使用者所有私訊聊天室', this.userRooms)
     },
     afterClick (user) {
-      // console.log(user)
       this.currentRoom = {
         id: user.id,
         userId: user.roomMember.id,
         name: user.roomMember.name,
         account: user.roomMember.account
       }
-      // this.currentRoom = user.id
       this.userRooms = this.userRooms.map((user) => {
-        if(user.id === this.currentRoom) {
+        if(user.id === this.currentRoom.id) {
           user.isLinked = true
         } else {
           user.isLinked = false
         }
         return user
       })
-      console.log(`父層接收聊天室房號：${this.currentRoom.id}`)
-      console.log(`父層接收聊天室對方使用者ID：${this.currentRoom.userId}`)
+      console.log('所有房間', this.userRooms)
+      console.log(`開啟的聊天室房號：${this.currentRoom.id}`)
+      console.log(`開啟的聊天室對方使用者ID：${this.currentRoom.userId}`)
       this.get_private_history(this.currentRoom.id)
 
       const User1Id = this.currentUser.id
       const User2Id = this.currentRoom.userId
       this.join_private_room({User1Id,User2Id})
+      this.$router.push({ name: 'message-await', params: { id: this.currentRoom.id } })
     },
     get_private_history(roomId) { 
       // console.log(roomId)
@@ -205,6 +214,15 @@ export default {
         // this.messages.push( data )
       })
     },
+    catchRoomUserId () {
+      const roomUserId = this.$route.params.id
+      if (!roomUserId) return
+      
+      console.log(`等待啟動聊天的房間號碼：${roomUserId}`)
+      this.privateRoomAwait = JSON.parse(localStorage.getItem('privateRoomAwait'))
+      console.log('等待發送訊息的聊天室：', this.privateRoomAwait)
+    
+    }
   }
 }
 </script>
