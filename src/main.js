@@ -14,14 +14,16 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-Vue.use(new VueSocketIo({
-  // debug: true,
-  connection: 'https://twitter-project-2021.herokuapp.com/',
-  // connection: 'https://f87a57ad20a3.ngrok.io',
-  options: {
-    query: {
-      auth: token
-    }
-  },
-  vuex: {}
-}))
+if (token) {
+  Vue.use(new VueSocketIo({
+    // debug: true,
+    connection: 'https://twitter-project-2021.herokuapp.com/',
+    // connection: 'http://3e331a904c8b.ngrok.io',
+    options: {
+      query: {
+        auth: token
+      }
+    },
+    vuex: {}
+  }))
+}
