@@ -62,6 +62,8 @@
 <script>
 import authorizationAPI from './../apis/authorization'
 import { Toast } from './../utils/helpers'
+import Vue from 'vue'
+import VueSocketIo from 'vue-socket.io'
 
 export default {
   data () {
@@ -71,7 +73,25 @@ export default {
       isProcessing: false
     }
   },
+  created() {
+    this.socketClose()
+  },
+  sockets: {
+    connect: function() {
+      console.log("連線成功")
+    },
+    disconnect(){
+      console.log("斷開連線");
+    },
+    reconnect(){
+      console.log("重新連線");
+    },
+  },
   methods: {
+    socketClose () {
+      if (!this.$socket.on('disconnect')) return
+      console.log('刪掉！')
+    },
     async handleSubmit () {
       try {
         if (!this.email || !this.password) {
@@ -96,10 +116,25 @@ export default {
         }
 
         localStorage.setItem('token', data.token)
+        const token = localStorage.getItem('token')
 
         this.$store.commit('setCurrentUser', data.User)
         
         this.$router.push('/tweets')
+
+        // this.$router.go(0)
+
+        Vue.use(new VueSocketIo({
+          // debug: true,
+          connection: 'https://twitter-project-2021.herokuapp.com/',
+          // connection: 'https://f87a57ad20a3.ngrok.io',
+          options: {
+            query: {
+              auth: token
+            }
+          },
+          vuex: {}
+        }))
 
       } catch (error) {
         console.log('error',error.response.data.message)
@@ -127,7 +162,22 @@ export default {
         console.error(error.message)
       }
     }
-  }
+  },
+  // beforeDestroy () {
+  //   // location.reload()
+  //   const token = localStorage.getItem('token')
+  //   Vue.use(new VueSocketIo({
+  //     // debug: true,
+  //     connection: 'https://twitter-project-2021.herokuapp.com/',
+  //     // connection: 'https://f87a57ad20a3.ngrok.io',
+  //     options: {
+  //       query: {
+  //         auth: token
+  //       }
+  //     },
+  //     vuex: {}
+  //   }))
+  // }
 }
 </script>
 

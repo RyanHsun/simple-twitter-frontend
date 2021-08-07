@@ -22,7 +22,7 @@
       <div v-else>
           <!-- :to="{ name: 'message-await', params: { id: user.id } }" -->
         <button  
-          @click="join_private_room"
+          @click="joinPrivateMessage"
           class="private-message"
         >
           <img src="~@/assets/img/icon_message.svg">
@@ -135,7 +135,8 @@ export default {
         avatar: this.user.avatar
       }
       localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
-      this.linkToPrivateMessage()
+      // this.linkToPrivateMessage()
+      this.$router.push({ name: 'message-await', params: { id: this.privateRoomId } })
     }
   },
   created () {
@@ -328,11 +329,16 @@ export default {
         })
       }
     },
-    join_private_room() { 
+    join_private_page(userId) { 
+      this.$socket.emit('join_private_page', { userId })
+      console.log(`使用者：${userId} 進入到私人訊息頁面了`)
+    },
+    joinPrivateMessage() { 
 
       const User1Id = this.currentUser.id
       const User2Id = this.user.id
-
+      
+      this.join_private_page(User1Id)
       this.$socket.emit('join_private_room', { User1Id,User2Id })
 
       console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)

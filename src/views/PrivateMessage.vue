@@ -91,6 +91,7 @@ export default {
       currentRoom: {},
       privateRoomAwait: {},
       messages: [],
+      unreadRooms: [],
       isLoading: true
     }
   }, 
@@ -114,6 +115,11 @@ export default {
     join_private_room(data) {
       console.log('加入room的data',data)
       // this.privateRoom.push(data)
+    },
+    get_msg_notice_details({ unseenRooms, unreadRooms }) {
+      console.log('未看聊天室數量：', unseenRooms.length)
+      // console.log('聊天室未讀數量：', unreadRooms)
+      this.unreadRooms = unreadRooms
     }
   },
   watch: {
@@ -124,15 +130,24 @@ export default {
       this.currentRoom = this.privateRoomAwait
       this.get_private_history(this.currentRoom.id)
     },
-    currentRoom () {
-      // this.afterClick(this.currentRoom)
+    unreadRooms () {
+      for (let i = 0; i < this.unreadRooms.length; i++) {
+        console.log('未讀的聊天室：', this.unreadRooms[i])
+        this.userRooms = this.userRooms.map( user => {
+          const { id, lastMsg, roomMember, isLinked } = user
+          const unread = user.roomMember.id === this.unreadRooms[i].SenderId ? this.unreadRooms[i].unreadNum : 0
+          console.log(`第${i}輪聊天室詳細資料：${this.userRooms}`)
+          return { id, lastMsg, roomMember, isLinked, unread }
+        })
+      }
+      
     }
   },
   created() {
-    this.catchRoomUserId()
     this.join_private_page(this.currentUser.id)
-    // this.fetchUserRooms()
     this.$socket.on('get_private_rooms')
+    this.catchRoomUserId()
+    // this.fetchUserRooms()
   },
   updated() {
     this.$socket.on('join_private_room')
@@ -184,6 +199,8 @@ export default {
       const User1Id = this.currentUser.id
       const User2Id = this.currentRoom.userId
       this.join_private_room({User1Id,User2Id})
+      this.privateRoomAwait = this.currentRoom
+      localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
       this.$router.push({ name: 'message-await', params: { id: this.currentRoom.id } })
     },
     get_private_history(roomId) { 
@@ -217,6 +234,7 @@ export default {
     catchRoomUserId () {
       const roomUserId = this.$route.params.id
       if (!roomUserId) return
+      // if (!localStorage.getItem('privateRoomAwait'))
       
       console.log(`等待啟動聊天的房間號碼：${roomUserId}`)
       this.privateRoomAwait = JSON.parse(localStorage.getItem('privateRoomAwait'))
