@@ -3,6 +3,7 @@
     <Spinner v-if="isLoading"/>
     <div v-else class="chat messages" id="messages">
       <div v-for="msg in messages" :key="msg.id" class="" >
+        <!-- 自己的訊息 -->
         <div 
           v-if="msg.isSelf"
           class="self msg" >
@@ -11,6 +12,7 @@
           </p>
           <span>{{ msg.createdAt | fromNow }}</span>
         </div>
+        <!-- 別人的訊息 -->
         <div 
           v-else
           class="other msg">
@@ -24,9 +26,10 @@
             <span>{{ msg.createdAt | fromNow }}</span>
           </div>
         </div>
-        <!-- <div class="use-join" v-if="msg.role === 'join'">
-          某某某 上線了
-        </div> -->
+        <!-- 上線離線 -->
+          <!-- <div class="user_join msg" v-if="msg.role === 'join'">
+            某某某 上線了
+          </div> -->
       </div>
     </div>
     <div class="d-flex justify-content-center divgn-items-center send-wrap">
@@ -88,8 +91,9 @@ export default {
     reconnect(){
       console.log("重新連線");
     },
-    user_join(name) {
+    new_join({name}) {
       console.log(`${name} 加入聊天室`)
+      this.post_online_inform(name)
     },
     online_users(data) {
       this.memberNum = data.users.length
@@ -99,16 +103,21 @@ export default {
       // console.log(`發的訊息：`, data)
       this.messages.push(data)
     },
+    user_leave({name}) {
+      console.log(`${name} 離開聊天室`)
+      this.post_offline_inform(name)
+    }
   },
   created () {
     const userId = this.currentUser.id
     // const name = this.currentUser.name
     this.join_public_room(userId)
     this.get_public_history() 
+    // this.$socket.on('new_join')
   },
   updated () {
     this.updateScroll()
-    this.$socket.on('user_join')
+    // this.$socket.on('user_leave')
   },
   methods: {
     // 1. 通知伺服器加入聊天室
@@ -168,6 +177,19 @@ export default {
         title: '訊息發送成功'
       })
       // console.log(data)
+    },
+    post_online_inform (name) {
+      // this.onlineInform = name
+      Toast.fire({
+          icon: 'info',
+          title: `${name} 加入聊天室`,
+        })
+    },
+    post_offline_inform (name) {
+      Toast.fire({
+          icon: 'info',
+          title: `${name} 離開聊天室`
+        })
     },
     // 4. 離開聊天室
     leave_public_room(userId) {
