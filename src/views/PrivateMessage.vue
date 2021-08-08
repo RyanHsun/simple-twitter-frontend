@@ -128,6 +128,9 @@ export default {
     // }
     privateRoomAwait () {
       this.currentRoom = this.privateRoomAwait
+      const User1Id = this.currentUser.id
+      const User2Id = this.currentRoom.userId
+      this.join_private_room({User1Id,User2Id})
       this.get_private_history(this.currentRoom.id)
     },
     unreadRooms () {
