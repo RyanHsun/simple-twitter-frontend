@@ -45,8 +45,8 @@
           placeholder="請輸入訊息 ..."
           type="text"
           maxlength="160"
+          @keypress.enter="post_private_msg"
         >
-        <!-- @keydown.stop.prevent.enter="post_private_msg" -->
         <button 
           class="send-btn"
           type="button"

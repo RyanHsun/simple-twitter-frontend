@@ -38,8 +38,8 @@
         placeholder="請輸入訊息 ..."
         type="text"
         maxlength="160"
+        @keypress.enter="post_public_msg"
       >
-      <!-- @keydown.stop.prevent.enter="post_public_msg" -->
       <button 
         class="send-btn"
         type="button"
