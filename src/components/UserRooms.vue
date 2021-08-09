@@ -19,6 +19,11 @@
         <div class="user-msg">
           <span class="last-msg"><small v-if="!user.lastMsg.fromRoomMember">你：</small>{{ user.lastMsg.content }}</span>
           <span class="last-time">{{ user.lastMsg.createdAt | fromNow }}</span>
+          <span 
+            v-if="user.unreadNum > 0" 
+            class="unread-number">
+            {{ user.unreadNum }}
+          </span>
         </div>
       </div>
       <!-- :to="{ name: 'message-await', params: { id: user.id } }" -->
@@ -60,11 +65,8 @@ export default {
     }
   },
   watch: {
-    initialUser(newValue) {
-      this.user = {
-        ...this.user,
-        ...newValue,
-      }
+    initialUser () {
+      this.user = this.initialUser
     },
   },
   computed: {
@@ -75,6 +77,7 @@ export default {
   },
   methods: {
     handleClick() {
+      this.user.unreadNum = 0
       this.$emit('after-click', this.user)
     },
     fetchUser() {
@@ -149,6 +152,19 @@ export default {
   top: 0;
   right: 0;
   font-size: 14px;
+}
+.unread-number {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: block;
+  min-width: 25px;
+  height: 25px;
+  line-height: 25px;
+  border-radius: 25px;
+  text-align: center;
+  background: #ff6600;
+  color: #fff;
 }
 .full-link {
   position: absolute;
