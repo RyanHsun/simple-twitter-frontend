@@ -37,6 +37,7 @@
         >
           <div class="icon">
             <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
+            <span v-if="unseenNum > 0">{{ unseenNum }}</span>
           </div>
           <div>私人訊息</div>
         </router-link>
@@ -146,6 +147,7 @@ export default {
   data() {
     return {
       newTweet: '',
+      unseenNum: 0,
       isShowModal: false,
       isProcessing: false
     }
@@ -163,9 +165,14 @@ export default {
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
+  created () {
+    this.unseenNum = localStorage.getItem('unseenNum')
+  },
   sockets: {
     get_msg_notice (unseenNum) {
       console.log('未看聊天室數量：', unseenNum)
+      this.unseenNum = unseenNum
+      localStorage.setItem('unseenNum', unseenNum)
     }
   },
   methods: {
@@ -290,7 +297,7 @@ export default {
   background-color: #ff6600;
 }
 .nav-item.active .icon img,
-.nav-item:hover .icon,
+.nav-item:hover .icon img,
 .private-chat.router-link-active .icon img,
 .logout:hover img {
   filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
@@ -298,6 +305,24 @@ export default {
 .icon {
   width: 30px;
   margin-right: 10px;
+}
+.private-chat .icon {
+  position: relative;
+}
+.private-chat .icon span {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: auto;
+  height: 20px;
+  padding: 0 5px;
+  font-size: 13px;
+  line-height: 20px;
+  border-radius: 20px;
+  text-align: center;
+  color: #fff;
+  background: #ff6600;
+  border: 1px solid #fff;
 }
 .logout:hover .btn-logout{
   color: #ff6600;

@@ -1,6 +1,6 @@
 <template>
   <div class="container private-message">
-    <Sidebar />
+    <Sidebar /> 
     <div class="private-message-wrap">
       <section class="private-users">
         <div class="private-users-wrap">
@@ -73,6 +73,7 @@ export default {
       currentRoom: {},
       privateRoomAwait: {},
       messages: [],
+      unseenNum: 0,
       unreadRooms: [],
       messageNotice: {},
       isLoading: true
@@ -100,8 +101,7 @@ export default {
       // this.privateRoom.push(data)
     },
     get_msg_notice_details({ unseenRooms, unreadRooms }) {
-      console.log('未看聊天室數量：', unseenRooms.length)
-      console.log('聊天室未讀數量：', unreadRooms)
+      console.log('聊天室未看未讀數量：', unseenRooms, unreadRooms)
       this.unreadRooms = unreadRooms
     },
     update_msg_notice_details(data) {
@@ -166,6 +166,7 @@ export default {
     this.join_private_page(this.currentUser.id)
     this.$socket.on('get_private_rooms')
     this.catchRoomUserId()
+    this.unseenNum = localStorage.getItem('unseenNum')
     // this.fetchUserRooms()
   },
   updated() {
@@ -174,6 +175,7 @@ export default {
   methods: {
     join_private_page(userId) { 
       this.$socket.emit('join_private_page', { userId })
+      localStorage.removeItem('unseenNum')
       // console.log(`使用者：${userId} 進入到私人訊息頁面了`)
     },
     join_private_room({User1Id,User2Id}) { 
@@ -188,6 +190,8 @@ export default {
       console.log('跳窗顯示所有使用者')
     },
     afterClick (user) {
+      // this.unseenNum = this.unseenNum - 1
+      // localStorage.setItem('unseenNum', this.unseenNum)
 
       this.currentRoom = {
         id: user.id,
