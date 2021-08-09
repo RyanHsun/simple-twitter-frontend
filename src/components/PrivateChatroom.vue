@@ -155,12 +155,8 @@ export default {
         isSelf: true
       }
       this.messages.push( data )
+      this.$emit('after-post-msg', this.text)
       this.text = ''
-      // Toast.fire({
-      //   icon: 'success',
-      //   title: '訊息發送成功'
-      // })
-      // console.log(data)
     },
     // 自動置頂
     updateScroll() {

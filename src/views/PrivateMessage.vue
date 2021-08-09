@@ -41,6 +41,7 @@
             <PrivateChatroom 
               :initialCurrentRoom="currentRoom"
               :initialMessages="messages"
+              @after-post-msg="afterPostMsg"
             />
           </div>
         </div>
@@ -55,25 +56,6 @@ import Sidebar from "./../components/Sidebar.vue"
 import UserRooms from "./../components/UserRooms.vue"
 import PrivateChatroom from "./../components/PrivateChatroom.vue"
 // import Spinner from './../components/Spinner'
-
-const dummyData = [
-  {
-    id: 2,
-    account: 'apple',
-    name: 'Apple',
-    avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
-    lastMsg: 'Whatever is worth doing is worth doing well.',
-    createdAt: '2021-07-28T22:03:46.000Z'
-  },
-  {
-    id: 5,
-    account: 'banna',
-    name: 'Banna',
-    avatar: 'https://loremflickr.com/cache/resized/65535_50888036831_e6cde803e7_320_240_g.jpg',
-    lastMsg: 'Dinner Time ~~~',
-    createdAt: '2021-07-18T22:03:46.000Z'
-  }
-]
 
 export default {
   name: 'PrivateMessage',
@@ -108,7 +90,7 @@ export default {
         const isLinked = id === this.currentRoom.id ? true : false
         return { id, lastMsg, roomMember, isLinked }
       })
-      console.log('取得當前使用者所有私訊聊天室', this.userRooms)
+      // console.log('取得當前使用者所有私訊聊天室', this.userRooms)
 
       this.isLoading = false
     },
@@ -120,6 +102,18 @@ export default {
       console.log('未看聊天室數量：', unseenRooms.length)
       // console.log('聊天室未讀數量：', unreadRooms)
       this.unreadRooms = unreadRooms
+    },
+    get_private_msg(data) {
+      // this.messages.push(data)
+      // console.log('取得其他使用者傳來的訊息：', data)
+      this.userRooms = this.userRooms.map((user) => {
+        if(user.id === this.currentRoom.id) {
+          user.lastMsg.fromRoomMember = true
+          user.lastMsg.content = data.content
+          user.lastMsg.createdAt = data.createdAt
+        }
+        return user
+      })
     }
   },
   watch: {
@@ -128,6 +122,9 @@ export default {
     // }
     privateRoomAwait () {
       this.currentRoom = this.privateRoomAwait
+      const User1Id = this.currentUser.id
+      const User2Id = this.currentRoom.userId
+      this.join_private_room({User1Id,User2Id})
       this.get_private_history(this.currentRoom.id)
     },
     unreadRooms () {
@@ -140,7 +137,6 @@ export default {
           return { id, lastMsg, roomMember, isLinked, unread }
         })
       }
-      
     }
   },
   created() {
@@ -155,26 +151,18 @@ export default {
   methods: {
     join_private_page(userId) { 
       this.$socket.emit('join_private_page', { userId })
-      console.log(`使用者：${userId} 進入到私人訊息頁面了`)
+      // console.log(`使用者：${userId} 進入到私人訊息頁面了`)
     },
     join_private_room({User1Id,User2Id}) { 
 
       this.$socket.emit('join_private_room', { User1Id,User2Id })
 
-      console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
+      // console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
       // console.log('進入與誰的私訊：', User2Id)
       // console.log('私人房號',this.privateRoom)
     },
     addMsgUser () {
       console.log('跳窗顯示所有使用者')
-    },
-    fetchUserRooms() {
-      this.userRooms = dummyData.map( user => {
-        const { id, account, name, avatar, lastMsg, createdAt } = user
-        const isLinked = id === this.currentRoom.id ? true : false
-        return { id, account, name, isLinked, avatar, lastMsg, createdAt }
-      })
-      console.log('取得當前使用者所有私訊聊天室', this.userRooms)
     },
     afterClick (user) {
       this.currentRoom = {
@@ -191,14 +179,14 @@ export default {
         }
         return user
       })
-      console.log('所有房間', this.userRooms)
-      console.log(`開啟的聊天室房號：${this.currentRoom.id}`)
-      console.log(`開啟的聊天室對方使用者ID：${this.currentRoom.userId}`)
+      // console.log('所有房間', this.userRooms)
+      // console.log(`開啟的聊天室房號：${this.currentRoom.id}`)
+      // console.log(`開啟的聊天室對方使用者ID：${this.currentRoom.userId}`)
       this.get_private_history(this.currentRoom.id)
 
-      const User1Id = this.currentUser.id
-      const User2Id = this.currentRoom.userId
-      this.join_private_room({User1Id,User2Id})
+      // const User1Id = this.currentUser.id
+      // const User2Id = this.currentRoom.userId
+      // this.join_private_room({User1Id,User2Id})
       this.privateRoomAwait = this.currentRoom
       localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
       this.$router.push({ name: 'message-await', params: { id: this.currentRoom.id } })
@@ -212,13 +200,6 @@ export default {
       }, data => {
         this.messages = [
           ...data.reverse()
-          // {
-          //   UserId: 101,
-          //   avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
-          //   content: 'Whatever is worth doing is worth doing well.',
-          //   createdAt: '2021-07-28T22:03:46.000Z',
-          //   isSelf: false
-          // }
         ]
         this.messages = this.messages.map( msg => {
           const { UserId, avatar, content, createdAt } = msg
@@ -227,7 +208,7 @@ export default {
         })
         this.isLoading = false
         // console.log('歷史訊息：', this.messages)  
-        console.log('歷史訊息：', data)  
+        // console.log('歷史訊息：', data)  
         // this.messages.push( data )
       })
     },
@@ -236,10 +217,20 @@ export default {
       if (!roomUserId) return
       // if (!localStorage.getItem('privateRoomAwait'))
       
-      console.log(`等待啟動聊天的房間號碼：${roomUserId}`)
+      // console.log(`等待啟動聊天的房間號碼：${roomUserId}`)
       this.privateRoomAwait = JSON.parse(localStorage.getItem('privateRoomAwait'))
-      console.log('等待發送訊息的聊天室：', this.privateRoomAwait)
-    
+      // console.log('等待發送訊息的聊天室：', this.privateRoomAwait)
+    },
+    afterPostMsg (content) {
+      // console.log('after post message: ', content)
+      this.userRooms = this.userRooms.map((user) => {
+        if(user.id === this.currentRoom.id) {
+          user.lastMsg.fromRoomMember = false
+          user.lastMsg.content = content
+          user.lastMsg.createdAt = new Date()
+        }
+        return user
+      })
     }
   }
 }
