@@ -398,7 +398,7 @@ export default {
 }
 </style>
 
-<style>
+<style scoped>
 .user-info {
   margin-bottom: 10px;
 }

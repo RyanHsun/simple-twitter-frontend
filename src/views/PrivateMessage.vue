@@ -1,6 +1,6 @@
 <template>
   <div class="container private-message">
-    <Sidebar />
+    <Sidebar /> 
     <div class="private-message-wrap">
       <section class="private-users">
         <div class="private-users-wrap">
@@ -73,7 +73,9 @@ export default {
       currentRoom: {},
       privateRoomAwait: {},
       messages: [],
+      unseenNum: 0,
       unreadRooms: [],
+      messageNotice: {},
       isLoading: true
     }
   }, 
@@ -99,9 +101,21 @@ export default {
       // this.privateRoom.push(data)
     },
     get_msg_notice_details({ unseenRooms, unreadRooms }) {
-      console.log('未看聊天室數量：', unseenRooms.length)
-      // console.log('聊天室未讀數量：', unreadRooms)
+      console.log('聊天室未看未讀數量：', unseenRooms, unreadRooms)
       this.unreadRooms = unreadRooms
+    },
+    update_msg_notice_details(data) {
+      this.messageNotice = data
+      this.userRooms = this.userRooms.map( user => {
+        if (user.id === this.messageNotice.id) {
+          user.lastMsg.fromRoomMember = true
+          user.lastMsg.content = this.messageNotice.lastMsg.content
+          user.lastMsg.createdAt = this.messageNotice.lastMsg.createdAt
+          user.unreadNum = this.messageNotice.unreadNum
+        }
+        return user
+      })
+      console.log('update_msg_notice_details', this.messageNotice)
     },
     get_private_msg(data) {
       // this.messages.push(data)
@@ -128,21 +142,31 @@ export default {
       this.get_private_history(this.currentRoom.id)
     },
     unreadRooms () {
+      // console.log(this.unreadRooms.length)
       for (let i = 0; i < this.unreadRooms.length; i++) {
-        console.log('未讀的聊天室：', this.unreadRooms[i])
+        // console.log('未讀的聊天室：', this.unreadRooms[i])
         this.userRooms = this.userRooms.map( user => {
           const { id, lastMsg, roomMember, isLinked } = user
-          const unread = user.roomMember.id === this.unreadRooms[i].SenderId ? this.unreadRooms[i].unreadNum : 0
-          console.log(`第${i}輪聊天室詳細資料：${this.userRooms}`)
-          return { id, lastMsg, roomMember, isLinked, unread }
+          // console.log('user', user)
+          const unreadNum = user.roomMember.id === this.unreadRooms[i].SenderId ? this.unreadRooms[i].unreadNum : user.unreadNum
+          return { id, lastMsg, roomMember, isLinked, unreadNum }
         })
+        // console.log(`第${i}輪聊天室詳細資料：`, this.userRooms)
       }
-    }
+    },
+    // messageNotice () {
+    //   this.userRooms = this.userRooms.map( user => {
+    //     if (user.id === this.messageNotice.id) {
+    //       user.unreadNum = this.messageNotice.unreadNum
+    //     }
+    //   })
+    // }
   },
   created() {
     this.join_private_page(this.currentUser.id)
     this.$socket.on('get_private_rooms')
     this.catchRoomUserId()
+    this.unseenNum = localStorage.getItem('unseenNum')
     // this.fetchUserRooms()
   },
   updated() {
@@ -151,6 +175,7 @@ export default {
   methods: {
     join_private_page(userId) { 
       this.$socket.emit('join_private_page', { userId })
+      localStorage.removeItem('unseenNum')
       // console.log(`使用者：${userId} 進入到私人訊息頁面了`)
     },
     join_private_room({User1Id,User2Id}) { 
@@ -165,6 +190,9 @@ export default {
       console.log('跳窗顯示所有使用者')
     },
     afterClick (user) {
+      // this.unseenNum = this.unseenNum - 1
+      // localStorage.setItem('unseenNum', this.unseenNum)
+
       this.currentRoom = {
         id: user.id,
         userId: user.roomMember.id,
@@ -195,7 +223,7 @@ export default {
       // console.log(roomId)
       this.$socket.emit('get_private_history', {
         offset: 0,
-        limit: 5,
+        limit: 20,
         RoomId: roomId,
       }, data => {
         this.messages = [
