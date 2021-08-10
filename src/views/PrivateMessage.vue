@@ -3,7 +3,7 @@
     <Sidebar /> 
     <div class="private-message-wrap">
       <section class="private-users">
-        <div class="private-users-wrap">
+        <div class="private-users-wrap" ref="userRoomsList" @scroll="handleScroll($event)">
           <h2 class="headbar">
             <div class="title">
               <div class="main-title">訊息</div>
@@ -14,7 +14,7 @@
               </div>
             </div>
           </h2>
-          <div
+          <ul
             class="private-users-list">
             <!-- <Spinner v-if="isLoading"/> -->
             <UserRooms
@@ -23,7 +23,10 @@
               :initialUser="user" 
               @after-click="afterClick"
             />
-          </div>
+            <li v-if="userRoomsLimit === 'limited'" class="limited">
+              已載入所有資料！
+            </li>
+          </ul>
         </div>
       </section>
       <section class="private-chatroom">
@@ -70,6 +73,7 @@ export default {
     return {
       socket: null,
       userRooms: [],
+      userRoomsLimit: 5,
       currentRoom: {},
       privateRoomAwait: {},
       messages: [],
@@ -144,7 +148,7 @@ export default {
   created() {
     this.join_private_page(this.currentUser.id)
     this.catchRoomUserId()
-    this.unseenNum = localStorage.getItem('unseenNum')
+    this.unseenNum = localStorage.getItem('unseenNum')  
   },
   updated() {
     this.$socket.on('join_private_room')
@@ -152,13 +156,14 @@ export default {
   methods: {
     join_private_page(userId) { 
       this.$socket.emit('join_private_page', { userId })
+      console.log('進入私訊頁面')
       localStorage.removeItem('unseenNum')
-      this.get_private_rooms()
+      this.get_private_rooms(0, this.userRoomsLimit)
     },
-    get_private_rooms() {
+    get_private_rooms(offset, limit) {
       this.$socket.emit('get_private_rooms', {
-        offset: 0,
-        limit: 20
+        offset,
+        limit
         }, data => {
           // this.userRooms = data
           
@@ -177,7 +182,7 @@ export default {
               })
             }
           }
-          // console.log('新的使用者清單：', this.userRooms)
+          console.log('新的使用者清單：', this.userRooms)
         }
       )
     },
@@ -248,6 +253,22 @@ export default {
         }
         return user
       })
+    },
+    handleScroll(e) {
+      if (e.srcElement.scrollTop + e.srcElement.offsetHeight >= e.srcElement.scrollHeight ) {
+        this.loadMore()
+      }
+    },
+    loadMore() {
+      if (this.userRooms.length >= this.userRoomsLimit) {
+        const offset = 0
+        const limit = this.userRooms.length + 1
+        this.get_private_rooms(offset, limit)
+        this.userRoomsLimit = limit
+      } else {
+        this.userRoomsLimit = 'limited'
+        // console.log('已載入所有資料！')
+      }
     }
   }
 }
@@ -279,13 +300,16 @@ export default {
 .private-chatroom .headbar {
   border-right: 1px solid #e6ecf0;
 }
-.private-chatroom-wrap,
 .private-users-wrap {
+  max-height: calc(100vh - 50px);
+  /* max-height: 300px; */
+}
+.private-chatroom-wrap {
   /* overflow-y: auto; */
   max-height: calc(100vh - 50px);
 }
 .private-users-wrap {
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 .headbar {
   position: absolute;
@@ -331,6 +355,10 @@ export default {
 .add-msg-user:hover img {
   filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
   /* transition: .2s ease; */
+}
+.private-users-list li.limited {
+  margin: 20px;
+  color: #ccc;
 }
 @media (max-width: 992px) {
   .container {
