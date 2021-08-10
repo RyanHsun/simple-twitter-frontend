@@ -3,7 +3,7 @@
     <Sidebar /> 
     <div class="private-message-wrap">
       <section class="private-users">
-        <div class="private-users-wrap">
+        <div class="private-users-wrap" ref="userRoomsList" @scroll="handleScroll($event)">
           <h2 class="headbar">
             <div class="title">
               <div class="main-title">訊息</div>
@@ -14,7 +14,7 @@
               </div>
             </div>
           </h2>
-          <div
+          <ul
             class="private-users-list">
             <!-- <Spinner v-if="isLoading"/> -->
             <UserRooms
@@ -23,7 +23,10 @@
               :initialUser="user" 
               @after-click="afterClick"
             />
-          </div>
+            <li v-if="userRoomsLimit === 'limited'" class="limited">
+              已載入所有資料！
+            </li>
+          </ul>
         </div>
       </section>
       <section class="private-chatroom">
@@ -66,16 +69,16 @@ export default {
     PrivateChatroom,
     // Spinner
   },
-  data () {
+  data() {
     return {
       socket: null,
       userRooms: [],
+      userRoomsLimit: 5,
       currentRoom: {},
       privateRoomAwait: {},
       messages: [],
       unseenNum: 0,
       unreadRooms: [],
-      messageNotice: {},
       isLoading: true
     }
   }, 
@@ -83,19 +86,6 @@ export default {
     ...mapState(['currentUser'])
   },
   sockets: {
-    get_private_rooms(Rooms) {
-      // this.userRooms = Rooms
-      // console.log('取得當前使用者所有私訊聊天室', Rooms)
-
-      this.userRooms = Rooms.map( user => {
-        const { id, lastMsg, roomMember } = user
-        const isLinked = id === this.currentRoom.id ? true : false
-        return { id, lastMsg, roomMember, isLinked }
-      })
-      // console.log('取得當前使用者所有私訊聊天室', this.userRooms)
-
-      this.isLoading = false
-    },
     join_private_room(data) {
       console.log('加入room的data',data)
       // this.privateRoom.push(data)
@@ -134,14 +124,14 @@ export default {
     // userRooms () {
     //   this.afterClick()
     // }
-    privateRoomAwait () {
+    privateRoomAwait() {
       this.currentRoom = this.privateRoomAwait
       const User1Id = this.currentUser.id
       const User2Id = this.currentRoom.userId
       this.join_private_room({User1Id,User2Id})
       this.get_private_history(this.currentRoom.id)
     },
-    unreadRooms () {
+    unreadRooms() {
       // console.log(this.unreadRooms.length)
       for (let i = 0; i < this.unreadRooms.length; i++) {
         // console.log('未讀的聊天室：', this.unreadRooms[i])
@@ -153,21 +143,12 @@ export default {
         })
         // console.log(`第${i}輪聊天室詳細資料：`, this.userRooms)
       }
-    },
-    // messageNotice () {
-    //   this.userRooms = this.userRooms.map( user => {
-    //     if (user.id === this.messageNotice.id) {
-    //       user.unreadNum = this.messageNotice.unreadNum
-    //     }
-    //   })
-    // }
+    }
   },
   created() {
     this.join_private_page(this.currentUser.id)
-    this.$socket.on('get_private_rooms')
     this.catchRoomUserId()
-    this.unseenNum = localStorage.getItem('unseenNum')
-    // this.fetchUserRooms()
+    this.unseenNum = localStorage.getItem('unseenNum')  
   },
   updated() {
     this.$socket.on('join_private_room')
@@ -175,8 +156,35 @@ export default {
   methods: {
     join_private_page(userId) { 
       this.$socket.emit('join_private_page', { userId })
+      console.log('進入私訊頁面')
       localStorage.removeItem('unseenNum')
-      // console.log(`使用者：${userId} 進入到私人訊息頁面了`)
+      this.get_private_rooms(0, this.userRoomsLimit)
+    },
+    get_private_rooms(offset, limit) {
+      this.$socket.emit('get_private_rooms', {
+        offset,
+        limit
+        }, data => {
+          // this.userRooms = data
+          
+          this.userRooms = data.map( user => {
+            const { id, lastMsg, roomMember } = user
+            const isLinked = id === this.currentRoom.id ? true : false
+            return { id, lastMsg, roomMember, isLinked }
+          })
+
+          if (this.unreadRooms.length > 0) {
+            for (let i = 0; i < this.unreadRooms.length; i++) {
+              this.userRooms = this.userRooms.map( user => {
+                const { id, lastMsg, roomMember, isLinked } = user
+                const unreadNum = user.roomMember.id === this.unreadRooms[i].SenderId ? this.unreadRooms[i].unreadNum : user.unreadNum
+                return { id, lastMsg, roomMember, isLinked, unreadNum }
+              })
+            }
+          }
+          console.log('新的使用者清單：', this.userRooms)
+        }
+      )
     },
     join_private_room({User1Id,User2Id}) { 
 
@@ -186,13 +194,10 @@ export default {
       // console.log('進入與誰的私訊：', User2Id)
       // console.log('私人房號',this.privateRoom)
     },
-    addMsgUser () {
+    addMsgUser() {
       console.log('跳窗顯示所有使用者')
     },
-    afterClick (user) {
-      // this.unseenNum = this.unseenNum - 1
-      // localStorage.setItem('unseenNum', this.unseenNum)
-
+    afterClick(user) {
       this.currentRoom = {
         id: user.id,
         userId: user.roomMember.id,
@@ -207,20 +212,12 @@ export default {
         }
         return user
       })
-      // console.log('所有房間', this.userRooms)
-      // console.log(`開啟的聊天室房號：${this.currentRoom.id}`)
-      // console.log(`開啟的聊天室對方使用者ID：${this.currentRoom.userId}`)
-      this.get_private_history(this.currentRoom.id)
 
-      // const User1Id = this.currentUser.id
-      // const User2Id = this.currentRoom.userId
-      // this.join_private_room({User1Id,User2Id})
       this.privateRoomAwait = this.currentRoom
       localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
       this.$router.push({ name: 'message-await', params: { id: this.currentRoom.id } })
     },
     get_private_history(roomId) { 
-      // console.log(roomId)
       this.$socket.emit('get_private_history', {
         offset: 0,
         limit: 20,
@@ -235,9 +232,6 @@ export default {
           return { UserId, avatar, content, createdAt, isSelf }
         })
         this.isLoading = false
-        // console.log('歷史訊息：', this.messages)  
-        // console.log('歷史訊息：', data)  
-        // this.messages.push( data )
       })
     },
     catchRoomUserId () {
@@ -259,6 +253,22 @@ export default {
         }
         return user
       })
+    },
+    handleScroll(e) {
+      if (e.srcElement.scrollTop + e.srcElement.offsetHeight >= e.srcElement.scrollHeight ) {
+        this.loadMore()
+      }
+    },
+    loadMore() {
+      if (this.userRooms.length >= this.userRoomsLimit) {
+        const offset = 0
+        const limit = this.userRooms.length + 1
+        this.get_private_rooms(offset, limit)
+        this.userRoomsLimit = limit
+      } else {
+        this.userRoomsLimit = 'limited'
+        // console.log('已載入所有資料！')
+      }
     }
   }
 }
@@ -290,13 +300,16 @@ export default {
 .private-chatroom .headbar {
   border-right: 1px solid #e6ecf0;
 }
-.private-chatroom-wrap,
 .private-users-wrap {
+  max-height: calc(100vh - 50px);
+  /* max-height: 300px; */
+}
+.private-chatroom-wrap {
   /* overflow-y: auto; */
   max-height: calc(100vh - 50px);
 }
 .private-users-wrap {
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 .headbar {
   position: absolute;
@@ -342,6 +355,10 @@ export default {
 .add-msg-user:hover img {
   filter: invert(73%) sepia(100%) saturate(48) hue-rotate(364deg);
   /* transition: .2s ease; */
+}
+.private-users-list li.limited {
+  margin: 20px;
+  color: #ccc;
 }
 @media (max-width: 992px) {
   .container {
