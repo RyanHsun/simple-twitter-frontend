@@ -69,6 +69,7 @@ export default {
     online_users(data) {
       // console.log('上線使用者資料', data)
       // this.fetchOnlineUsers(data.user);
+      
       this.fetchOnlineUsers(data.users);
       this.onlineUsersNum = data.users.length
       this.isLoading = false
@@ -77,12 +78,24 @@ export default {
   mounted () {
     this.$socket.on('online_users')
   },
-  created() {
-    this.fetchOnlineUsers()
+  async created() {
+    try {
+      this.fetchOnlineUsers()
+    }catch (err) {
+      this.error = err
+    }
+    
     },
+    //因為data在Vue的生命週期中曾經是空值，雖然前端filter可以成功，但devtool會報錯
+    //vue Error in created hook: "TypeError: Cannot read property 'filter' of undefined"
+    //解決方法：在created加上async await
   methods: {
     fetchOnlineUsers(data) {
-      this.onlineUsers = data;
+      
+      const set = new Set();
+      const result = data.filter(item => !set.has(item.id) ? set.add(item.id) : false);
+      console.log(result); 
+      this.onlineUsers = result;
     },
   }
 }
