@@ -3,7 +3,7 @@
     <Sidebar /> 
     <div class="private-message-wrap">
       <section class="private-users">
-        <div class="private-users-wrap" ref="userRoomsList" @scroll="handleScroll($event)">
+        <div class="private-users-wrap" ref="userRoomsList" @scroll="userRoomsHandleScroll($event)">
           <h2 class="headbar">
             <div class="title">
               <div class="main-title">訊息</div>
@@ -44,7 +44,9 @@
             <PrivateChatroom 
               :initialCurrentRoom="currentRoom"
               :initialMessages="messages"
+              :initialMessageLoadMore="messageLoadMore"
               @after-post-msg="afterPostMsg"
+              @after-scroll-top="afterScrollTop"
             />
           </div>
         </div>
@@ -77,6 +79,7 @@ export default {
       currentRoom: {},
       privateRoomAwait: {},
       messages: [],
+      messageLoadMore: 0,
       unseenNum: 0,
       unreadRooms: [],
       isLoading: true
@@ -130,7 +133,7 @@ export default {
       const RoomId = this.currentRoom.id
 
       this.join_private_room({ User1Id, User2Id, RoomId })
-      this.get_private_history(RoomId)
+      this.get_private_history(RoomId, 20)
     },
     unreadRooms() {
       // console.log(this.unreadRooms.length)
@@ -182,7 +185,7 @@ export default {
               })
             }
           }
-          console.log('新的使用者清單：', this.userRooms)
+          // console.log('新的使用者清單：', this.userRooms)
         }
       )
     },
@@ -193,6 +196,7 @@ export default {
       console.log('跳窗顯示所有使用者')
     },
     afterClick(user) {
+
       this.currentRoom = {
         id: user.id,
         userId: user.roomMember.id,
@@ -207,15 +211,16 @@ export default {
         }
         return user
       })
+      this.messageLoadMore = 20
 
       this.privateRoomAwait = this.currentRoom
       localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
       this.$router.push({ name: 'message-await', params: { id: this.currentRoom.id } })
     },
-    get_private_history(roomId) { 
+    get_private_history(roomId, limit) { 
       this.$socket.emit('get_private_history', {
         offset: 0,
-        limit: 20,
+        limit: limit,
         RoomId: roomId,
       }, data => {
         this.messages = [
@@ -239,7 +244,6 @@ export default {
       // console.log('等待發送訊息的聊天室：', this.privateRoomAwait)
     },
     afterPostMsg (content) {
-      // console.log('after post message: ', content)
       this.userRooms = this.userRooms.map((user) => {
         if(user.id === this.currentRoom.id) {
           user.lastMsg.fromRoomMember = false
@@ -249,7 +253,7 @@ export default {
         return user
       })
     },
-    handleScroll(e) {
+    userRoomsHandleScroll(e) {
       if (e.srcElement.scrollTop + e.srcElement.offsetHeight >= e.srcElement.scrollHeight ) {
         this.loadMore()
       }
@@ -262,9 +266,12 @@ export default {
         this.userRoomsLimit = limit
       } else {
         this.userRoomsLimit = 'limited'
-        // console.log('已載入所有資料！')
       }
-    }
+    },
+    afterScrollTop(limit) {
+      this.get_private_history(this.currentRoom.id, limit)
+      this.messageLoadMore = limit
+    } 
   }
 }
 </script>

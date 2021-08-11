@@ -1,5 +1,10 @@
 <template>
-  <div class="chat-wrap" ref="messages">
+  <div 
+    class="chat-wrap" 
+    :class="{ 'show-load-more': showLoadMore }"
+    ref="messages" 
+    @scroll="handleScroll($event)"
+    >
     <!-- <Spinner v-if="isLoading"/> -->
     <div
       v-if="!initialCurrentRoom.name"
@@ -11,6 +16,12 @@
     <div 
       v-if="initialCurrentRoom.name"
       class="chat messages" id="messages">
+      <div v-if="loadMoreLimit === 'limited'" class="load-text load-limited">
+        沒有更多訊息了！
+      </div>
+      <div v-if="showLoadMore" class="load-text load-more">
+        <span class="loading"></span><span>正在載入訊息...</span>
+      </div>
       <div v-for="msg in messages" :key="msg.id" class="" >
         <div 
           v-if="msg.isSelf"
@@ -80,6 +91,10 @@ export default {
     initialMessages: {
       type: Array,
       required: true
+    },
+    initialMessageLoadMore: {
+      type: Number,
+      required: true
     }
   },
   data () {
@@ -87,10 +102,13 @@ export default {
       text: '',
       memberNum: 0, 
       messages: [],
+      loadMoreLimit: 20,
+      showLoadMore: false,
       socket: null,
       isSelf: false,
       isLoading: true,
-      privateRoom: {}
+      privateRoom: {},
+      isPostMsg: false
     }
   },
   computed: {
@@ -106,19 +124,17 @@ export default {
     reconnect(){
       console.log("重新連線");
     },
-    //私人訊息：這裡都放on
     get_private_msg(data) {
       this.messages.push(data)
     }
   },
-  //這裡放:進入私訊後，要emit
   created () {
-
+    // this.updateScroll()
   },
   updated () {
-    this.updateScroll()
-  },
-  mounted () {
+    if (this.loadMoreLimit === 20) {
+      this.updateScroll(this.$refs.messages.scrollHeight)
+    }
   },
   watch: {
     initialCurrentRoom () {
@@ -126,6 +142,38 @@ export default {
     },
     initialMessages () {
       this.messages = this.initialMessages
+    },
+    initialMessageLoadMore () {
+      this.loadMoreLimit = this.initialMessageLoadMore
+    },
+    isPostMsg (value) {
+      if (value) {
+        setTimeout(() => { 
+          this.text = ''
+          console.log('setTimeout!')
+        }, 500)
+      }
+    },
+    text (value) {
+      if (value === '' && this.isPostMsg) {
+        this.updateScroll(this.$refs.messages.scrollHeight)
+        console.log('發送訊息回到底部')
+        this.isPostMsg = false
+      }
+    },
+    loadMoreLimit (value) {
+      if (value === 'limited') {
+        setTimeout(() => { 
+          this.loadMoreLimit = 'nomore'
+        }, 3000)
+      }
+    },
+    showLoadMore (value) {
+      if (value) {
+        setTimeout(() => { 
+          this.showLoadMore = false
+        }, 2000)
+      }
     }
   },
   methods: {
@@ -156,11 +204,34 @@ export default {
       }
       this.messages.push( data )
       this.$emit('after-post-msg', this.text)
-      this.text = ''
+      this.isPostMsg = true
     },
-    // 自動置頂
-    updateScroll() {
-      this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
+    updateScroll(heightPoint) {
+      this.$refs.messages.scrollTop = heightPoint
+    },
+    handleScroll(e) {
+      if (e.srcElement.scrollTop === 0 ) {
+        this.loadMore()
+      }
+    },
+    loadMore() {
+      if (this.messages.length >= this.loadMoreLimit) {
+        // console.log('到頂部了！')
+        this.showLoadMore = true
+
+        // const offset = 0
+        const limit = this.messages.length + 5
+        setTimeout(() => { 
+          this.$emit('after-scroll-top', limit)
+          this.loadMoreLimit = limit
+        }, 2000)
+        
+      } else if (this.loadMoreLimit - this.messages.length <= 5){
+        console.log('this.messages.length', this.messages.length)
+        console.log('this.loadMoreLimit', this.loadMoreLimit)
+        this.loadMoreLimit = 'limited'
+        // console.log('已載入所有資料！')
+      }
     },
     // 離開聊天室
     leave_private_page() {
@@ -179,6 +250,7 @@ export default {
   align-items: center;
   height: calc( 100vh - 110px);
   overflow-y: scroll;
+  overscroll-behavior-y: contain;
   box-sizing: border-box;
 }
 .chat::-webkit-scrollbar {
@@ -289,6 +361,40 @@ input {
 .privateroom-await .btn {
   color: #fff;
   background-color: #ff6600;
+}
+.chat > .load-more {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: #fdaa72;
+}
+.loading {
+  height: 15px;
+  width: 15px;
+  border-radius: 100%;
+  margin: 6px;
+  border: 2px solid #fdaa72;
+  border-bottom-color: transparent;
+  vertical-align: middle;
+  -webkit-animation: rotate 0.75s linear infinite;
+  animation: rotate 0.75s linear infinite;
+}
+.load-more span:last-child {
+  padding-top: 5px;
+}
+.load-limited {
+  color: #ccc;
+}
+.show-load-more {
+  overflow-y: hidden;
+}
+@keyframes rotate {
+  0% {
+      -webkit-transform: rotate(0deg);
+  }
+  100% {
+      -webkit-transform: rotate(360deg);
+  }
 }
 @media (max-width: 576px) {
   .chat {
