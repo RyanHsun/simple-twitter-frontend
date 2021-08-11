@@ -59,7 +59,8 @@ export default {
       onlineUsers: [],
       socket: null,
       onlineUsersNum: 0,
-      isLoading: true
+      isLoading: true,
+      error: undefined,
     }
   }, 
   computed: {
@@ -80,21 +81,16 @@ export default {
   },
   async created() {
     try {
-      this.fetchOnlineUsers()
+      await this.fetchOnlineUsers()
     }catch (err) {
       this.error = err
     }
     
     },
-    //因為data在Vue的生命週期中曾經是空值，雖然前端filter可以成功，但devtool會報錯
-    //vue Error in created hook: "TypeError: Cannot read property 'filter' of undefined"
-    //解決方法：在created加上async await
   methods: {
-    fetchOnlineUsers(data) {
-      
+    fetchOnlineUsers(data) { 
       const set = new Set();
       const result = data.filter(item => !set.has(item.id) ? set.add(item.id) : false);
-      console.log(result); 
       this.onlineUsers = result;
     },
   }
