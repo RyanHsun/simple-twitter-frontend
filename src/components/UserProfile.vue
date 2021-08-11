@@ -166,9 +166,9 @@ export default {
     reconnect(){
       console.log("重新連線");
     },
-    join_private_room(data) {
-      console.log('加入room的data',data)
-      this.privateRoomId = data
+    join_private_room(RoomId) {
+      console.log('加入room的RoomId', RoomId)
+      this.privateRoomId = RoomId
     }
   },
   methods: {
@@ -337,9 +337,10 @@ export default {
 
       const User1Id = this.currentUser.id
       const User2Id = this.user.id
+      const RoomId = null
       
       this.join_private_page(User1Id)
-      this.$socket.emit('join_private_room', { User1Id,User2Id })
+      this.$socket.emit('join_private_room', { User1Id, User2Id, RoomId })
 
       console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
       // console.log('進入與誰的私訊：', User2Id)

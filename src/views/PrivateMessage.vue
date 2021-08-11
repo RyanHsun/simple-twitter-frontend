@@ -73,7 +73,7 @@ export default {
     return {
       socket: null,
       userRooms: [],
-      userRoomsLimit: 5,
+      userRoomsLimit: 15,
       currentRoom: {},
       privateRoomAwait: {},
       messages: [],
@@ -86,9 +86,8 @@ export default {
     ...mapState(['currentUser'])
   },
   sockets: {
-    join_private_room(data) {
-      console.log('加入room的data',data)
-      // this.privateRoom.push(data)
+    join_private_room(RoomId) {
+      console.log('加入的聊天室 RoomId：', RoomId)
     },
     get_msg_notice_details({ unseenRooms, unreadRooms }) {
       console.log('聊天室未看未讀數量：', unseenRooms, unreadRooms)
@@ -128,8 +127,10 @@ export default {
       this.currentRoom = this.privateRoomAwait
       const User1Id = this.currentUser.id
       const User2Id = this.currentRoom.userId
-      this.join_private_room({User1Id,User2Id})
-      this.get_private_history(this.currentRoom.id)
+      const RoomId = this.currentRoom.id
+
+      this.join_private_room({ User1Id, User2Id, RoomId })
+      this.get_private_history(RoomId)
     },
     unreadRooms() {
       // console.log(this.unreadRooms.length)
@@ -156,7 +157,6 @@ export default {
   methods: {
     join_private_page(userId) { 
       this.$socket.emit('join_private_page', { userId })
-      console.log('進入私訊頁面')
       localStorage.removeItem('unseenNum')
       this.get_private_rooms(0, this.userRoomsLimit)
     },
@@ -186,13 +186,8 @@ export default {
         }
       )
     },
-    join_private_room({User1Id,User2Id}) { 
-
-      this.$socket.emit('join_private_room', { User1Id,User2Id })
-
-      // console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
-      // console.log('進入與誰的私訊：', User2Id)
-      // console.log('私人房號',this.privateRoom)
+    join_private_room({ User1Id, User2Id, RoomId }) { 
+      this.$socket.emit('join_private_room', { User1Id, User2Id, RoomId })
     },
     addMsgUser() {
       console.log('跳窗顯示所有使用者')
@@ -262,7 +257,7 @@ export default {
     loadMore() {
       if (this.userRooms.length >= this.userRoomsLimit) {
         const offset = 0
-        const limit = this.userRooms.length + 1
+        const limit = this.userRooms.length + 5
         this.get_private_rooms(offset, limit)
         this.userRoomsLimit = limit
       } else {
