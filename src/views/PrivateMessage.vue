@@ -77,6 +77,7 @@ export default {
       userRooms: [],
       userRoomsLimit: 15,
       currentRoom: {},
+      userRoomAwait: {},
       privateRoomAwait: {},
       messages: [],
       messageLoadMore: 0,
@@ -175,6 +176,16 @@ export default {
             const isLinked = id === this.currentRoom.id ? true : false
             return { id, lastMsg, roomMember, isLinked }
           })
+          
+          const roomUserId = Number(this.$route.params.id)
+          const checkPastMsg = this.userRooms.every( user => {
+            return user.id !== roomUserId
+          })
+          if (checkPastMsg && roomUserId) {
+            // console.log('沒有對話過！')
+            this.handleUserRoomAwait('立即開啟對話吧 ▸')
+            this.userRooms.unshift(this.userRoomAwait)
+          }
 
           if (this.unreadRooms.length > 0) {
             for (let i = 0; i < this.unreadRooms.length; i++) {
@@ -196,6 +207,7 @@ export default {
       console.log('跳窗顯示所有使用者')
     },
     afterClick(user) {
+      this.userRoomAwait = {}
 
       this.currentRoom = {
         id: user.id,
@@ -249,9 +261,27 @@ export default {
           user.lastMsg.fromRoomMember = false
           user.lastMsg.content = content
           user.lastMsg.createdAt = new Date()
-        }
+        } 
         return user
       })
+    },
+    handleUserRoomAwait(data) {
+      this.userRoomAwait = {
+        awaitMsg: true,
+        id: this.currentRoom.id,
+        isLinked: true,
+        lastMsg: {
+          content: data,
+          createdAt: '',
+          fromRoomMember: true
+        },
+        roomMember: {
+          account: this.currentRoom.account,
+          avatar: this.currentRoom.avatar,
+          id: this.currentRoom.userId,
+          name: this.currentRoom.name
+        }
+      }
     },
     userRoomsHandleScroll(e) {
       if (e.srcElement.scrollTop + e.srcElement.offsetHeight >= e.srcElement.scrollHeight ) {
