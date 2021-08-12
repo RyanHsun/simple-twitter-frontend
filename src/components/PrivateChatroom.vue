@@ -166,13 +166,13 @@ export default {
         setTimeout(() => { 
           this.loadMoreLimit = 'nomore'
         }, 3000)
-      }
+      } 
     },
     showLoadMore (value) {
       if (value) {
         setTimeout(() => { 
           this.showLoadMore = false
-        }, 2000)
+        }, 2500)
       }
     }
   },
@@ -212,6 +212,9 @@ export default {
     handleScroll(e) {
       if (e.srcElement.scrollTop === 0 ) {
         this.loadMore()
+      }
+      if (this.loadMoreLimit === 'nomore') {
+        this.loadMoreLimit = 'limited'
       }
     },
     loadMore() {

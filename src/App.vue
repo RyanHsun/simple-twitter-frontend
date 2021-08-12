@@ -17,7 +17,7 @@ export default {
 
 body {
   font-family: 'Noto Sans JP', sans-serif;
-  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
 
 /* no scroll bar */
