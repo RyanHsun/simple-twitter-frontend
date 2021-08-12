@@ -60,7 +60,6 @@ export default {
       socket: null,
       onlineUsersNum: 0,
       isLoading: true,
-      error: undefined,
     }
   }, 
   computed: {
@@ -68,30 +67,16 @@ export default {
   },
   sockets: {
     online_users(data) {
-      // console.log('上線使用者資料', data)
-      // this.fetchOnlineUsers(data.user);
-      
-      this.fetchOnlineUsers(data.users);
+      this.fetchOnlineUsers(data.users)
       this.onlineUsersNum = data.users.length
       this.isLoading = false
     }
   },
-  mounted () {
-    this.$socket.on('online_users')
-  },
-  async created() {
-    try {
-      await this.fetchOnlineUsers()
-    }catch (err) {
-      this.error = err
-    }
-    
-    },
   methods: {
     fetchOnlineUsers(data) { 
-      const set = new Set();
-      const result = data.filter(item => !set.has(item.id) ? set.add(item.id) : false);
-      this.onlineUsers = result;
+      const set = new Set()
+      const result = data.filter(item => !set.has(item.id) ? set.add(item.id) : false)
+      this.onlineUsers = result
     },
   }
 }
