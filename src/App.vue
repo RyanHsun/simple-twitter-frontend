@@ -17,6 +17,7 @@ export default {
 
 body {
   font-family: 'Noto Sans JP', sans-serif;
+  overscroll-behavior-y: none;
 }
 
 /* no scroll bar */
@@ -26,7 +27,8 @@ body {
 .user-wrap::-webkit-scrollbar,
 .admin-users-wrap::-webkit-scrollbar,
 .admin-tweets-wrap::-webkit-scrollbar,
-.chat-wrap::-webkit-scrollbar {
+.chat-wrap::-webkit-scrollbar,
+.private-users-wrap::-webkit-scrollbar {
   display: none;
 }
 .tweets-wrap,
@@ -35,7 +37,8 @@ body {
 .user-wrap,
 .admin-users-wrap,
 .admin-tweets-wrap,
-.chat-wrap {
+.chat-wrap,
+.private-users-wrap {
   scrollbar-width: none; /* Newer Firefox and not confirmed */
   overflow: -moz-scrollbars-none; /* Older Firefox*/
 }

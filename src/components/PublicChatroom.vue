@@ -1,7 +1,17 @@
 <template>
-  <div class="chat-wrap" ref="messages">
+  <div 
+    class="chat-wrap" 
+    :class="{ 'show-load-more': showLoadMore }"
+    ref="messages"
+    @scroll="handleScroll($event)">
     <Spinner v-if="isLoading"/>
     <div v-else class="chat messages" id="messages">
+      <div v-if="loadMoreLimit === 'limited'" class="load-text load-limited">
+        沒有更多訊息了！
+      </div>
+      <div v-if="showLoadMore" class="load-text load-more">
+        <span class="loading"></span><span>正在載入訊息...</span>
+      </div>
       <div v-for="msg in messages" :key="msg.id" class="" >
         <!-- 自己的訊息 -->
         <div 
@@ -73,6 +83,8 @@ export default {
         content: '',
         createdAt: ''
       },
+      loadMoreLimit: 20,
+      showLoadMore: false,
       socket: null,
       isSelf: false,
       isLoading: true
@@ -112,12 +124,45 @@ export default {
     const userId = this.currentUser.id
     // const name = this.currentUser.name
     this.join_public_room(userId)
-    this.get_public_history() 
+    this.get_public_history(20) 
     // this.$socket.on('new_join')
   },
   updated () {
-    this.updateScroll()
+    if (this.loadMoreLimit === 20) {
+      this.updateScroll(this.$refs.messages.scrollHeight)
+    }
     // this.$socket.on('user_leave')
+  },
+  watch: {
+    isPostMsg (value) {
+      if (value) {
+        setTimeout(() => { 
+          this.text = ''
+          console.log('setTimeout!')
+        }, 500)
+      }
+    },
+    text (value) {
+      if (value === '' && this.isPostMsg) {
+        this.updateScroll(this.$refs.messages.scrollHeight)
+        console.log('發送訊息回到底部')
+        this.isPostMsg = false
+      }
+    },
+    loadMoreLimit (value) {
+      if (value === 'limited') {
+        setTimeout(() => { 
+          this.loadMoreLimit = 'nomore'
+        }, 3000)
+      } 
+    },
+    showLoadMore (value) {
+      if (value) {
+        setTimeout(() => { 
+          this.showLoadMore = false
+        }, 2500)
+      }
+    }
   },
   methods: {
     // 1. 通知伺服器加入聊天室
@@ -126,10 +171,10 @@ export default {
       // console.log('加入聊天室：', userId)
     },
     // 2. 抓取歷史訊息
-    get_public_history() { 
+    get_public_history(limit) { 
       this.$socket.emit('get_public_history', {
         offset: 0,
-        limit: 50
+        limit: limit
       }, data => {
         this.messages = [
           ...data.reverse()
@@ -196,9 +241,35 @@ export default {
       this.$socket.emit('leave_public_room', { userId })
       // console.log(`使用者${userId} 離開聊天室`)
     },
-    // 自動置頂
-    updateScroll() {
-      this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
+    updateScroll(heightPoint) {
+      this.$refs.messages.scrollTop = heightPoint
+    },
+    handleScroll(e) {
+      if (e.srcElement.scrollTop === 0 ) {
+        this.loadMore()
+      }
+      if (this.loadMoreLimit === 'nomore') {
+        this.loadMoreLimit = 'limited'
+      }
+    },
+    loadMore() {
+      if (this.messages.length >= this.loadMoreLimit) {
+        // console.log('到頂部了！')
+        this.showLoadMore = true
+
+        // const offset = 0
+        const limit = this.messages.length + 5
+        setTimeout(() => { 
+          this.get_public_history(limit)
+          this.loadMoreLimit = limit
+        }, 2000)
+        
+      } else if (this.loadMoreLimit - this.messages.length <= 5){
+        console.log('this.messages.length', this.messages.length)
+        console.log('this.loadMoreLimit', this.loadMoreLimit)
+        this.loadMoreLimit = 'limited'
+        // console.log('已載入所有資料！')
+      }
     },
   },
   beforeDestroy () {
@@ -308,6 +379,40 @@ input {
 .send-btn:hover img {
   transform: scale(1.2);
   transition: .3s ease-in-out;
+}
+.chat > .load-more {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: #fdaa72;
+}
+.loading {
+  height: 15px;
+  width: 15px;
+  border-radius: 100%;
+  margin: 6px;
+  border: 2px solid #fdaa72;
+  border-bottom-color: transparent;
+  vertical-align: middle;
+  -webkit-animation: rotate 0.75s linear infinite;
+  animation: rotate 0.75s linear infinite;
+}
+.load-more span:last-child {
+  padding-top: 5px;
+}
+.load-limited {
+  color: #ccc;
+}
+.show-load-more {
+  overflow-y: hidden;
+}
+@keyframes rotate {
+  0% {
+      -webkit-transform: rotate(0deg);
+  }
+  100% {
+      -webkit-transform: rotate(360deg);
+  }
 }
 @media (max-width: 576px) {
   .chat {

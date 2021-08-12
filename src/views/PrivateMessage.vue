@@ -3,7 +3,7 @@
     <Sidebar /> 
     <div class="private-message-wrap">
       <section class="private-users">
-        <div class="private-users-wrap" ref="userRoomsList" @scroll="handleScroll($event)">
+        <div class="private-users-wrap" ref="userRoomsList" @scroll="userRoomsHandleScroll($event)">
           <h2 class="headbar">
             <div class="title">
               <div class="main-title">訊息</div>
@@ -44,7 +44,9 @@
             <PrivateChatroom 
               :initialCurrentRoom="currentRoom"
               :initialMessages="messages"
+              :initialMessageLoadMore="messageLoadMore"
               @after-post-msg="afterPostMsg"
+              @after-scroll-top="afterScrollTop"
             />
           </div>
         </div>
@@ -73,10 +75,12 @@ export default {
     return {
       socket: null,
       userRooms: [],
-      userRoomsLimit: 5,
+      userRoomsLimit: 15,
       currentRoom: {},
+      userRoomAwait: {},
       privateRoomAwait: {},
       messages: [],
+      messageLoadMore: 0,
       unseenNum: 0,
       unreadRooms: [],
       isLoading: true
@@ -86,9 +90,8 @@ export default {
     ...mapState(['currentUser'])
   },
   sockets: {
-    join_private_room(data) {
-      console.log('加入room的data',data)
-      // this.privateRoom.push(data)
+    join_private_room(RoomId) {
+      console.log('加入的聊天室 RoomId：', RoomId)
     },
     get_msg_notice_details({ unseenRooms, unreadRooms }) {
       console.log('聊天室未看未讀數量：', unseenRooms, unreadRooms)
@@ -128,8 +131,10 @@ export default {
       this.currentRoom = this.privateRoomAwait
       const User1Id = this.currentUser.id
       const User2Id = this.currentRoom.userId
-      this.join_private_room({User1Id,User2Id})
-      this.get_private_history(this.currentRoom.id)
+      const RoomId = this.currentRoom.id
+
+      this.join_private_room({ User1Id, User2Id, RoomId })
+      this.get_private_history(RoomId, 20)
     },
     unreadRooms() {
       // console.log(this.unreadRooms.length)
@@ -156,7 +161,6 @@ export default {
   methods: {
     join_private_page(userId) { 
       this.$socket.emit('join_private_page', { userId })
-      console.log('進入私訊頁面')
       localStorage.removeItem('unseenNum')
       this.get_private_rooms(0, this.userRoomsLimit)
     },
@@ -172,6 +176,16 @@ export default {
             const isLinked = id === this.currentRoom.id ? true : false
             return { id, lastMsg, roomMember, isLinked }
           })
+          
+          const roomUserId = Number(this.$route.params.id)
+          const checkPastMsg = this.userRooms.every( user => {
+            return user.id !== roomUserId
+          })
+          if (checkPastMsg && roomUserId) {
+            // console.log('沒有對話過！')
+            this.handleUserRoomAwait('立即開啟對話吧 ▸')
+            this.userRooms.unshift(this.userRoomAwait)
+          }
 
           if (this.unreadRooms.length > 0) {
             for (let i = 0; i < this.unreadRooms.length; i++) {
@@ -182,22 +196,19 @@ export default {
               })
             }
           }
-          console.log('新的使用者清單：', this.userRooms)
+          // console.log('新的使用者清單：', this.userRooms)
         }
       )
     },
-    join_private_room({User1Id,User2Id}) { 
-
-      this.$socket.emit('join_private_room', { User1Id,User2Id })
-
-      // console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
-      // console.log('進入與誰的私訊：', User2Id)
-      // console.log('私人房號',this.privateRoom)
+    join_private_room({ User1Id, User2Id, RoomId }) { 
+      this.$socket.emit('join_private_room', { User1Id, User2Id, RoomId })
     },
     addMsgUser() {
       console.log('跳窗顯示所有使用者')
     },
     afterClick(user) {
+      this.userRoomAwait = {}
+
       this.currentRoom = {
         id: user.id,
         userId: user.roomMember.id,
@@ -212,15 +223,16 @@ export default {
         }
         return user
       })
+      this.messageLoadMore = 20
 
       this.privateRoomAwait = this.currentRoom
       localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
       this.$router.push({ name: 'message-await', params: { id: this.currentRoom.id } })
     },
-    get_private_history(roomId) { 
+    get_private_history(roomId, limit) { 
       this.$socket.emit('get_private_history', {
         offset: 0,
-        limit: 20,
+        limit: limit,
         RoomId: roomId,
       }, data => {
         this.messages = [
@@ -244,17 +256,34 @@ export default {
       // console.log('等待發送訊息的聊天室：', this.privateRoomAwait)
     },
     afterPostMsg (content) {
-      // console.log('after post message: ', content)
       this.userRooms = this.userRooms.map((user) => {
         if(user.id === this.currentRoom.id) {
           user.lastMsg.fromRoomMember = false
           user.lastMsg.content = content
           user.lastMsg.createdAt = new Date()
-        }
+        } 
         return user
       })
     },
-    handleScroll(e) {
+    handleUserRoomAwait(data) {
+      this.userRoomAwait = {
+        awaitMsg: true,
+        id: this.currentRoom.id,
+        isLinked: true,
+        lastMsg: {
+          content: data,
+          createdAt: '',
+          fromRoomMember: true
+        },
+        roomMember: {
+          account: this.currentRoom.account,
+          avatar: this.currentRoom.avatar,
+          id: this.currentRoom.userId,
+          name: this.currentRoom.name
+        }
+      }
+    },
+    userRoomsHandleScroll(e) {
       if (e.srcElement.scrollTop + e.srcElement.offsetHeight >= e.srcElement.scrollHeight ) {
         this.loadMore()
       }
@@ -262,14 +291,17 @@ export default {
     loadMore() {
       if (this.userRooms.length >= this.userRoomsLimit) {
         const offset = 0
-        const limit = this.userRooms.length + 1
+        const limit = this.userRooms.length + 5
         this.get_private_rooms(offset, limit)
         this.userRoomsLimit = limit
       } else {
         this.userRoomsLimit = 'limited'
-        // console.log('已載入所有資料！')
       }
-    }
+    },
+    afterScrollTop(limit) {
+      this.get_private_history(this.currentRoom.id, limit)
+      this.messageLoadMore = limit
+    } 
   }
 }
 </script>

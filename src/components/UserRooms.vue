@@ -1,5 +1,6 @@
 <template>
     <li class="notice">
+      <!-- :class="{ 'new-user-room': user.newUserRoom }" -->
       <router-link
         class="avatar"
         :to="`/users/${user.roomMember.id}`"
@@ -16,8 +17,10 @@
           </router-link>
           <span class="account">@{{ user.roomMember.account }}</span>
         </div>
-        <div class="user-msg">
-          <span class="last-msg"><small v-if="!user.lastMsg.fromRoomMember">你：</small>{{ user.lastMsg.content }}</span>
+        <div class="user-msg" :class="{ 'await-msg': user.lastMsg.content === '立即開啟對話吧 ▸'}">
+          <span class="last-msg">
+            <small v-if="!user.lastMsg.fromRoomMember">你：</small>{{ user.lastMsg.content }}
+          </span>
           <span class="last-time">{{ user.lastMsg.createdAt | fromNow }}</span>
           <span 
             v-if="user.unreadNum > 0" 
@@ -152,6 +155,12 @@ export default {
   top: 0;
   right: 0;
   font-size: 14px;
+}
+.await-msg .last-msg {
+  color: #ff6600;
+}
+.await-msg .last-time {
+  display: none;
 }
 .unread-number {
   position: absolute;
