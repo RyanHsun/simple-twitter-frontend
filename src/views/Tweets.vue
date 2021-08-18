@@ -61,7 +61,6 @@ import Spinner from './../components/Spinner'
 import { v4 as uuidv4 } from "uuid"
 import tweetsAPI from './../apis/tweets'
 import { Toast } from './../utils/helpers'
-// import { component } from 'vue/types/umd'
 
 export default {
   mixins: [emptyImageFilter],
@@ -101,7 +100,7 @@ export default {
           title: '字數限制140字',
         })
       }
-    },
+    }
   },
   methods: {
     async fetchTweets({ queryOffset, queryLimit }) {
@@ -146,6 +145,8 @@ export default {
           throw new Error(data.message)
         }
 
+        this.postTimeline(data.Tweet.id)
+
         Toast.fire({
           icon: 'success',
           title: '新增推文成功'
@@ -153,7 +154,7 @@ export default {
         this.isProcessing = false
         this.newTweet = ''
 
-        this.fetchTweets(0, 10)
+        this.fetchTweets({ queryOffset: 0, queryLimit: 100 })
 
       } catch (error) {
         console.log(error)
@@ -165,7 +166,6 @@ export default {
     },
     afterSubmitTweet(payload) {
       const { description } = payload
-      console.log("description", description)
       this.tweets.unshift({
         // id: commentId,
         id: uuidv4(),
@@ -180,8 +180,13 @@ export default {
           avatar: this.user.avatar,
         },
       })
-      this.fetchTweets(0, 10)
+      this.fetchTweets({ queryOffset: 0, queryLimit: 100 })
     },
+    postTimeline(PostId) {
+      const ReceiverId = null
+      const type = 1
+      this.$socket.emit('post_timeline', { ReceiverId, type, PostId })
+    }
   }
 }
 </script>
