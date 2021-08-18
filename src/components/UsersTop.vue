@@ -22,6 +22,7 @@
             v-if="user.isFollowing"
             @click.stop.prevent="deleteFollowing(user.id)"
             class="btn toggle-follow is-following"
+            :disabled="isProcessing"
           >
             正在跟隨
           </button>
@@ -29,6 +30,7 @@
             v-else
             @click.stop.prevent="addFollowing(user.id)"
             class="btn toggle-follow"
+            :disabled="isProcessing"
           >
             跟隨
           </button>
@@ -100,6 +102,7 @@ export default {
     },
     async addFollowing (userId) {
       try {
+        this.isProcessing = true
         const { data } = await usersAPI.addFollowing({ id: userId })
 
         if (data.status === 'error') {
@@ -117,24 +120,28 @@ export default {
           }
         })
 
-        // 做傳送到User
         this.$emit('after-add-follow')
+        
+        this.postTimeline(userId, 4, this.currentUser.id)
 
         Toast.fire({
           icon: 'success',
           title: '跟隨成功'
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.log(error)
         Toast.fire({
           icon: 'error',
           title: '無法新增跟隨，請稍後再試',
         })
+        this.isProcessing = false
       }
     },
     async deleteFollowing (userId) {
-      console.log(userId)
       try {
+        this.isProcessing = true
         const { data } = await usersAPI.deleteFollowing({ userId })
         
         if(data.status === 'error') {
@@ -156,18 +163,24 @@ export default {
           icon: 'success',
           title: '取消跟隨'
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.error(error.message)
         Toast.fire({
           icon: 'error',
           title: '無法取消跟隨，請稍後再試'
         })
+        this.isProcessing = false
       }
     },
     showMoreUser () {
       console.log('MORE')
       this.fetchTopUsers(0, 10)
       this.showMore = false
+    },
+    postTimeline(ReceiverId, type, PostId) {
+      this.$socket.emit('post_timeline', { ReceiverId, type, PostId })
     }
   }
 }

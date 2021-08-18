@@ -119,11 +119,18 @@ export default {
         }
         this.like.LikedTweet.isLike = true
         this.like.LikedTweet.likeNum += 1
-        this.isProcessing = false
+
+        if (this.currentUser.id !== this.like.LikedTweet.Author.id) {
+          // console.log('不是同個使用者')
+          this.postTimeline(this.like.LikedTweet.Author.id, 3, data.Like.id)
+        }
+
         Toast.fire({
           icon: "success",
           title: "加入喜歡！",
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.log(error.response)
         Toast.fire({
@@ -142,11 +149,13 @@ export default {
         }
         this.like.LikedTweet.isLike = false
         this.like.LikedTweet.likeNum -= 1
-        this.isProcessing = false
+
         Toast.fire({
           icon: "success",
           title: "收回喜歡！",
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.log(error.response)
         Toast.fire({
@@ -157,16 +166,21 @@ export default {
       }
     },
     afterCreateComment (payload) {
-      const { tweetId, replyNum } = payload
-      console.log(tweetId, replyNum, payload)
-
+      const { authorId, replyId } = payload
       this.like.LikedTweet.replyNum += 1
+
+      if (this.currentUser.id !== authorId) {
+        this.postTimeline(authorId, 2, replyId)
+      }
     },
     handleReplyTweetModal () {
       this.isShowReplyModal = true
     },
     linkToTweetDetail (tweetId) {
       this.$router.push(`/tweets/${tweetId}`)
+    },
+    postTimeline(ReceiverId, type, PostId) {
+      this.$socket.emit('post_timeline', { ReceiverId, type, PostId })
     }
   }
 }

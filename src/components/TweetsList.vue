@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from './../utils/mixins'
 import ReplyTweetModal from './../components/ReplyTweetModal.vue'
@@ -104,6 +105,9 @@ export default {
       isProcessing: false
     }
   },
+  computed: {
+    ...mapState(['currentUser'])
+  },
   methods: {
     async addLike(tweetId) {
       try {
@@ -113,12 +117,19 @@ export default {
           throw new Error(data.message)
         }
         this.tweet.isLike = true
-        this.tweet.likeNum = this.tweet.likeNum + 1
-        this.isProcessing = false
+        this.tweet.likeNum += 1
+
+        if (this.currentUser.id !== this.tweet.Author.id) {
+          console.log('不是同個使用者')
+          this.postTimeline(this.tweet.Author.id, 3, data.Like.id)
+        }
+
         Toast.fire({
           icon: "success",
           title: "加入喜歡！",
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -136,12 +147,14 @@ export default {
           throw new Error(data.message)
         }
         this.tweet.isLike = false
-        this.tweet.likeNum = this.tweet.likeNum - 1
-        this.isProcessing = false
+        this.tweet.likeNum -= 1
+
         Toast.fire({
           icon: "success",
           title: "收回喜歡！",
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -158,10 +171,15 @@ export default {
       this.$router.push(`/tweets/${tweetId}`)
     },
     afterCreateComment (payload) {
-      const { tweetId, replyNum } = payload
-      console.log(tweetId, replyNum, payload)
-
+      const { authorId, replyId } = payload
       this.tweet.replyNum += 1
+
+      if (this.currentUser.id !== authorId) {
+        this.postTimeline(authorId, 2, replyId)
+      }
+    },
+    postTimeline(ReceiverId, type, PostId) {
+      this.$socket.emit('post_timeline', { ReceiverId, type, PostId })
     }
   }
 }

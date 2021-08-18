@@ -34,5 +34,8 @@ export default {
   getTopUsers ({ offset, limit }) {
     const searchParams = new URLSearchParams({ offset, limit })
     return apiHelper.get(`/users?${searchParams.toString()}`)
+  },
+  toggleNotification ({ id }) {
+    return apiHelper.post('/followships/subscription', { id })
   }
 }

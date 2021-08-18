@@ -73,9 +73,6 @@ export default {
   },
   methods: {
     async handleSubmit(tweet) {
-      console.log(tweet.id)
-      console.log(tweet.replyNum)
-      console.log(this.comment)
       try {
         if (!this.comment.trim()) {
           Toast.fire({
@@ -86,8 +83,6 @@ export default {
         }
         this.isProcessing = true
 
-        console.log('要送去後端的的 Id:', tweet.id)
-        console.log('要送去後端的的 comment:', this.comment)
         const { data } = await tweetsAPI.createTweetReply({
           tweetId: this.tweet.id,
           comment: this.comment
@@ -98,8 +93,10 @@ export default {
         }
 
         this.$emit("after-create-comment", {
-          tweetId: this.tweetId,
-          replyNum: this.tweet.replyNum
+          tweetId: tweet.id,
+          authorId: tweet.Author.id,
+          replyId: data.Reply.id,
+          replyNum: tweet.replyNum
         })
 
         $(`#replyTweetModal-${tweet.id}`).modal("hide")

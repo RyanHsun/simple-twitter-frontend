@@ -19,6 +19,7 @@
         >
           <div class="icon">
             <img src="~@/assets/img/icon_ring.svg" width="25px" alt="" />
+            <span v-if="notiUnseenNum > 0" class="notice">{{ notiUnseenNum }}</span>
           </div>
           <div>通知</div>
         </router-link>
@@ -37,7 +38,7 @@
         >
           <div class="icon">
             <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
-            <span v-if="unseenNum > 0">{{ unseenNum }}</span>
+            <span v-if="msgUnseenNum > 0" class="notice">{{ msgUnseenNum }}</span>
           </div>
           <div>私人訊息</div>
         </router-link>
@@ -147,9 +148,11 @@ export default {
   data() {
     return {
       newTweet: '',
-      unseenNum: 0,
+      msgUnseenNum: 0,
+      notiUnseenNum: 0,
       isShowModal: false,
-      isProcessing: false
+      isProcessing: false,
+      timelineNotice: {}
     }
   },
   watch: {
@@ -166,13 +169,23 @@ export default {
     ...mapState(["currentUser", "isAuthenticated"]),
   },
   created () {
-    this.unseenNum = localStorage.getItem('unseenNum')
+    this.notiUnseenNum = localStorage.getItem('notiUnseenNum')
+    this.msgUnseenNum = localStorage.getItem('msgUnseenNum')
   },
   sockets: {
     get_msg_notice (unseenNum) {
-      console.log('未看聊天室數量：', unseenNum)
-      this.unseenNum = unseenNum
-      localStorage.setItem('unseenNum', unseenNum)
+      this.msgUnseenNum = unseenNum
+      localStorage.setItem('msgUnseenNum', unseenNum)
+    },
+    get_timeline_notice (unseenNum) {
+      this.notiUnseenNum = unseenNum
+      localStorage.setItem('notiUnseenNum', unseenNum)
+    },
+    update_timeline_notice (data) {
+      this.timelineNotice = data
+      const currentNotiNum = localStorage.getItem('notiUnseenNum')
+      this.notiUnseenNum = Number(currentNotiNum) + 1
+      localStorage.setItem('notiUnseenNum', this.notiUnseenNum)
     }
   },
   methods: {
@@ -190,6 +203,7 @@ export default {
           return
         }
         this.isProcessing = true
+
         const { data } = await tweetsAPI.createTweet({
           description: this.newTweet,
         })
@@ -197,9 +211,12 @@ export default {
           throw new Error(data.message)
         }
 
-        this.$emit("after-submit-tweet", { description: this.newTweet
-         })
+        this.$emit("after-submit-tweet", { description: this.newTweet })
+
         $("#newTweetModal").modal("hide")
+
+        this.postTimeline(data.Tweet.id)
+
         Toast.fire({
           icon: "success",
           title: "新增推文成功",
@@ -212,7 +229,7 @@ export default {
         console.log(error.message)
         Toast.fire({
           icon: "warning",
-          title: "無法新增推文，請稍候在試",
+          title: "無法新增推文，請稍候在試"
         })
       }
     },
@@ -221,6 +238,11 @@ export default {
     },
     cancelModal() {
       this.isShowModal = false
+    },
+    postTimeline(PostId) {
+      const ReceiverId = null
+      const type = 1
+      this.$socket.emit('post_timeline', { ReceiverId, type, PostId })
     }
   }
 }
@@ -306,23 +328,24 @@ export default {
   width: 30px;
   margin-right: 10px;
 }
-.private-chat .icon {
+.nav-item .icon {
   position: relative;
 }
-.private-chat .icon span {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  width: auto;
-  height: 20px;
-  padding: 0 5px;
-  font-size: 13px;
-  line-height: 20px;
-  border-radius: 20px;
-  text-align: center;
-  color: #fff;
-  background: #ff6600;
-  border: 1px solid #fff;
+.notice {
+    min-width: 20px;
+    position: absolute;
+    top: -8px;
+    right: -4px;
+    width: auto;
+    height: 20px;
+    padding: 0 3px;
+    font-size: 13px;
+    line-height: 18px;
+    border-radius: 20px;
+    text-align: center;
+    color: #fff;
+    background: #ff6600;
+    border: 1px solid #fff;
 }
 .logout:hover .btn-logout{
   color: #ff6600;

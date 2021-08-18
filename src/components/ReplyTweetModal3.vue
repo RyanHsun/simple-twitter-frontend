@@ -96,7 +96,7 @@ export default {
         console.log('要送去後端的的 Id:', like.TweetId)
         console.log('要送去後端的的 comment:', this.comment)
         const { data } = await tweetsAPI.createTweetReply({
-          tweetId: this.like.TweetId,
+          tweetId: like.TweetId,
           comment: this.comment
         })
 
@@ -105,8 +105,10 @@ export default {
         }
 
         this.$emit("after-create-comment", {
-          tweetId: this.like.TweetId,
-          likeNum: this.like.LikedTweet.likeNum
+          tweetId: like.TweetId,
+          authorId: like.UserId,
+          replyId: data.Reply.id,
+          replyNum: like.LikedTweet.likeNum
         })
 
         $(`#replyTweetModal-${like.id}`).modal("hide")

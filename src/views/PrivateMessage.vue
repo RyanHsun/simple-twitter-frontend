@@ -108,11 +108,8 @@ export default {
         }
         return user
       })
-      console.log('update_msg_notice_details', this.messageNotice)
     },
     get_private_msg(data) {
-      // this.messages.push(data)
-      // console.log('取得其他使用者傳來的訊息：', data)
       this.userRooms = this.userRooms.map((user) => {
         if(user.id === this.currentRoom.id) {
           user.lastMsg.fromRoomMember = true
@@ -124,9 +121,7 @@ export default {
     }
   },
   watch: {
-    // userRooms () {
-    //   this.afterClick()
-    // }
+
     privateRoomAwait() {
       this.currentRoom = this.privateRoomAwait
       const User1Id = this.currentUser.id
@@ -137,16 +132,12 @@ export default {
       this.get_private_history(RoomId, 20)
     },
     unreadRooms() {
-      // console.log(this.unreadRooms.length)
       for (let i = 0; i < this.unreadRooms.length; i++) {
-        // console.log('未讀的聊天室：', this.unreadRooms[i])
         this.userRooms = this.userRooms.map( user => {
           const { id, lastMsg, roomMember, isLinked } = user
-          // console.log('user', user)
           const unreadNum = user.roomMember.id === this.unreadRooms[i].SenderId ? this.unreadRooms[i].unreadNum : user.unreadNum
           return { id, lastMsg, roomMember, isLinked, unreadNum }
         })
-        // console.log(`第${i}輪聊天室詳細資料：`, this.userRooms)
       }
     }
   },
@@ -161,7 +152,7 @@ export default {
   methods: {
     join_private_page(userId) { 
       this.$socket.emit('join_private_page', { userId })
-      localStorage.removeItem('unseenNum')
+      localStorage.removeItem('msgUnseenNum')
       this.get_private_rooms(0, this.userRoomsLimit)
     },
     get_private_rooms(offset, limit) {
@@ -169,8 +160,6 @@ export default {
         offset,
         limit
         }, data => {
-          // this.userRooms = data
-          
           this.userRooms = data.map( user => {
             const { id, lastMsg, roomMember } = user
             const isLinked = id === this.currentRoom.id ? true : false
@@ -182,7 +171,6 @@ export default {
             return user.id !== roomUserId
           })
           if (checkPastMsg && roomUserId) {
-            // console.log('沒有對話過！')
             this.handleUserRoomAwait('立即開啟對話吧 ▸')
             this.userRooms.unshift(this.userRoomAwait)
           }
@@ -196,7 +184,6 @@ export default {
               })
             }
           }
-          // console.log('新的使用者清單：', this.userRooms)
         }
       )
     },
@@ -249,11 +236,7 @@ export default {
     catchRoomUserId () {
       const roomUserId = this.$route.params.id
       if (!roomUserId) return
-      // if (!localStorage.getItem('privateRoomAwait'))
-      
-      // console.log(`等待啟動聊天的房間號碼：${roomUserId}`)
       this.privateRoomAwait = JSON.parse(localStorage.getItem('privateRoomAwait'))
-      // console.log('等待發送訊息的聊天室：', this.privateRoomAwait)
     },
     afterPostMsg (content) {
       this.userRooms = this.userRooms.map((user) => {
