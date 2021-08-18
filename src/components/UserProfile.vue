@@ -7,11 +7,6 @@
       <p class="user-avatar avatar">
         <img :src="user.avatar | emptyImage" alt="" />
       </p>
-      <!-- <template v-if="isCurrentUser">
-        <EditProfileModal
-          :user="user"
-        /> 
-      </template> -->
       <template v-if="isCurrentUser">
         <EditProfileModal
           :initial-user="user"
@@ -20,18 +15,25 @@
         />
       </template>
       <div v-else>
-          <!-- :to="{ name: 'message-await', params: { id: user.id } }" -->
         <button  
           @click="joinPrivateMessage"
-          class="private-message"
+          class="btn-private-message"
         >
           <img src="~@/assets/img/icon_message.svg">
+        </button >
+        <button  
+          @click.prevent.stop="toggleNotification"
+          class="btn-notification"
+        >
+          <img v-if="this.user.isSubscribing" src="~@/assets/img/icon_notification-2.svg">
+          <img v-else src="~@/assets/img/icon_notification-1.svg">
         </button >
         <button
           v-if="this.user.isFollowing"
           type="submit" 
           class="btn btn-follow" 
           :class="{ 'is-following': this.user.isFollowing }" 
+          :disabled="isProcessing"
           @click.prevent.stop="deleteFollowing"
         >
           正在跟隨
@@ -40,6 +42,7 @@
           v-else
           type="click"
           class="btn btn-follow" 
+          :disabled="isProcessing"
           @click.prevent.stop="addFollowing"
         > 
           跟隨
@@ -69,7 +72,6 @@
 </template>
 
 <script>
-
 import { mapState } from 'vuex'
 import EditProfileModal from './EditProfileModal.vue'
 import usersAPI from './../apis/users'
@@ -107,7 +109,8 @@ export default {
         followingNum: -1,
         followerNum: -1,
         lastLoginAt: '',
-        isFollowing: false
+        isFollowing: false,
+        isSubscribing: false
       },
       isProcessing: false,
       isSelf: false,
@@ -135,7 +138,7 @@ export default {
         avatar: this.user.avatar
       }
       localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
-      // this.linkToPrivateMessage()
+
       this.$router.push({ name: 'message-await', params: { id: this.privateRoomId } })
     }
   },
@@ -149,7 +152,6 @@ export default {
     this.$socket.on('join_private_room')
   },
   beforeRouteUpdate (to, from, next) {
-    // this.$socket.on('join_private_room')
     const { id } = to.params
     this.fetchUser(id)
     this.checkFollow(id)
@@ -157,17 +159,7 @@ export default {
     next()
   },
   sockets: {
-    connect: function() {
-      console.log("連線成功")
-    },
-    disconnect(){
-      console.log("斷開連線");
-    },
-    reconnect(){
-      console.log("重新連線");
-    },
     join_private_room(RoomId) {
-      console.log('加入room的RoomId', RoomId)
       this.privateRoomId = RoomId
     }
   },
@@ -193,7 +185,8 @@ export default {
           followingNum,
           followerNum,
           lastLoginAt,
-          isFollowing
+          isFollowing,
+          isSubscribing
         } = data
         this.user = {
           id,
@@ -208,7 +201,8 @@ export default {
           followingNum,
           followerNum,
           lastLoginAt,
-          isFollowing
+          isFollowing,
+          isSubscribing
         }
 
       } catch (error) {
@@ -247,6 +241,7 @@ export default {
     },
     async addFollowing () {
       try {
+        this.isProcessing = true
         const { data } = await usersAPI.addFollowing({ id: this.user.id })
 
         if (data.status !== 'success') {
@@ -255,20 +250,26 @@ export default {
         this.user.isFollowing = true
         this.user.followerNum++
         
+        this.postTimeline(this.user.id, 4, this.currentUser.id)
+
         Toast.fire({
           icon: 'success',
           title: '跟隨成功'
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.log(error)
         Toast.fire({
           icon: 'error',
           title: '無法新增跟隨，請稍後再試',
         })
+        this.isProcessing = false
       }
     },
     async deleteFollowing () {
       try {
+        this.isProcessing = true
         const { data } = await usersAPI.deleteFollowing({ userId: this.user.id })
         
         if(data.status === 'error') {
@@ -281,18 +282,48 @@ export default {
           icon: 'success',
           title: '取消跟隨'
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.error(error.message)
         Toast.fire({
           icon: 'error',
           title: '無法取消跟隨，請稍後再試'
         })
+        this.isProcessing = false
+      }
+    },
+    async toggleNotification () {
+      try {
+        const { data } = await usersAPI.toggleNotification({ id: this.user.id })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        
+        if (this.user.isSubscribing) {
+          this.user.isSubscribing = false
+          Toast.fire({
+            icon: 'success',
+            title: '取消訂閱'
+          })
+        } else {
+          this.user.isSubscribing = true
+          Toast.fire({
+            icon: 'success',
+            title: '訂閱成功'
+          })
+        }
+        
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法訂閱，請稍後再試',
+        })
       }
     },
     async handleAfterSubmit (formData) {
-      // for (let [name, value] of formData.entries()) {
-      //   console.log(name + ': ' + value)
-      // }
       try {
         this.isProcessing = true
         const { data } = await usersAPI.updateUser({
@@ -311,7 +342,6 @@ export default {
           title: '資料更新成功'
         })
 
-        //即時更新
         const {name, introduction, avatar, cover}  = data
         this.user.name = name
         this.user.introduction = introduction
@@ -319,7 +349,6 @@ export default {
         this.user.cover = cover
 
         this.isProcessing = false
-        // this.$router.push({ name: 'user', params: { id: this.id } })
       } catch (error) {
         console.log('error', error)
         this.isProcessing = false
@@ -331,23 +360,20 @@ export default {
     },
     join_private_page(userId) { 
       this.$socket.emit('join_private_page', { userId })
-      console.log(`使用者：${userId} 進入到私人訊息頁面了`)
     },
     joinPrivateMessage() { 
-
       const User1Id = this.currentUser.id
       const User2Id = this.user.id
       const RoomId = null
       
       this.join_private_page(User1Id)
       this.$socket.emit('join_private_room', { User1Id, User2Id, RoomId })
-
-      console.log(`使用者${User1Id}加入私訊頁面，開始與${User2Id}聊天`)
-      // console.log('進入與誰的私訊：', User2Id)
-      // console.log('私人房號',this.privateRoom)
     },
     linkToPrivateMessage () {
       this.$router.push({ name: 'message-await', params: { id: this.privateRoomId } })
+    },
+    postTimeline(ReceiverId, type, PostId) {
+      this.$socket.emit('post_timeline', { ReceiverId, type, PostId })
     }
   }
 }
@@ -556,7 +582,8 @@ label[for="upload-image-avatar"] img {
 .btn-follow {
   margin-right: 20px;
 }
-.private-message {
+.btn-private-message,
+.btn-notification {
   margin-right: 10px;
 }
 @media (max-width: 576px) {

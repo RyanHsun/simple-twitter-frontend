@@ -45,9 +45,10 @@
 </template>
 
 <script>
-import { emptyImageFilter } from "../utils/mixins";
-import usersAPI from "../apis/users";
-import { Toast } from "./../utils/helpers";
+import { mapState } from 'vuex'
+import { emptyImageFilter } from "../utils/mixins"
+import usersAPI from "../apis/users"
+import { Toast } from "./../utils/helpers"
 
 export default {
   mixins: [emptyImageFilter],
@@ -61,63 +62,69 @@ export default {
     return {
       followerUser: this.initinalFollowerUser,
       isProcessing: false
-    };
-  }, 
+    }
+  },
+  computed: {
+    ...mapState(['currentUser'])
+  },
   methods: {
     async deleteFollowing(userId) {
       try {
         this.isProcessing = true
-        const { data } = await usersAPI.deleteFollowing({ userId });
-        console.log('data',data.response)
+        const { data } = await usersAPI.deleteFollowing({ userId })
 
         if (data.status !== "success") {
-          throw new Error(data.message);
+          throw new Error(data.message)
         }
-        
         this.followerUser.follower.isFollowing = false
-        console.log('data',data.response)
+
         Toast.fire({
           icon: "success",
           title: "取消跟隨",
-        });
+        })
         this.isProcessing = false
       } catch (error) {
         this.isProcessing = false
         Toast.fire({
           icon: "error",
           title: "無法取消跟隨，請稍後再試",
-        });
-        console.log("error", error);
+        })
+        console.log("error", error)
       }
     },
-
     async addFollowing() {
       try {
         this.isProcessing = true
-        const { data } = await usersAPI.addFollowing({ id: this.followerUser.followerId });
+        const { data } = await usersAPI.addFollowing({ id: this.followerUser.followerId })
 
         if (data.status !== "success") {
-          throw new Error(data.message);
+          throw new Error(data.message)
         }
         this.followerUser.follower.isFollowing = true
+
+        this.postTimeline(this.followerUser.followerId, 4, this.currentUser.id)
+
         Toast.fire({
           icon: "success",
           title: "跟隨成功",
-        });
+        })
         this.isProcessing = false
       } catch (error) {
         this.isProcessing = false
         Toast.fire({
           icon: "error",
           title: "無法跟隨，請稍後再試",
-        });
+        })
       }
     },
     linkToUserProfile (userId) {
       this.$router.push(`/users/${userId}`)
     },
+    postTimeline(ReceiverId, type, PostId) {
+      this.$socket.emit('post_timeline', { ReceiverId, type, PostId })
+    }
   },
-};
+}
 </script>
 
 <style scoped>
