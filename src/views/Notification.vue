@@ -8,20 +8,7 @@
             <div class="main-title">通知</div>
           </div>
         </h2>
-        <!-- 下面的內容做好，Spinner再打開 -->
-
-        <!-- <Spinner v-if="isLoading"/>
-        <ul
-          v-else 
-          class="notification-list">
-          <NotificationList 
-          /> -->
-        <ul
-          class="notification-list">
-          <NotificationList 
-          />
-        </ul>
-        <!-- 上面的是暫時的，內容做好再換掉 -->
+        <NotificationList />
       </div>
     </section>
     <UsersTop />
@@ -29,15 +16,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { emptyImageFilter } from "../utils/mixins";
 import Sidebar from "./../components/Sidebar.vue"
 import UsersTop from "./../components/UsersTop.vue"
 import NotificationList from "./../components/NotificationList.vue"
-// import Spinner from './../components/Spinner'
-// import tweetsAPI from './../apis/tweets'
-// import { Toast } from './../utils/helpers'
-// import { component } from 'vue/types/umd'
 
 export default {
   mixins: [emptyImageFilter],
@@ -45,54 +27,7 @@ export default {
   components: {
     Sidebar,
     NotificationList,
-    UsersTop,
-    // Spinner
-  },
-  data() {
-    return {
-      user: {},
-      tweets: [],
-      // isProcessing: false,
-      // isLoading: true
-    }
-  }, 
-  computed: {
-    ...mapState(['currentUser'])
-  },
-  // created() {
-  //   const { offset = 0, limit = 100 } = this.$route.query
-  //   this.fetchTweets({ queryOffset: offset, queryLimit: limit })
-  // },
-  // beforeRouteUpdate (to, from, next) {
-  //   const { offset = '', limit = '' } = to.query
-  //   this.fetchTweets({ queryOffset: offset, queryLimit: limit })
-  //   next()
-  // },
-  methods: {
-    //之後串接通知
-    // async fetchTweets({ queryOffset, queryLimit }) {
-    //   try {
-        
-    //     const response = await tweetsAPI.getTweets({
-    //       offset: queryOffset,
-    //       limit: queryLimit
-    //     })
-
-    //     this.tweets = [...response.data]
-        
-    //     this.isLoading = false
-
-    //   } catch (error) {
-
-    //     this.isLoading = false
-
-    //     console.log('error', error)
-    //     Toast.fire({
-    //       icon: 'error',
-    //       title: '無法取得推文資料，請稍後再試'
-    //     })
-    //   }
-    // }
+    UsersTop
   }
 }
 </script>
