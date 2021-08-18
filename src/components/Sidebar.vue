@@ -332,19 +332,20 @@ export default {
   position: relative;
 }
 .notice {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  width: auto;
-  height: 20px;
-  padding: 0 5px;
-  font-size: 13px;
-  line-height: 20px;
-  border-radius: 20px;
-  text-align: center;
-  color: #fff;
-  background: #ff6600;
-  border: 1px solid #fff;
+    min-width: 20px;
+    position: absolute;
+    top: -8px;
+    right: -4px;
+    width: auto;
+    height: 20px;
+    padding: 0 3px;
+    font-size: 13px;
+    line-height: 18px;
+    border-radius: 20px;
+    text-align: center;
+    color: #fff;
+    background: #ff6600;
+    border: 1px solid #fff;
 }
 .logout:hover .btn-logout{
   color: #ff6600;
