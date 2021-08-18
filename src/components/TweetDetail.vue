@@ -49,7 +49,6 @@
                     <a class="name" href="">{{ tweet.Author.name }}</a>
                     <span class="account">@{{ tweet.Author.account }}</span>
                     <span class="tweet-update-at">
-                      <!-- ・{{ tweet.createdAt }} -->
                       ・{{ tweet.createdAt | exactDate }}
                       </span>
                   </div>
@@ -128,10 +127,6 @@ import $ from 'jquery'
 export default {
   mixins: [exactDateFilter,emptyImageFilter],
   props: {
-    // isCurrentUser: {
-    //   type: Boolean,
-    //   required: true
-    // },
     initialTweet: {
       type: Object,
       required: true
@@ -140,9 +135,6 @@ export default {
       type: Number,
       required: true
     }
-  },
-  components: {
-    // ReplyTweetModal
   },
   data () {
     return {
@@ -172,11 +164,17 @@ export default {
         }
         this.tweet.isLike = true
         this.tweet.likeNum = this.tweet.likeNum + 1
-        this.isProcessing = false
+
+        if (this.currentUser.id !== this.tweet.Author.id) {
+          this.postTimeline(this.tweet.Author.id, 3, data.Like.id)
+        }
+        
         Toast.fire({
           icon: "success",
           title: "加入喜歡！",
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -195,11 +193,13 @@ export default {
         }
         this.tweet.isLike = false
         this.tweet.likeNum = this.tweet.likeNum - 1
-        this.isProcessing = false
+        
         Toast.fire({
           icon: "success",
           title: "收回喜歡！",
         })
+        this.isProcessing = false
+
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -210,8 +210,6 @@ export default {
       }
     },
     async handleSubmit() {
-      console.log(this.tweetId)
-      console.log(this.comment)
       try {
         if (!this.comment.trim()) {
           Toast.fire({
@@ -222,8 +220,6 @@ export default {
         }
         this.isProcessing = true
 
-        console.log('要送去後端的的 Id:', this.tweetId)
-        console.log('要送去後端的的 comment:', this.comment)
         const { data } = await tweetsAPI.createTweetReply({
           tweetId: this.tweetId,
           comment: this.comment
@@ -234,7 +230,7 @@ export default {
         }
 
         this.$emit("after-create-comment", {
-          commentId: data.tweetId,
+          commentId: this.tweetId,
           comment: this.comment 
         })
 
@@ -242,6 +238,10 @@ export default {
         
         this.tweet.replyNum += 1
 
+        if (this.currentUser.id !== this.tweet.Author.id) {
+          this.postTimeline(this.tweet.Author.id, 2, data.Reply.id)
+        }
+        
         Toast.fire({
           icon: "success",
           title: "回覆推文成功",
@@ -258,6 +258,9 @@ export default {
           title: "無法新增推文，請稍候在試",
         });
       }
+    },
+    postTimeline(ReceiverId, type, PostId) {
+      this.$socket.emit('post_timeline', { ReceiverId, type, PostId })
     }
   }
 }

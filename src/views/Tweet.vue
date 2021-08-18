@@ -47,7 +47,6 @@ export default {
     TweetDetail,
     TweetRepliedList,
     Spinner
-
   },
   data () {
     return {
@@ -103,8 +102,7 @@ export default {
         }
 
       } catch (error) {
-        console.error(error.response)
-        // console.log('error', error)
+        console.log(error)
         Toast.fire({
           icon: 'error',
           title: '無法取得推文資料，請稍後再試'
@@ -140,8 +138,8 @@ export default {
           id: this.currentUser.id,
           account: this.currentUser.account,
           name: this.currentUser.name,
-          avatar: this.currentUser.avatar,
-        },
+          avatar: this.currentUser.avatar
+        }
       })
     }
   }
