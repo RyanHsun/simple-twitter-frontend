@@ -190,7 +190,6 @@ h1 {
   line-height: 33px;
 }
 .form-label-group {
-  border-bottom: 1px solid black;
   position: relative;
   max-width: 540px;
   max-height: 212px;
@@ -200,10 +199,10 @@ h1 {
 
 .form-control {
   background: #f5f8fa;
-  height: 50px;
-  border: 0;
+  height: 60px;
   margin-top: 20px;
   padding-top: 30px;
+  border: 1px solid #a0bed2;
 }
 
 .input-label {
