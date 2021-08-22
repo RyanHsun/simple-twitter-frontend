@@ -9,22 +9,24 @@
               <div class="main-title">訊息</div>
               <div 
                 class="add-msg-user"
-                @click="addMsgUser()">
-                <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
+                data-toggle="modal"
+                data-target="#newMessageModal"
+                @click="showModal">
+                <img src="~@/assets/img/icon_mail-add.svg" width="30px" alt="" />
               </div>
             </div>
           </h2>
           <ul
             class="private-users-list">
-            <!-- <Spinner v-if="isLoading"/> -->
+            <Spinner v-if="isLoading"/>
             <UserRooms
               v-for="user in userRooms"
               :key="user.id"
               :initialUser="user" 
-              @after-click="afterClick"
+              @after-click-user-room="afterClickUserRoom"
             />
             <li v-if="userRoomsLimit === 'limited'" class="limited">
-              已載入所有資料！
+              已載入所有聊天室！
             </li>
           </ul>
         </div>
@@ -47,20 +49,89 @@
               :initialMessageLoadMore="messageLoadMore"
               @after-post-msg="afterPostMsg"
               @after-scroll-top="afterScrollTop"
+              @after-show-user-list-modal="afterShowUserListModal"
             />
           </div>
         </div>
       </section>
     </div>
+    <!-- Button trigger modal -->
+    <div
+      v-if="isShowModal"
+      class="modal fade"
+      id="newMessageModal"
+      data-backdrop="static" 
+      data-keyboard="false" 
+      tabindex="-1"
+      aria-labelledby="newMessageModalLabel"
+      aria-hidden="true"
+    >
+      <!-- Modal -->
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+              @click="cancelModal"
+            >
+              <img src="~@/assets/img/icon_close-og.svg" alt="" />
+            </button>
+            <span>新訊息</span>
+          </div>
+          <div class="modal-body">
+            <form class="create-tweet" action="">
+              <ul class="message-users">
+                <li v-if="msgUsersFollowing.length > 0" class="following">正在跟隨的使用者</li>
+                <li 
+                  v-for="user of msgUsersFollowing" 
+                  :key="user.id" 
+                  class="message-user"
+                  @click="joinUserRoomAwait(user)">
+                  <div class="avatar">
+                    <img :src="user.avatar | emptyImage" alt="">
+                  </div>
+                  <div class="user-info">
+                    <span ref="" class="name">{{ user.name }}</span>
+                    <span class="account">@{{ user.account }}</span>
+                  </div>
+                  <button v-if="user.joinUserRoomAwait" class="btn" @click.prevent.stop="joinUserRoomConfirm(user)">開始聊天</button>
+                </li>
+                <li v-if="msgUsersUnFollowing.length > 0" class="un-following">其他未跟隨的使用者</li>
+                <li 
+                  v-for="user of msgUsersUnFollowing" 
+                  :key="user.id" 
+                  class="message-user"
+                  @click="joinUserRoomAwait(user)">
+                  <div class="avatar">
+                    <img :src="user.avatar | emptyImage" alt="">
+                  </div>
+                  <div class="user-info">
+                    <span ref="" class="name">{{ user.name }}</span>
+                    <span class="account">@{{ user.account }}</span>
+                  </div>
+                  <button v-if="user.joinUserRoomAwait" class="btn" @click.prevent.stop="joinUserRoomConfirm(user)">開始聊天</button>
+                </li>
+              </ul>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
-import { emptyImageFilter } from "../utils/mixins";
+import { emptyImageFilter } from "../utils/mixins"
+import { Toast } from "./../utils/helpers"
+import usersAPI from "../apis/users"
 import Sidebar from "./../components/Sidebar.vue"
 import UserRooms from "./../components/UserRooms.vue"
 import PrivateChatroom from "./../components/PrivateChatroom.vue"
-// import Spinner from './../components/Spinner'
+import Spinner from './../components/Spinner'
+import $ from 'jquery'
 
 export default {
   name: 'PrivateMessage',
@@ -69,33 +140,91 @@ export default {
     Sidebar,
     UserRooms,
     PrivateChatroom,
-    // Spinner
+    Spinner
   },
   data() {
     return {
       socket: null,
       userRooms: [],
-      userRoomsLimit: 15,
+      userRoomsLimit: 100,
       currentRoom: {},
       userRoomAwait: {},
       privateRoomAwait: {},
+      getPrivateRoomId: 0,
       messages: [],
       messageLoadMore: 0,
-      unseenNum: 0,
-      unreadRooms: [],
-      isLoading: true
+      msgUnseenNum: 0,
+      msgUnseenRooms: [],
+      msgUnreadRooms: [],
+      msgUsersFollowing: [],
+      msgUsersUnFollowing: [],
+      isLoading: true,
+      isShowModal: false
     }
   }, 
   computed: {
     ...mapState(['currentUser'])
   },
+  watch: {
+    privateRoomAwait() {
+      this.currentRoom = this.privateRoomAwait
+      const User1Id = this.currentUser.id
+      const User2Id = this.currentRoom.userId
+      const RoomId = this.currentRoom.id
+
+      this.joinPrivateRoom({ User1Id, User2Id, RoomId })
+      this.getPrivateHistory(RoomId, 20)
+    },
+    msgUnreadRooms() {
+      for (let i = 0; i < this.msgUnreadRooms.length; i++) {
+        this.userRooms = this.userRooms.map( user => {
+          const { id, lastMsg, roomMember, isLinked } = user
+          const unreadNum = user.roomMember.id === this.msgUnreadRooms[i].SenderId ? this.msgUnreadRooms[i].unreadNum : user.unreadNum
+          return { id, lastMsg, roomMember, isLinked, unreadNum }
+        })
+      }
+    },
+    getPrivateRoomId() {
+      this.currentRoom.id = this.getPrivateRoomId
+      this.privateRoomAwait = this.currentRoom
+      localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
+
+      this.$router.push({ name: 'message-await', params: { id: this.getPrivateRoomId } })
+
+      if (this.userRooms.length <= 0) return
+
+      const userRoomId = Number(this.$route.params.id)
+      const checkPastMsg = this.userRooms.every( user => {
+        return user.id !== userRoomId
+      })
+      if (checkPastMsg && userRoomId) {
+        this.handleUserRoomAwait('立即開啟對話吧 ▸')
+        this.userRooms.unshift(this.userRoomAwait)
+      }
+
+      this.userRooms = this.userRooms.map((user) => {
+        if(user.id === this.currentRoom.id) {
+          user.isLinked = true
+        } else {
+          user.isLinked = false
+        }
+        return user
+      })
+    }
+  },
+  created() {
+    this.joinPrivatePage(this.currentUser.id)
+    this.catchUserRoomId()
+    this.msgUnseenNum = localStorage.getItem('msgUnseenNum')
+    this.fetchMsgUsers(this.currentUser.id) 
+  },
   sockets: {
     join_private_room(RoomId) {
-      console.log('加入的聊天室 RoomId：', RoomId)
+      this.getPrivateRoomId = RoomId
     },
     get_msg_notice_details({ unseenRooms, unreadRooms }) {
-      console.log('聊天室未看未讀數量：', unseenRooms, unreadRooms)
-      this.unreadRooms = unreadRooms
+      this.msgUnseenRooms = unseenRooms
+      this.msgUnreadRooms = unreadRooms
     },
     update_msg_notice_details(data) {
       this.messageNotice = data
@@ -120,42 +249,13 @@ export default {
       })
     }
   },
-  watch: {
-
-    privateRoomAwait() {
-      this.currentRoom = this.privateRoomAwait
-      const User1Id = this.currentUser.id
-      const User2Id = this.currentRoom.userId
-      const RoomId = this.currentRoom.id
-
-      this.join_private_room({ User1Id, User2Id, RoomId })
-      this.get_private_history(RoomId, 20)
-    },
-    unreadRooms() {
-      for (let i = 0; i < this.unreadRooms.length; i++) {
-        this.userRooms = this.userRooms.map( user => {
-          const { id, lastMsg, roomMember, isLinked } = user
-          const unreadNum = user.roomMember.id === this.unreadRooms[i].SenderId ? this.unreadRooms[i].unreadNum : user.unreadNum
-          return { id, lastMsg, roomMember, isLinked, unreadNum }
-        })
-      }
-    }
-  },
-  created() {
-    this.join_private_page(this.currentUser.id)
-    this.catchRoomUserId()
-    this.unseenNum = localStorage.getItem('unseenNum')  
-  },
-  updated() {
-    this.$socket.on('join_private_room')
-  },
   methods: {
-    join_private_page(userId) { 
+    joinPrivatePage(userId) { 
       this.$socket.emit('join_private_page', { userId })
       localStorage.removeItem('msgUnseenNum')
-      this.get_private_rooms(0, this.userRoomsLimit)
+      this.getPrivateRooms(0, this.userRoomsLimit)
     },
-    get_private_rooms(offset, limit) {
+    getPrivateRooms(offset, limit) {
       this.$socket.emit('get_private_rooms', {
         offset,
         limit
@@ -166,41 +266,40 @@ export default {
             return { id, lastMsg, roomMember, isLinked }
           })
           
-          const roomUserId = Number(this.$route.params.id)
+          const userRoomId = Number(this.$route.params.id)
           const checkPastMsg = this.userRooms.every( user => {
-            return user.id !== roomUserId
+            return user.id !== userRoomId
           })
-          if (checkPastMsg && roomUserId) {
+          if (checkPastMsg && userRoomId) {
             this.handleUserRoomAwait('立即開啟對話吧 ▸')
             this.userRooms.unshift(this.userRoomAwait)
           }
 
-          if (this.unreadRooms.length > 0) {
-            for (let i = 0; i < this.unreadRooms.length; i++) {
+          if (this.msgUnreadRooms.length > 0) {
+            for (let i = 0; i < this.msgUnreadRooms.length; i++) {
               this.userRooms = this.userRooms.map( user => {
                 const { id, lastMsg, roomMember, isLinked } = user
-                const unreadNum = user.roomMember.id === this.unreadRooms[i].SenderId ? this.unreadRooms[i].unreadNum : user.unreadNum
+                const unreadNum = user.roomMember.id === this.msgUnreadRooms[i].SenderId ? this.msgUnreadRooms[i].unreadNum : user.unreadNum
                 return { id, lastMsg, roomMember, isLinked, unreadNum }
               })
             }
           }
+          this.isLoading = false
         }
       )
     },
-    join_private_room({ User1Id, User2Id, RoomId }) { 
+    joinPrivateRoom({ User1Id, User2Id, RoomId }) { 
       this.$socket.emit('join_private_room', { User1Id, User2Id, RoomId })
     },
-    addMsgUser() {
-      console.log('跳窗顯示所有使用者')
-    },
-    afterClick(user) {
+    afterClickUserRoom(user) {
       this.userRoomAwait = {}
 
       this.currentRoom = {
         id: user.id,
         userId: user.roomMember.id,
         name: user.roomMember.name,
-        account: user.roomMember.account
+        account: user.roomMember.account,
+        avatar: user.roomMember.avatar
       }
       this.userRooms = this.userRooms.map((user) => {
         if(user.id === this.currentRoom.id) {
@@ -216,7 +315,7 @@ export default {
       localStorage.setItem('privateRoomAwait', JSON.stringify(this.privateRoomAwait))
       this.$router.push({ name: 'message-await', params: { id: this.currentRoom.id } })
     },
-    get_private_history(roomId, limit) { 
+    getPrivateHistory(roomId, limit) { 
       this.$socket.emit('get_private_history', {
         offset: 0,
         limit: limit,
@@ -233,12 +332,12 @@ export default {
         this.isLoading = false
       })
     },
-    catchRoomUserId () {
-      const roomUserId = this.$route.params.id
-      if (!roomUserId) return
+    catchUserRoomId() {
+      const userRoomId = this.$route.params.id
+      if (!userRoomId) return
       this.privateRoomAwait = JSON.parse(localStorage.getItem('privateRoomAwait'))
     },
-    afterPostMsg (content) {
+    afterPostMsg(content) {
       this.userRooms = this.userRooms.map((user) => {
         if(user.id === this.currentRoom.id) {
           user.lastMsg.fromRoomMember = false
@@ -275,16 +374,113 @@ export default {
       if (this.userRooms.length >= this.userRoomsLimit) {
         const offset = 0
         const limit = this.userRooms.length + 5
-        this.get_private_rooms(offset, limit)
+        this.getPrivateRooms(offset, limit)
         this.userRoomsLimit = limit
       } else {
         this.userRoomsLimit = 'limited'
       }
     },
     afterScrollTop(limit) {
-      this.get_private_history(this.currentRoom.id, limit)
+      this.getPrivateHistory(this.currentRoom.id, limit)
       this.messageLoadMore = limit
-    } 
+    },
+    async fetchMsgUsers(userId) {
+      try {
+        const responseGetFollowingUsers = await usersAPI.getFollowings({ 
+          userId,
+          offset: 0,
+          limit: 50
+        })
+        this.msgUsersFollowing = [ ...responseGetFollowingUsers.data ].map( user => {
+          const { following } = user
+          const msgUser = {
+            id: following.id,
+            account: following.account,
+            name: following.name,
+            avatar: following.avatar,
+            joinUserRoomAwait: false
+          }
+          return msgUser
+        })
+
+        const responseGetOtherUsers = await usersAPI.getTopUsers({
+          offset: 0,
+          limit: 50
+        })
+        this.msgUsersUnFollowing = [...responseGetOtherUsers.data]
+
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "無法取得使用者清單，請稍後再試",
+        })
+      }
+    },
+    joinUserRoomAwait(msgUser) {
+      this.msgUsersFollowing = this.msgUsersFollowing.map( user => {
+        if(user.id === msgUser.id) {
+          user.joinUserRoomAwait = true
+        } else {
+          user.joinUserRoomAwait = false
+        }
+        return user
+      })
+      this.msgUsersUnFollowing = this.msgUsersUnFollowing.map( user => {
+        if(user.id === msgUser.id) {
+          user.joinUserRoomAwait = true
+        } else {
+          user.joinUserRoomAwait = false
+        }
+        return user
+      })
+    },
+    joinUserRoomConfirm(user) {
+      this.userRoomAwait = {}
+      this.currentRoom = {
+        id: null,
+        userId: user.id,
+        name: user.name,
+        account: user.account,
+        avatar: user.avatar
+      }
+      
+      const User1Id = this.currentUser.id
+      const User2Id = user.id
+      const RoomId = null
+
+      this.$socket.emit('join_private_room', { User1Id, User2Id, RoomId })
+
+      this.joinUserRoomAwaitToFalse()
+      $(`#newMessageModal`).modal("hide")
+    },
+    joinUserRoomAwaitToFalse() {
+      this.msgUsersFollowing = this.msgUsersFollowing.map( user => {
+        const { id, account, name, avatar } = user
+        const joinUserRoomAwait = false
+        return { id, account, name, avatar, joinUserRoomAwait }
+      })
+      this.msgUsersUnFollowing = this.msgUsersUnFollowing.map( user => {
+        const { id, account, name, avatar } = user
+        const joinUserRoomAwait = false
+        return { id, account, name, avatar, joinUserRoomAwait }
+      })
+    },
+    afterShowUserListModal() {
+      this.showModal()
+    },
+    showModal() {
+      this.isShowModal = true
+    },
+    cancelModal() {
+      this.joinUserRoomAwaitToFalse()
+      this.isShowModal = false
+    },
+    leavePrivatePage() {
+      this.$socket.emit('leave_private_page')
+    },
+  },
+  beforeDestroy () {
+    this.leavePrivatePage()
   }
 }
 </script>
@@ -374,6 +570,63 @@ export default {
 .private-users-list li.limited {
   margin: 20px;
   color: #ccc;
+}
+.modal-content {
+  overflow: hidden;
+}
+.modal-header {
+  justify-content: flex-start;
+  font-size: 18px;
+  font-weight: bold;
+}
+.modal-header span {
+  margin-left: 20px;
+}
+.close {
+  margin: 0;
+  padding: 0;
+  opacity: 1;
+}
+.modal-body {
+  padding: 0;
+}
+.message-users {
+  overflow-y: scroll;
+  height: 80vh;
+  max-height: 800px;
+  margin-bottom: 0;
+}
+.message-users li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  width: 100%;
+  border-bottom: 1px solid #e6ecf0;
+}
+.message-users li:last-child {
+  border-bottom: none;
+}
+.message-user:hover {
+  background-color: #f5f8fa;
+  cursor: pointer;
+}
+.message-users li .user-info * {
+  display: block;
+  text-align: left;
+}
+.message-users .btn {
+  position: absolute;
+  right: 15px;
+  color: #fff;
+  background-color: #ff6600;
+}
+.message-users .following,
+.message-users .un-following {
+  font-weight: bold;
+}
+.message-users .un-following  {
+  border-top: 9px solid #dce2e6;
 }
 @media (max-width: 992px) {
   .container {

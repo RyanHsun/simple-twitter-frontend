@@ -159,7 +159,6 @@ export default {
       }
     },
     async deleteLike(tweetId) {
-      console.log(tweetId)
       try {
         this.isProcessing = true
         const { data } = await tweetsAPI.deleteLike({ tweetId })

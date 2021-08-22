@@ -43,7 +43,9 @@ export default {
 .notification {
   position: relative;
   margin-top: 50px;
-  border: 1px solid #e6ecf0;
+  border-width: 0 1px;
+  border-style: solid;
+  border-color: #e6ecf0;
 }
 .notification-wrap {
   overflow-y: scroll;
@@ -117,5 +119,17 @@ export default {
   border-width: 0 1px;
   border-style: solid;
   border-color: #e6ecf0;
+}
+@media (max-width: 992px) {
+  .container {
+    grid-template-columns: 25% auto;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    grid-template-columns: 13% auto;
+  }
 }
 </style>

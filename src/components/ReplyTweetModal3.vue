@@ -80,9 +80,6 @@ export default {
   },
   methods: {
     async handleSubmit(like) {
-      console.log(like.TweetId)
-      console.log(like.LikedTweet.likeNum)
-      console.log(this.comment)
       try {
         if (!this.comment.trim()) {
           Toast.fire({
@@ -93,8 +90,6 @@ export default {
         }
         this.isProcessing = true
 
-        console.log('要送去後端的的 Id:', like.TweetId)
-        console.log('要送去後端的的 comment:', this.comment)
         const { data } = await tweetsAPI.createTweetReply({
           tweetId: like.TweetId,
           comment: this.comment

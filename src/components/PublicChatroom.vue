@@ -13,7 +13,6 @@
         <span class="loading"></span><span>正在載入訊息...</span>
       </div>
       <div v-for="msg in messages" :key="msg.id" class="" >
-        <!-- 自己的訊息 -->
         <div 
           v-if="msg.isSelf"
           class="self msg" >
@@ -22,7 +21,6 @@
           </p>
           <span>{{ msg.createdAt | fromNow }}</span>
         </div>
-        <!-- 別人的訊息 -->
         <div 
           v-else
           class="other msg">
@@ -48,14 +46,13 @@
         placeholder="請輸入訊息 ..."
         type="text"
         maxlength="160"
-        @keypress.enter="post_public_msg"
+        @keypress.enter="postPublicMsg"
       >
       <button 
         class="send-btn"
         type="button"
-        @click.stop.prevent="post_public_msg"
+        @click.stop.prevent="postPublicMsg"
       >
-        <!-- 送出 -->
         <img src="~@/assets/img/icon_send.svg" alt="">
       </button>
     </div>
@@ -76,6 +73,7 @@ export default {
   },
   data () {
     return {
+      socket: null,
       text: '',
       memberNum: 0, 
       messages: {
@@ -85,67 +83,33 @@ export default {
       },
       loadMoreLimit: 20,
       showLoadMore: false,
-      socket: null,
-      isSelf: false,
       isLoading: true
     }
   },
   computed: {
     ...mapState(['currentUser'])
   },
-  sockets: {
-    connect: function() {
-      console.log("連線成功")
-    },
-    disconnect(){
-      console.log("斷開連線");
-    },
-    reconnect(){
-      console.log("重新連線");
-    },
-    new_join({name}) {
-      console.log(`${name} 加入聊天室`)
-      this.post_online_inform(name)
-    },
-    online_users(data) {
-      this.memberNum = data.users.length
-      // console.log('上線使用者：', this.memberNum)
-    },
-    get_public_msg(data) {
-      // console.log(`發的訊息：`, data)
-      this.messages.push(data)
-    },
-    user_leave({name}) {
-      console.log(`${name} 離開聊天室`)
-      this.post_offline_inform(name)
-    }
-  },
   created () {
     const userId = this.currentUser.id
-    // const name = this.currentUser.name
-    this.join_public_room(userId)
-    this.get_public_history(20) 
-    // this.$socket.on('new_join')
+    this.joinPublicRoom(userId)
+    this.getPublicHistory(20) 
   },
   updated () {
     if (this.loadMoreLimit === 20) {
       this.updateScroll(this.$refs.messages.scrollHeight)
     }
-    // this.$socket.on('user_leave')
   },
   watch: {
     isPostMsg (value) {
       if (value) {
         setTimeout(() => { 
           this.text = ''
-          console.log('setTimeout!')
         }, 500)
       }
     },
     text (value) {
       if (value === '' && this.isPostMsg) {
         this.updateScroll(this.$refs.messages.scrollHeight)
-        console.log('發送訊息回到底部')
         this.isPostMsg = false
       }
     },
@@ -164,14 +128,25 @@ export default {
       }
     }
   },
-  methods: {
-    // 1. 通知伺服器加入聊天室
-    join_public_room(userId) { 
-      this.$socket.emit('join_public_room', { userId })
-      // console.log('加入聊天室：', userId)
+  sockets: {
+    new_join({name}) {
+      this.postOnlineInform(name)
     },
-    // 2. 抓取歷史訊息
-    get_public_history(limit) { 
+    online_users(data) {
+      this.memberNum = data.users.length
+    },
+    get_public_msg(data) {
+      this.messages.push(data)
+    },
+    user_leave({name}) {
+      this.postOfflineInform(name)
+    }
+  },
+  methods: {
+    joinPublicRoom(userId) { 
+      this.$socket.emit('join_public_room', { userId })
+    },
+    getPublicHistory(limit) { 
       this.$socket.emit('get_public_history', {
         offset: 0,
         limit: limit
@@ -185,12 +160,9 @@ export default {
           return { UserId, avatar, content, createdAt, isSelf }
         })
         this.isLoading = false
-        // console.log('歷史訊息：', this.messages)  
-        // this.messages.push( data )
       })
     },
-    // 3. 點擊按鈕送出自己的訊息
-    post_public_msg () { 
+    postPublicMsg() { 
       if (!this.text.length) {
         Toast.fire({
           icon: 'warning',
@@ -221,25 +193,21 @@ export default {
         icon: 'success',
         title: '訊息發送成功'
       })
-      // console.log(data)
     },
-    post_online_inform (name) {
-      // this.onlineInform = name
+    postOnlineInform(name) {
       Toast.fire({
           icon: 'info',
           title: `${name} 加入聊天室`,
         })
     },
-    post_offline_inform (name) {
+    postOfflineInform(name) {
       Toast.fire({
           icon: 'info',
           title: `${name} 離開聊天室`
         })
     },
-    // 4. 離開聊天室
-    leave_public_room(userId) {
+    leavePublicRoom(userId) {
       this.$socket.emit('leave_public_room', { userId })
-      // console.log(`使用者${userId} 離開聊天室`)
     },
     updateScroll(heightPoint) {
       this.$refs.messages.scrollTop = heightPoint
@@ -254,27 +222,21 @@ export default {
     },
     loadMore() {
       if (this.messages.length >= this.loadMoreLimit) {
-        // console.log('到頂部了！')
         this.showLoadMore = true
 
-        // const offset = 0
         const limit = this.messages.length + 5
         setTimeout(() => { 
-          this.get_public_history(limit)
+          this.getPublicHistory(limit)
           this.loadMoreLimit = limit
         }, 2000)
         
       } else if (this.loadMoreLimit - this.messages.length <= 5){
-        console.log('this.messages.length', this.messages.length)
-        console.log('this.loadMoreLimit', this.loadMoreLimit)
         this.loadMoreLimit = 'limited'
-        // console.log('已載入所有資料！')
       }
     },
   },
   beforeDestroy () {
-    const userId = this.currentUser.id
-    this.leave_public_room(userId)
+    this.leavePublicRoom(this.currentUser.id)
   }
 }
 </script>
@@ -319,7 +281,6 @@ export default {
   max-width: 400px;
   padding: 15px 20px;
   margin-bottom: 0;
-  font-size: 20px;
 }
 .msg span {
   font-size: 13px;

@@ -202,9 +202,7 @@ export default {
 
         const form = e.target
         const formData = new FormData(form)
-        // for (let [name, value] of formData.entries()) {
-        //   console.log(name + ': ' + value)
-        // }
+
         this.isProcessing = true
 
         const { data } = await usersAPI.updateUser({
@@ -281,7 +279,6 @@ form {
   padding: 30px 20px;
 }
 .form-label-group {
-  border-bottom: 1px solid black;
   position: relative;
   max-width: 540px;
   max-height: 212px;
@@ -290,9 +287,10 @@ form {
 
 .form-control {
   background: #f5f8fa;
-  border: 0;
-  height: 50px;
+  height: 60px;
+  margin-top: 20px;
   padding-top: 30px;
+  border: 1px solid #a0bed2;
 }
 
 .input-label {

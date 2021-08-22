@@ -227,14 +227,13 @@ export default {
   },
   sockets: {
     update_timeline_notice_detail(data) {
-      console.log('update_timeline_notice_detail', data)
+      // console.log('update_timeline_notice_detail', data)
       this.notificationNewest.unshift(data)
     }
   },
   methods: {
      join_timeline_page(timestamp) {
       this.$socket.emit('join_timeline_page', { timestamp })
-      console.log('進入通知頁面：', timestamp)
       localStorage.removeItem('notiUnseenNum')
     },
     leave_timeline_page() {
@@ -246,7 +245,6 @@ export default {
         data => {
           this.notificationList = data.Seen
           this.notificationNewest = data.Unseen
-          console.log('接收通知資料', data)
           this.isLoading = false
         }
       )

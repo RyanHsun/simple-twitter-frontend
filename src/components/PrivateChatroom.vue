@@ -5,13 +5,18 @@
     ref="messages" 
     @scroll="handleScroll($event)"
     >
-    <!-- <Spinner v-if="isLoading"/> -->
     <div
       v-if="!initialCurrentRoom.name"
       class="privateroom-await">
       <p>你未選取訊息</p>
       <span>從你現有的訊息中選擇一則，或開始一則新訊息。</span>
-      <button class="btn">新訊息</button>
+      <button 
+        class="btn" 
+        @click="showUserListModal" 
+        data-toggle="modal" 
+        data-target="#newMessageModal">
+        新訊息
+      </button>
     </div>
     <div 
       v-if="initialCurrentRoom.name"
@@ -44,9 +49,6 @@
             <span>{{ msg.createdAt | fromNow }}</span>
           </div>
         </div> 
-        <!-- <div class="use-join" v-if="msg.role === 'join'">
-          某某某 上線了
-        </div> -->
       </div>
     </div>
     <div class="d-flex justify-content-center align-items-center send-wrap">
@@ -56,14 +58,13 @@
           placeholder="請輸入訊息 ..."
           type="text"
           maxlength="160"
-          @keypress.enter="post_private_msg"
+          @keypress.enter="postPrivateMsg"
         >
         <button 
           class="send-btn"
           type="button"
-          @click.stop.prevent="post_private_msg"
+          @click.stop.prevent="postPrivateMsg"
         >
-          <!-- 送出 -->
           <img src="~@/assets/img/icon_send.svg" alt="">
         </button>
       </template>
@@ -75,14 +76,10 @@ import { mapState } from 'vuex'
 import { Toast } from './../utils/helpers'
 import { emptyImageFilter } from "../utils/mixins"
 import { fromNowFilter } from './../utils/mixins'
-// import Spinner from './../components/Spinner'
 
 export default {
   name: 'PrivateChatroom',
   mixins: [fromNowFilter,emptyImageFilter],
-  components: {
-    // Spinner
-  },
   props: {
     initialCurrentRoom: {
       type: Object,
@@ -99,65 +96,41 @@ export default {
   },
   data () {
     return {
+      socket: null,
+      privateRoom: {},
       text: '',
       memberNum: 0, 
       messages: [],
       loadMoreLimit: 20,
       showLoadMore: false,
-      socket: null,
       isSelf: false,
       isLoading: true,
-      privateRoom: {},
       isPostMsg: false
     }
   },
   computed: {
     ...mapState(['currentUser'])
   },
-  sockets: {
-    connect: function() {
-      console.log("連線成功")
-    },
-    disconnect(){
-      console.log("斷開連線");
-    },
-    reconnect(){
-      console.log("重新連線");
-    },
-    get_private_msg(data) {
-      this.messages.push(data)
-    }
-  },
-  created () {
-    // this.updateScroll()
-  },
-  updated () {
-    if (this.loadMoreLimit === 20) {
-      this.updateScroll(this.$refs.messages.scrollHeight)
-    }
-  },
   watch: {
-    initialCurrentRoom () {
+    initialCurrentRoom() {
       this.privateRoom = this.initialCurrentRoom
     },
-    initialMessages () {
+    initialMessages() {
       this.messages = this.initialMessages
     },
     initialMessageLoadMore () {
       this.loadMoreLimit = this.initialMessageLoadMore
     },
-    isPostMsg (value) {
+    isPostMsg(value) {
       if (value) {
         setTimeout(() => { 
           this.text = ''
-          console.log('setTimeout!')
         }, 500)
       }
     },
-    text (value) {
+    text(value) {
       if (value === '' && this.isPostMsg) {
         this.updateScroll(this.$refs.messages.scrollHeight)
-        console.log('發送訊息回到底部')
         this.isPostMsg = false
       }
     },
@@ -168,7 +141,7 @@ export default {
         }, 3000)
       } 
     },
-    showLoadMore (value) {
+    showLoadMore(value) {
       if (value) {
         setTimeout(() => { 
           this.showLoadMore = false
@@ -176,9 +149,18 @@ export default {
       }
     }
   },
+  updated () {
+    if (this.loadMoreLimit === 20) {
+      this.updateScroll(this.$refs.messages.scrollHeight)
+    }
+  },
+  sockets: {
+    get_private_msg(data) {
+      this.messages.push(data)
+    }
+  },
   methods: {
-    // 點擊按鈕送出自己的訊息
-    post_private_msg () { 
+    postPrivateMsg() { 
       if (!this.text.length) {
         Toast.fire({
           icon: 'warning',
@@ -219,10 +201,8 @@ export default {
     },
     loadMore() {
       if (this.messages.length >= this.loadMoreLimit) {
-        // console.log('到頂部了！')
         this.showLoadMore = true
 
-        // const offset = 0
         const limit = this.messages.length + 5
         setTimeout(() => { 
           this.$emit('after-scroll-top', limit)
@@ -230,19 +210,12 @@ export default {
         }, 2000)
         
       } else if (this.loadMoreLimit - this.messages.length <= 5){
-        console.log('this.messages.length', this.messages.length)
-        console.log('this.loadMoreLimit', this.loadMoreLimit)
         this.loadMoreLimit = 'limited'
-        // console.log('已載入所有資料！')
       }
     },
-    // 離開聊天室
-    leave_private_page() {
-      this.$socket.emit('leave_private_page')
-    },
-  },
-  beforeDestroy () {
-    this.leave_private_page()
+    showUserListModal() {
+      this.$emit('after-show-user-list-modal')
+    }
   }
 }
 </script>
@@ -406,6 +379,9 @@ input {
   .msg p {
     max-width: 180px;
     font-size: 14px;
+  }
+  .privateroom-await span {
+    max-width: 250px;
   }
 }
 </style>

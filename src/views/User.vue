@@ -205,7 +205,11 @@ export default {
     },
     async fetchUserTweets (userId) {
       try {
-        const { data } = await usersAPI.getUserTweets({ userId })
+        const { data } = await usersAPI.getUserTweets({ 
+          userId,
+          offset: 0,
+          limit: 100
+        })
 
         if (data.status === 'error') {
           throw new Error(data.message)
@@ -225,7 +229,11 @@ export default {
     },
     async fetchUserRepliedTweets (userId) {
       try {
-        const { data } = await usersAPI.getUserRepliedTweets({ userId })
+        const { data } = await usersAPI.getUserRepliedTweets({ 
+          userId,
+          offset: 0,
+          limit: 100
+        })
 
         if (data.status === 'error') {
           throw new Error(data.message)
@@ -243,7 +251,11 @@ export default {
     },
     async fetchUserLikes (userId) {
       try {
-        const { data } = await usersAPI.getUserLikes({ userId })
+        const { data } = await usersAPI.getUserLikes({ 
+          userId,
+          offset: 0,
+          limit: 100
+        })
 
         if (data.status === 'error') {
           throw new Error(data.message)

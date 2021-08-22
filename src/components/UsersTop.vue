@@ -175,7 +175,6 @@ export default {
       }
     },
     showMoreUser () {
-      console.log('MORE')
       this.fetchTopUsers(0, 10)
       this.showMore = false
     },

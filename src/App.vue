@@ -29,7 +29,8 @@ body {
 .admin-tweets-wrap::-webkit-scrollbar,
 .chat-wrap::-webkit-scrollbar,
 .private-users-wrap::-webkit-scrollbar,
-.notification-wrap::-webkit-scrollbar {
+.notification-wrap::-webkit-scrollbar,
+.message-users::-webkit-scrollbar {
   display: none;
 }
 .tweets-wrap,
@@ -40,7 +41,8 @@ body {
 .admin-tweets-wrap,
 .chat-wrap,
 .private-users-wrap,
-.notification-wrap {
+.notification-wrap,
+.message-users {
   scrollbar-width: none; /* Newer Firefox and not confirmed */
   overflow: -moz-scrollbars-none; /* Older Firefox*/
 }
