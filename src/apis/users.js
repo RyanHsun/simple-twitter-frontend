@@ -10,20 +10,25 @@ export default {
   updateUser ({ userId, formData }) {
     return apiHelper.put(`/users/${userId}`, formData)
   },
-  getUserTweets ({ userId }) {
-    return apiHelper.get(`/users/${userId}/tweets`)
+  getUserTweets ({ userId, offset, limit }) {
+    const searchParams = new URLSearchParams({ offset, limit })
+    return apiHelper.get(`/users/${userId}/tweets?${searchParams.toString()}`)
   },
-  getUserRepliedTweets ({ userId }) {
-    return apiHelper.get(`/users/${userId}/replied_tweets`)
+  getUserRepliedTweets ({ userId, offset, limit }) {
+    const searchParams = new URLSearchParams({ offset, limit })
+    return apiHelper.get(`/users/${userId}/replied_tweets?${searchParams.toString()}`)
   },
-  getUserLikes ({ userId }) {
-    return apiHelper.get(`/users/${userId}/likes`)
+  getUserLikes ({ userId, offset, limit }) {
+    const searchParams = new URLSearchParams({ offset, limit })
+    return apiHelper.get(`/users/${userId}/likes?${searchParams.toString()}`)
   },
-  getFollowings ({ userId }) {
-    return apiHelper.get(`/users/${userId}/followings`)
+  getFollowings ({ userId, offset, limit }) {
+    const searchParams = new URLSearchParams({ offset, limit })
+    return apiHelper.get(`/users/${userId}/followings?${searchParams.toString()}`)
   },
-  getFollowers ({ userId }) {
-    return apiHelper.get(`/users/${userId}/followers`)
+  getFollowers ({ userId, offset, limit }) {
+    const searchParams = new URLSearchParams({ offset, limit })
+    return apiHelper.get(`/users/${userId}/followers?${searchParams.toString()}`)
   },
   addFollowing ({ id }) {
     return apiHelper.post('/followships', { id })

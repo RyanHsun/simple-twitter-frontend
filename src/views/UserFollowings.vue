@@ -36,12 +36,12 @@
 </template>
 
 <script>
-import Headbar from "../components/Headbar.vue";
-import Sidebar from "../components/Sidebar.vue";
-import UsersTop from "../components/UsersTop.vue";
-import UserFollowingsCard from "../components/UserFollowingsCard.vue";
-import usersAPI from "../apis/users";
-import { Toast } from "./../utils/helpers";
+import Headbar from "../components/Headbar.vue"
+import Sidebar from "../components/Sidebar.vue"
+import UsersTop from "../components/UsersTop.vue"
+import UserFollowingsCard from "../components/UserFollowingsCard.vue"
+import usersAPI from "../apis/users"
+import { Toast } from "./../utils/helpers"
 
 export default {
   components: {
@@ -69,12 +69,13 @@ export default {
       },
       followingUsers: []
       
-    };
+    }
   },
   created() {
-    const { id: userId } = this.$route.params;
+    const { id: userId } = this.$route.params
     this.fetchUser(userId)
-    this.fetchFollowingusers(userId);
+    
+    this.fetchFollowingusers(userId)
   },
     beforeRouteUpdate (to, from, next) {
     const { id: userId } = to.params
@@ -119,26 +120,30 @@ export default {
         }
 
       } catch (error) {
-        console.log(error);
+        console.log(error)
         Toast.fire({
           icon: "error",
           title: "無法取得使用者資料，請稍後再試",
-        });
+        })
       }
     },
     async fetchFollowingusers(userId) {
       try {
-        const response = await usersAPI.getFollowings({ userId });
-        this.followingUsers = { ...response.data };
+        const response = await usersAPI.getFollowings({ 
+          userId,
+          offset: 0,
+          limit: 100
+        })
+        this.followingUsers = { ...response.data }
       } catch (error) {
         Toast.fire({
           icon: "warning",
           title: "無法取得正在跟隨清單，請稍後再試",
-        });
+        })
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>

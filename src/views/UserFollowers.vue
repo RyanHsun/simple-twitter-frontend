@@ -36,12 +36,12 @@
 </template>
 
 <script>
-import Headbar from "../components/Headbar.vue";
-import Sidebar from "../components/Sidebar.vue";
-import UsersTop from "../components/UsersTop.vue";
-import UserFollowersCard from "../components/UserFollowersCard.vue";
-import usersAPI from "../apis/users";
-import { Toast } from "./../utils/helpers";
+import Headbar from "../components/Headbar.vue"
+import Sidebar from "../components/Sidebar.vue"
+import UsersTop from "../components/UsersTop.vue"
+import UserFollowersCard from "../components/UserFollowersCard.vue"
+import usersAPI from "../apis/users"
+import { Toast } from "./../utils/helpers"
 
 export default {
   components: {
@@ -68,17 +68,17 @@ export default {
         isFollowing: false,
       },
       followerUsers: []
-    };
+    }
   },
   created() {
-    const { id: userId } = this.$route.params;
-    this.fetchUser(userId);
-    this.fetchFollowerusers(userId);
+    const { id: userId } = this.$route.params
+    this.fetchUser(userId)
+    this.fetchFollowerusers(userId)
   },
   methods: {
     async fetchUser(userId) {
       try {
-        const { data } = await usersAPI.getUser({ userId });
+        const { data } = await usersAPI.getUser({ userId })
         const {
           id,
           account,
@@ -93,7 +93,7 @@ export default {
           followerNum,
           lastLoginAt,
           isFollowing,
-        } = data;
+        } = data
         this.user = {
           id,
           account,
@@ -108,28 +108,32 @@ export default {
           followerNum,
           lastLoginAt,
           isFollowing,
-        };
+        }
       } catch (error) {
-        console.log(error);
+        console.log(error)
         Toast.fire({
           icon: "error",
           title: "無法取得使用者資料，請稍後再試",
-        });
+        })
       }
     },
     async fetchFollowerusers(userId) {
       try {
-        const response = await usersAPI.getFollowers({ userId });
-        this.followerUsers = { ...response.data };
+        const response = await usersAPI.getFollowers({ 
+          userId,
+          offset: 0,
+          limit: 100
+        })
+        this.followerUsers = { ...response.data }
       } catch (error) {
         Toast.fire({
           icon: "warning",
           title: "無法取得跟隨清單，請稍後再試",
-        });
+        })
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>
