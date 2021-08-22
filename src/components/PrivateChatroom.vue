@@ -58,12 +58,12 @@
           placeholder="請輸入訊息 ..."
           type="text"
           maxlength="160"
-          @keypress.enter="post_private_msg"
+          @keypress.enter="postPrivateMsg"
         >
         <button 
           class="send-btn"
           type="button"
-          @click.stop.prevent="post_private_msg"
+          @click.stop.prevent="postPrivateMsg"
         >
           <img src="~@/assets/img/icon_send.svg" alt="">
         </button>
@@ -111,16 +111,6 @@ export default {
   computed: {
     ...mapState(['currentUser'])
   },
-  sockets: {
-    get_private_msg(data) {
-      this.messages.push(data)
-    }
-  },
-  updated () {
-    if (this.loadMoreLimit === 20) {
-      this.updateScroll(this.$refs.messages.scrollHeight)
-    }
-  },
   watch: {
     initialCurrentRoom() {
       this.privateRoom = this.initialCurrentRoom
@@ -159,8 +149,18 @@ export default {
       }
     }
   },
+  updated () {
+    if (this.loadMoreLimit === 20) {
+      this.updateScroll(this.$refs.messages.scrollHeight)
+    }
+  },
+  sockets: {
+    get_private_msg(data) {
+      this.messages.push(data)
+    }
+  },
   methods: {
-    post_private_msg() { 
+    postPrivateMsg() { 
       if (!this.text.length) {
         Toast.fire({
           icon: 'warning',
@@ -202,7 +202,7 @@ export default {
     loadMore() {
       if (this.messages.length >= this.loadMoreLimit) {
         this.showLoadMore = true
-        // const offset = 0
+
         const limit = this.messages.length + 5
         setTimeout(() => { 
           this.$emit('after-scroll-top', limit)
@@ -210,8 +210,6 @@ export default {
         }, 2000)
         
       } else if (this.loadMoreLimit - this.messages.length <= 5){
-        // console.log('this.messages.length', this.messages.length)
-        // console.log('this.loadMoreLimit', this.loadMoreLimit)
         this.loadMoreLimit = 'limited'
       }
     },

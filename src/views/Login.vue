@@ -52,13 +52,9 @@
           <router-link class="login-text" to="/admin/login">後台登入</router-link>
         </p>
       </div>
-
     </form>
   </div>
 </template>
-
-
-
 <script>
 import authorizationAPI from './../apis/authorization'
 import { Toast } from './../utils/helpers'
@@ -74,7 +70,7 @@ export default {
     }
   },
   created() {
-    this.socketClose()
+    // this.socketClose()
   },
   sockets: {
     connect: function() {
@@ -88,10 +84,9 @@ export default {
     },
   },
   methods: {
-    socketClose () {
-      if (!this.$socket.on('disconnect')) return
-      console.log('刪掉！')
-    },
+    // socketClose () {
+    //   if (!this.$socket.on('disconnect')) return
+    // },
     async handleSubmit () {
       try {
         if (!this.email || !this.password) {
@@ -122,12 +117,9 @@ export default {
         
         this.$router.push('/tweets')
 
-        // this.$router.go(0)
-
         Vue.use(new VueSocketIo({
           // debug: true,
           connection: 'https://twitter-project-2021.herokuapp.com/',
-          // connection: 'https://f87a57ad20a3.ngrok.io',
           options: {
             query: {
               auth: token
@@ -137,52 +129,32 @@ export default {
         }))
 
       } catch (error) {
-        console.log('error',error.response.data.message)
         this.isProcessing = false
         if(error.response.data.message === "This user doesn't exist.") {
           this.email = ''
           this.password = ''
           Toast.fire({
-          icon: 'warning',
-          title: '沒有這個帳戶'
-        })
+            icon: 'warning',
+            title: '沒有這個帳戶'
+          })
         } else if (error.response.data.message === "Password incorrect."){
           this.password = ''
           Toast.fire({
-          icon: 'warning',
-          title: '密碼有誤'
-        })
+            icon: 'warning',
+            title: '密碼有誤'
+          })
         } else {
           Toast.fire({
-          icon: 'warning',
-          title: '請確認您輸入了正確的帳號密碼'
-        })
+            icon: 'warning',
+            title: '請確認您輸入了正確的帳號密碼'
+          })
         }
-        
         console.error(error.message)
       }
     }
-  },
-  // beforeDestroy () {
-  //   // location.reload()
-  //   const token = localStorage.getItem('token')
-  //   Vue.use(new VueSocketIo({
-  //     // debug: true,
-  //     connection: 'https://twitter-project-2021.herokuapp.com/',
-  //     // connection: 'https://f87a57ad20a3.ngrok.io',
-  //     options: {
-  //       query: {
-  //         auth: token
-  //       }
-  //     },
-  //     vuex: {}
-  //   }))
-  // }
+  }
 }
 </script>
-
-
-
 <style scoped>
 img {
   margin-top: 30px;

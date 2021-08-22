@@ -155,6 +155,9 @@ export default {
       timelineNotice: {}
     }
   },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
+  },
   watch: {
     newTweet(newValue) {
       if (newValue.length === 140) {
@@ -164,9 +167,6 @@ export default {
         })
       }
     },
-  },
-  computed: {
-    ...mapState(["currentUser", "isAuthenticated"]),
   },
   created () {
     this.notiUnseenNum = localStorage.getItem('notiUnseenNum')

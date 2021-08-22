@@ -81,6 +81,9 @@ import $ from 'jquery'
 
 export default {
   mixins: [emptyImageFilter],
+  components: {
+    EditProfileModal
+  },
   props: {
     isCurrentUser: {
       type: Boolean,
@@ -90,9 +93,6 @@ export default {
       type: Object,
       required: true
     }
-  },
-  components: {
-    EditProfileModal
   },
   data () {
     return {
@@ -358,7 +358,7 @@ export default {
         })
       }
     },
-    join_private_page(userId) { 
+    joinPrivatePage(userId) { 
       this.$socket.emit('join_private_page', { userId })
     },
     joinPrivateMessage() { 
@@ -366,7 +366,7 @@ export default {
       const User2Id = this.user.id
       const RoomId = null
       
-      this.join_private_page(User1Id)
+      this.joinPrivatePage(User1Id)
       this.$socket.emit('join_private_room', { User1Id, User2Id, RoomId })
     },
     linkToPrivateMessage () {
@@ -378,10 +378,7 @@ export default {
   }
 }
 </script>
-
-
 <style>
-
 .user-profile {
   text-align: left;
 }

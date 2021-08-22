@@ -218,6 +218,37 @@ export default {
     this.msgUnseenNum = localStorage.getItem('msgUnseenNum')
     this.fetchMsgUsers(this.currentUser.id) 
   },
+  sockets: {
+    join_private_room(RoomId) {
+      this.getPrivateRoomId = RoomId
+    },
+    get_msg_notice_details({ unseenRooms, unreadRooms }) {
+      this.msgUnseenRooms = unseenRooms
+      this.msgUnreadRooms = unreadRooms
+    },
+    update_msg_notice_details(data) {
+      this.messageNotice = data
+      this.userRooms = this.userRooms.map( user => {
+        if (user.id === this.messageNotice.id) {
+          user.lastMsg.fromRoomMember = true
+          user.lastMsg.content = this.messageNotice.lastMsg.content
+          user.lastMsg.createdAt = this.messageNotice.lastMsg.createdAt
+          user.unreadNum = this.messageNotice.unreadNum
+        }
+        return user
+      })
+    },
+    get_private_msg(data) {
+      this.userRooms = this.userRooms.map((user) => {
+        if(user.id === this.currentRoom.id) {
+          user.lastMsg.fromRoomMember = true
+          user.lastMsg.content = data.content
+          user.lastMsg.createdAt = data.createdAt
+        }
+        return user
+      })
+    }
+  },
   methods: {
     joinPrivatePage(userId) { 
       this.$socket.emit('join_private_page', { userId })
@@ -447,37 +478,6 @@ export default {
     leavePrivatePage() {
       this.$socket.emit('leave_private_page')
     },
-  },
-  sockets: {
-    join_private_room(RoomId) {
-      this.getPrivateRoomId = RoomId
-    },
-    get_msg_notice_details({ unseenRooms, unreadRooms }) {
-      this.msgUnseenRooms = unseenRooms
-      this.msgUnreadRooms = unreadRooms
-    },
-    update_msg_notice_details(data) {
-      this.messageNotice = data
-      this.userRooms = this.userRooms.map( user => {
-        if (user.id === this.messageNotice.id) {
-          user.lastMsg.fromRoomMember = true
-          user.lastMsg.content = this.messageNotice.lastMsg.content
-          user.lastMsg.createdAt = this.messageNotice.lastMsg.createdAt
-          user.unreadNum = this.messageNotice.unreadNum
-        }
-        return user
-      })
-    },
-    get_private_msg(data) {
-      this.userRooms = this.userRooms.map((user) => {
-        if(user.id === this.currentRoom.id) {
-          user.lastMsg.fromRoomMember = true
-          user.lastMsg.content = data.content
-          user.lastMsg.createdAt = data.createdAt
-        }
-        return user
-      })
-    }
   },
   beforeDestroy () {
     this.leavePrivatePage()
