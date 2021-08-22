@@ -33,7 +33,7 @@
       <div 
         class="full-link"
         :class="{ linked: user.isLinked }"
-        @click="handleClick"
+        @click="handleCLickUserRoom"
       >
       </div>
     </li>
@@ -42,16 +42,6 @@
 import { emptyImageFilter } from "../utils/mixins";
 import { fromNowFilter } from '../utils/mixins'
 import { mapState } from 'vuex'
-
-// const dummyPrivateHistory = [
-//   {
-//     UserId: 101,
-//     avatar: 'https://loremflickr.com/cache/resized/65535_50964525871_dbf9e75ce3_320_240_g.jpg',
-//     content: 'Whatever is worth doing is worth doing well.',
-//     createdAt: '2021-07-28T22:03:46.000Z',
-//     isSelf: false
-//   }
-// ]`
 
 export default {
   name: 'UserRooms',
@@ -67,21 +57,21 @@ export default {
       user: {}
     }
   },
+  computed: {
+    ...mapState(['currentUser'])
+  },
   watch: {
     initialUser () {
       this.user = this.initialUser
     },
   },
-  computed: {
-    ...mapState(['currentUser'])
-  },
   created () {
     this.fetchUser()
   },
   methods: {
-    handleClick() {
+    handleCLickUserRoom() {
       this.user.unreadNum = 0
-      this.$emit('after-click', this.user)
+      this.$emit('after-click-user-room', this.user)
     },
     fetchUser() {
       this.user = this.initialUser
