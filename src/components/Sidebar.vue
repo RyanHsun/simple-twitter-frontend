@@ -28,7 +28,7 @@
           to='/room'
         >
           <div class="icon">
-            <img src="~@/assets/img/icon_mail.svg" width="25px" alt="" />
+            <img src="~@/assets/img/icon_chat.svg" width="25px" alt="" />
           </div>
           <div>公開聊天室</div>
         </router-link>
@@ -173,6 +173,15 @@ export default {
     this.msgUnseenNum = localStorage.getItem('msgUnseenNum')
   },
   sockets: {
+    connect() {
+      console.log("連線成功")
+    },
+    disconnect(){
+      console.log("斷開連線")
+    },
+    reconnect(){
+      console.log("重新連線")
+    },
     get_msg_notice (unseenNum) {
       this.msgUnseenNum = unseenNum
       localStorage.setItem('msgUnseenNum', unseenNum)
@@ -327,6 +336,7 @@ export default {
 .icon {
   width: 30px;
   margin-right: 10px;
+  text-align: center;
 }
 .nav-item .icon {
   position: relative;
@@ -363,9 +373,6 @@ export default {
     z-index: 10;
     width: auto;
     min-width: auto;
-  }
-  .private-chat {
-    display: none;
   }
   .PublicMessage .new-tweet {
     display: none;

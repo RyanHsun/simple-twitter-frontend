@@ -385,10 +385,6 @@ export default {
 .user-profile {
   text-align: left;
 }
-.user-profile > div {
-  display: flex;
-  flex-wrap: wrap;
-}
 .user-profile-head {
   justify-content: space-between;
   align-items: flex-start;
@@ -439,6 +435,10 @@ export default {
   max-width: 1500px;
   margin: 0 auto;
   padding: 0 20px;
+}
+.user-profile > div {
+  display: flex;
+  flex-wrap: wrap;
 }
 .user-info {
   display: inline-block;
