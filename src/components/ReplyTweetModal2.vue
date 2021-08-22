@@ -90,8 +90,6 @@ export default {
         }
         this.isProcessing = true
 
-        console.log('要送去後端的的 Id:', reply.TweetId)
-        console.log('要送去後端的的 comment:', this.comment)
         const { data } = await tweetsAPI.createTweetReply({
           tweetId: reply.TweetId,
           comment: this.comment

@@ -120,7 +120,6 @@ export default {
         this.tweet.likeNum += 1
 
         if (this.currentUser.id !== this.tweet.Author.id) {
-          console.log('不是同個使用者')
           this.postTimeline(this.tweet.Author.id, 3, data.Like.id)
         }
 
